@@ -1,0 +1,36 @@
+StageId;Phase;Level;ObjectSpeedFactor;HeightIncrement;HeightUpThreshold;HeightDownThreshold;SizeIncrement;SizeUpThreshold;SizeDownThreshold;Loops
+5;1;5;2.0;0.0;0;0;0.0;0;0;2
+
+%% HEADERS %%
+%The first 2 lines above are headers. Never remove them!
+%StageId = Stage Identification (min: 1)
+%Phase = Phase Identification (min: 1, max: 4)
+%Level = Level Identification (min: 1)
+%ObjectSpeedFactor = Controls the objects speed (min: 1.0. max: 3.0)
+%Increment = Incremental value that controls player performance during a level (min: 0.0 max: 1.0)
+%Up Threshold = Number of successes required to increase performance height/sizes by 'Increment' during a level (min: 0.0 max: 5.0)
+%Down Threshold = Number of failures required to decrease performance height/sizes by 'Increment' during a level (min: 0.0 max: 5.0)
+%Loops = Number of times to repeat a script (min: 1, max: 99)
+
+%% COMMANDS %% 
+%Commands always after the headers
+%Template: ObjectType;DifficultyFactor;PositionYFactor;PositionXSpacing;
+%ObjectType = Object to spawn (Target | Obstacle | Relax)
+%DifficultyFactor => Modifies Height/Size (min: 0.0, max: 1.0)
+%PositionYFactor = Relative Position as INSpiratory or EXPiratory (AIR = 1, WATER = -1)
+%PositionXSpacing = Distance from the last spawned object in unity's metric unit
+%Relax command does not use DifficultyFactor and PositionYFactor
+
+Target;0.4;1;2.5;
+Target;0.4;-1;2.5;
+
+Target;0.4;1;2.5;
+Target;0.4;-1;2.5;
+
+Target;0.4;1;2.5;
+Target;0.4;-1;2.5;
+
+Target;0.4;1;2.5;
+Target;0.4;-1;2.5;
+
+Relax;0;0;1;
