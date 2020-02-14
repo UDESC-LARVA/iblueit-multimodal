@@ -27,7 +27,7 @@ float ReadSensor()
     sum += analogRead(A0);
   }
 
-  return ((sum / SAMPLESIZE)-200)*-1; // -200 porque é quase o meio das leituras de 0-600; *-1 pra ajustar INS para cima e EXP para baixo.
+  return ((sum / SAMPLESIZE)-400)*-1; // -400 porque é quase o meio das leituras de 0-600; *-1 pra ajustar INS para cima e EXP para baixo.
 }
 
 
