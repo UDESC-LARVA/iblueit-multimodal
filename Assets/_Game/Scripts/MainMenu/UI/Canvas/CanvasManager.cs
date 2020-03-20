@@ -24,22 +24,22 @@ namespace Ibit.MainMenu.UI.Canvas
                 $"Condição: {disfunction}\n" +
                 $"Partidas Jogadas: {Pacient.Loaded.PlaySessionsDone}\n" +
                 $"\n-------------- Pitaco --------------\n" +
-                $"Pico Exp.: {FlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesPitaco.RawExpPeakFlow)} L/min ({Pacient.Loaded.CapacitiesPitaco.RawExpPeakFlow} Pa)\n" +
-                $"Pico Ins.: {FlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesPitaco.RawInsPeakFlow)} L/min ({Pacient.Loaded.CapacitiesPitaco.RawInsPeakFlow} Pa)\n" +
+                $"Pico Exp.: {PitacoFlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesPitaco.RawExpPeakFlow)} L/min ({Pacient.Loaded.CapacitiesPitaco.RawExpPeakFlow} Pa)\n" +
+                $"Pico Ins.: {PitacoFlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesPitaco.RawInsPeakFlow)} L/min ({Pacient.Loaded.CapacitiesPitaco.RawInsPeakFlow} Pa)\n" +
                 $"Tempo Ins.: {Pacient.Loaded.CapacitiesPitaco.RawInsFlowDuration / 1000f:F1} s\n" +
                 $"Tempo Exp.: {Pacient.Loaded.CapacitiesPitaco.RawExpFlowDuration / 1000f:F1} s\n" +
                 $"Tins/Texp: {((Pacient.Loaded.CapacitiesPitaco.RawInsFlowDuration / 1000f) / (Pacient.Loaded.CapacitiesPitaco.RawExpFlowDuration / 1000f)):F1}\n" +
                 $"Freq. Resp. Média: {Pacient.Loaded.CapacitiesPitaco.RawRespRate * 60f:F1} rpm\n" +
                 $"\n------- Manovacuômetro -------\n" +
-                $"Pico Exp.: {FlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesMano.RawExpPeakFlow)} L/min ({Pacient.Loaded.CapacitiesMano.RawExpPeakFlow} Pa)\n" +
-                $"Pico Ins.: {FlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesMano.RawInsPeakFlow)} L/min ({Pacient.Loaded.CapacitiesMano.RawInsPeakFlow} Pa)\n" +
+                $"Pico Exp.: {ManoFlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesMano.RawExpPeakFlow)} L/min ({Pacient.Loaded.CapacitiesMano.RawExpPeakFlow} Pa)\n" +
+                $"Pico Ins.: {ManoFlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesMano.RawInsPeakFlow)} L/min ({Pacient.Loaded.CapacitiesMano.RawInsPeakFlow} Pa)\n" +
                 $"Tempo Ins.: {Pacient.Loaded.CapacitiesMano.RawInsFlowDuration / 1000f:F1} s\n" +
                 $"Tempo Exp.: {Pacient.Loaded.CapacitiesMano.RawExpFlowDuration / 1000f:F1} s\n" +
                 $"Tins/Texp: {((Pacient.Loaded.CapacitiesMano.RawInsFlowDuration / 1000f) / (Pacient.Loaded.CapacitiesMano.RawExpFlowDuration / 1000f)):F1}\n" +
                 // $"Freq. Resp. Média: {Pacient.Loaded.CapacitiesMano.RawRespRate * 60f:F1} rpm\n" +
                 $"\n-------- Cinta Extensora --------\n" +
-                $"Pico Exp.: {FlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesCinta.RawExpPeakFlow)} L/min ({Pacient.Loaded.CapacitiesCinta.RawExpPeakFlow} Pa)\n" +
-                $"Pico Ins.: {FlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesCinta.RawInsPeakFlow)} L/min ({Pacient.Loaded.CapacitiesCinta.RawInsPeakFlow} Pa)\n" +
+                $"Pico Exp.: {CintaFlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesCinta.RawExpPeakFlow)} L/min ({Pacient.Loaded.CapacitiesCinta.RawExpPeakFlow} Pa)\n" +
+                $"Pico Ins.: {CintaFlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesCinta.RawInsPeakFlow)} L/min ({Pacient.Loaded.CapacitiesCinta.RawInsPeakFlow} Pa)\n" +
                 $"Tempo Ins.: {Pacient.Loaded.CapacitiesCinta.RawInsFlowDuration / 1000f:F1} s\n" +
                 $"Tempo Exp.: {Pacient.Loaded.CapacitiesCinta.RawExpFlowDuration / 1000f:F1} s\n" +
                 $"Tins/Texp: {((Pacient.Loaded.CapacitiesCinta.RawInsFlowDuration / 1000f) / (Pacient.Loaded.CapacitiesCinta.RawExpFlowDuration / 1000f)):F1}\n" +

@@ -35,7 +35,7 @@ namespace Ibit.WaterGame
         {
             Debug.Log(roundNumber);
             totalScores[roundNumber] = roundScore;
-            FinalScore.pikeString[roundNumber].text += $"{FlowMath.ToLitresPerMinute(pikeValue)} L/min ({pikeValue} pa)";
+            FinalScore.pikeString[roundNumber].text += $"{PitacoFlowMath.ToLitresPerMinute(pikeValue)} L/min ({pikeValue} pa)";
             WaterBehaviour(roundScore);
 
             for (int i = 0; i < roundScore; i++)

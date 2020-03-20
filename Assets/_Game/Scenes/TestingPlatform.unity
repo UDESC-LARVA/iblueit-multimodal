@@ -147,7 +147,7 @@ MonoBehaviour:
     Phase: 1
     Level: 2
     ObjectSpeedFactor: 2
-    Loops: 5
+    Loops: 15
     HeightIncrement: 0
     HeightUpThreshold: 0
     HeightDownThreshold: 0
@@ -1525,9 +1525,24 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 212842463845092420, guid: b2df1bf30ba44844cb4c3bf45413870d,
+        type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 212842463845092420, guid: b2df1bf30ba44844cb4c3bf45413870d,
+        type: 3}
+      propertyPath: m_FlipY
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 95191716280218792, guid: b2df1bf30ba44844cb4c3bf45413870d,
         type: 3}
       propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 95191716280218792, guid: b2df1bf30ba44844cb4c3bf45413870d,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
