@@ -124,7 +124,7 @@ namespace Ibit.Calibration
 
                                     AirFlowDisable();
 
-                                    _flowMeter = FlowMath.RespiratoryRate(_capturedSamples, TimerRespFreq);
+                                    _flowMeter = PitacoFlowMath.RespiratoryRate(_capturedSamples, TimerRespFreq);
 
                                     if (_flowMeter > RespiratoryFrequencyThreshold)
                                     {
@@ -212,7 +212,7 @@ namespace Ibit.Calibration
 
                                 case 4:
                                     SoundManager.Instance.PlaySound("Success");
-                                    DudeTalk($"Seu pico inspiratório é de {FlowMath.ToLitresPerMinute(_tmpCapacities.RawInsPeakFlow):F} L/min." +
+                                    DudeTalk($"Seu pico inspiratório é de {PitacoFlowMath.ToLitresPerMinute(_tmpCapacities.RawInsPeakFlow):F} L/min." +
                                         " Pressione (Enter) para continuar com os outros exercícios.");
                                     SetupNextStep();
                                     break;
@@ -368,7 +368,7 @@ namespace Ibit.Calibration
 
                                 case 4:
                                     SoundManager.Instance.PlaySound("Success");
-                                    DudeTalk($"Seu pico expiratório é de {FlowMath.ToLitresPerMinute(_tmpCapacities.RawExpPeakFlow):F} L/min." +
+                                    DudeTalk($"Seu pico expiratório é de {PitacoFlowMath.ToLitresPerMinute(_tmpCapacities.RawExpPeakFlow):F} L/min." +
                                         " Pressione (Enter) para continuar com os outros exercícios.");
                                     SetupNextStep();
                                     break;

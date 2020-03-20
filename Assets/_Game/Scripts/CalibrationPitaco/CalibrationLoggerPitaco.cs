@@ -26,7 +26,7 @@ namespace Ibit.Calibration
         {
             if (exercise == CalibrationExercisePitaco.ExpiratoryPeak || exercise == CalibrationExercisePitaco.InspiratoryPeak)
             {
-                _sb.AppendLine($"{DateTime.Now:s};{result};{exercise};{FlowMath.ToLitresPerMinute(value)};");
+                _sb.AppendLine($"{DateTime.Now:s};{result};{exercise};{PitacoFlowMath.ToLitresPerMinute(value)};");
             }
             else if (exercise == CalibrationExercisePitaco.RespiratoryFrequency)
             {

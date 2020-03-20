@@ -26,7 +26,7 @@ namespace Ibit.Calibration
         {
             if (exercise == CalibrationExerciseCinta.ExpiratoryPeak || exercise == CalibrationExerciseCinta.InspiratoryPeak)
             {
-                _sb.AppendLine($"{DateTime.Now:s};{result};{exercise};{FlowMath.ToLitresPerMinute(value)};");
+                _sb.AppendLine($"{DateTime.Now:s};{result};{exercise};{CintaFlowMath.ToLitresPerMinute(value)};");
             }
             else if (exercise == CalibrationExerciseCinta.RespiratoryFrequency)
             {
