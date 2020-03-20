@@ -26,7 +26,7 @@ namespace Ibit.Calibration
         {
             if (exercise == CalibrationExerciseMano.ExpiratoryPeak || exercise == CalibrationExerciseMano.InspiratoryPeak)
             {
-                _sb.AppendLine($"{DateTime.Now:s};{result};{exercise};{FlowMath.ToLitresPerMinute(value)};");
+                _sb.AppendLine($"{DateTime.Now:s};{result};{exercise};{ManoFlowMath.ToLitresPerMinute(value)};");
             }
             // else if (exercise == CalibrationExerciseMano.RespiratoryFrequency)
             // {

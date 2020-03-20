@@ -197,7 +197,7 @@ namespace Ibit.WaterGame
 
             SoundManager.Instance.PlaySound("Success");
 
-            FindObjectOfType<MinigameLogger>().Write(FlowMath.ToLitresPerMinute(sensorValue));
+            FindObjectOfType<MinigameLogger>().Write(PitacoFlowMath.ToLitresPerMinute(sensorValue));
 
             CalculateFlowPike(maximumPeak);
             waitSignal = false;

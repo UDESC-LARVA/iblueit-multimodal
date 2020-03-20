@@ -134,7 +134,7 @@ namespace Ibit.LeavesGame
 
         private void PlayerWakeUp()
         {
-            Debug.Log(FlowMath.RespiratoryRate(Player.playerRespiratoryInfo,(int)countdownTime) + " bps");
+            Debug.Log(PitacoFlowMath.RespiratoryRate(Player.playerRespiratoryInfo,(int)countdownTime) + " bps");
             displayHowTo.text = "Acabou o tempo![Enter] para continuar.";
             //Se não jogou mandar sinal false para a permissão do jogador.
             EnablePlayerFlow(false);

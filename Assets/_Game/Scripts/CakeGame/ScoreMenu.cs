@@ -16,9 +16,9 @@ namespace Ibit.CakeGame
             finalScore[0].FillStarsFinal(score1);
             finalScore[1].FillStarsFinal(score2);
             finalScore[2].FillStarsFinal(score3);
-            peakText[0].text = "   Pico: " + FlowMath.ToLitresPerMinute(Parsers.Float(pikeString[0])) + " L/min";
-            peakText[1].text = "   Pico: " + FlowMath.ToLitresPerMinute(Parsers.Float(pikeString[1])) + " L/min";
-            peakText[2].text = "   Pico: " + FlowMath.ToLitresPerMinute(Parsers.Float(pikeString[2])) + " L/min";
+            peakText[0].text = "   Pico: " + PitacoFlowMath.ToLitresPerMinute(Parsers.Float(pikeString[0])) + " L/min";
+            peakText[1].text = "   Pico: " + PitacoFlowMath.ToLitresPerMinute(Parsers.Float(pikeString[1])) + " L/min";
+            peakText[2].text = "   Pico: " + PitacoFlowMath.ToLitresPerMinute(Parsers.Float(pikeString[2])) + " L/min";
         }
 
         public void Restart() => SceneManager.LoadScene(SceneManager.GetActiveScene().name);

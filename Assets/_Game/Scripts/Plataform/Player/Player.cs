@@ -20,13 +20,13 @@ namespace Ibit.Plataform
 
             
                 scp.OnSerialMessageReceived += PositionOnSerial;
-                scp.OnSerialMessageReceived += Animate;
+                scp.OnSerialMessageReceived += AnimatePitaco;
             
                 scm.OnSerialMessageReceived += PositionOnSerial;
-                scm.OnSerialMessageReceived += Animate;
+                scm.OnSerialMessageReceived += AnimateMano;
 
                 scc.OnSerialMessageReceived += PositionOnSerial;
-                scc.OnSerialMessageReceived += Animate;
+                scc.OnSerialMessageReceived += AnimateCinta;
             
         }
 

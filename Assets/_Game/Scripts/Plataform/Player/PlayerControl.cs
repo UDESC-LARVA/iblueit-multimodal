@@ -18,12 +18,33 @@ namespace Ibit.Plataform
             if (msg.Length < 1)
                 return;
 
-            var sensorValue = Parsers.Float(msg);
+/////////////////////////// PITACO ///////////////////////////
+            //var sensorValue = Parsers.Float(msg);
 
+            // sensorValue = sensorValue < -Pacient.Loaded.PitacoThreshold || sensorValue > Pacient.Loaded.PitacoThreshold ? sensorValue : 0f;
+            // // sensorValue = sensorValue < -Pacient.Loaded.PitacoThreshold || sensorValue > Pacient.Loaded.PitacoThreshold ? sensorValue : (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow+Pacient.Loaded.CapacitiesCinta.InsPeakFlow)/2f;
 
-            sensorValue = sensorValue < -Pacient.Loaded.PitacoThreshold || sensorValue > Pacient.Loaded.PitacoThreshold ? sensorValue : 0f;
+            // var peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow * 0.3f : -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
 
-            var peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow * 0.3f : -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
+/////////////////////////// CINTA ///////////////////////////
+            var sensorValue = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow);
+
+            if (sensorValue == Pacient.Loaded.CapacitiesCinta.ExpPeakFlow) //teste 01
+            {
+                sensorValue = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow);
+                if (sensorValue == Pacient.Loaded.CapacitiesCinta.ExpPeakFlow) //teste 02
+                {
+                    sensorValue = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow);
+                    if (sensorValue == Pacient.Loaded.CapacitiesCinta.ExpPeakFlow) //teste 03
+                    {
+                        sensorValue = 0f;
+                    }
+                }
+            }
+
+            var peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * 0.3f : -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
+
+//////////////////////////////////////////////////////////////
 
             var nextPosition = sensorValue * CameraLimits.Boundary / peak; // Ponto crucial do cálculo da posição do blue
             nextPosition = Mathf.Clamp(nextPosition, -CameraLimits.Boundary, CameraLimits.Boundary);// Ponto crucial do cálculo da posição do blue
@@ -37,9 +58,9 @@ namespace Ibit.Plataform
             var to = new Vector3(this.transform.position.x, -nextPosition);
 
             // Lerp(de onde está, para onde vai, lerpSpeed = velocidade de deslocamento);
-            this.transform.position = Vector3.Lerp(from, to, Time.deltaTime * 5f); // Valor original: Vector3.Lerp(from, to, Time.deltaTime * 15f);
+            this.transform.position = Vector3.Lerp(from, to, Time.deltaTime * 10f); // Valor original: Vector3.Lerp(from, to, Time.deltaTime * 15f);
             
-            Debug.Log($"lerpSpeed: {Time.deltaTime * 15f}");
+            //Debug.Log($"lerpSpeed: {Time.deltaTime * 5f}");
             
         }
     }
