@@ -72,16 +72,16 @@ namespace Ibit.Core.Data
                     CapacitiesPitaco = new Capacities
                     {
                     RespiratoryRate = 0.3f,
-                    ExpPeakFlow = 1600, //valor original 1600
-                    InsPeakFlow = -330,  //valor original -330
+                    ExpPeakFlow = 500, //valor original 1600
+                    InsPeakFlow = -500,  //valor original -330
                     ExpFlowDuration = 18000,   //valor original
                     InsFlowDuration = 10000   //valor original
                     },
 
                     CapacitiesMano = new Capacities
                     {
-                    ExpPeakFlow = 400, //valor original 1600
-                    InsPeakFlow = -200,  //valor original -330
+                    ExpPeakFlow = 75, //valor original 1600
+                    InsPeakFlow = -75,  //valor original -330
                     ExpFlowDuration = 18000,   //valor original
                     InsFlowDuration = 10000   //valor original
                     },
@@ -89,8 +89,8 @@ namespace Ibit.Core.Data
                     CapacitiesCinta = new Capacities
                     {
                     RespiratoryRate = 0.3f,
-                    ExpPeakFlow = 500, //valor original 1600
-                    InsPeakFlow = -500,  //valor original -330
+                    ExpPeakFlow = 250, //valor original 1600
+                    InsPeakFlow = -250,  //valor original -330
                     ExpFlowDuration = 18000,   //valor original
                     InsFlowDuration = 10000   //valor original
                     }

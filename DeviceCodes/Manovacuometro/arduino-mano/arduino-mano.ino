@@ -1,15 +1,15 @@
 /*
- * Pitaco Serial Connection - MPX5010DP
- * https://github.com/huenato/iblueit
+ * Pitaco Serial Connection - MPX5700AP
+ * https://github.com/UDESC-LARVA/IBLUEIT
  * 
- * RANGE do Sensor MPX5010DP p/ pressão
- * Max~: 500,00 L/min
+ * RANGE do Sensor MPX5700 p/ pressão absoluta
+ * Max~: 150,00 L/min
  * Stop: 0.0 L/min
- * Min: -23,00 L/min
+ * Min~: -150,00 L/min
  * 
  */
 
-#define SAMPLESIZE 200 /* Aqui pode precisar ser maior para o MV. No PItaco é 100*/
+#define SAMPLESIZE 100
 #define MOVING_AVERAGE true
 #define DEBUG false
 
@@ -19,22 +19,22 @@ void Calibrate()
 {
 
 #if MOVING_AVERAGE
-	for(int i = 0; i < SAMPLESIZE;i++)
-	{
-		//band-aid fix: this will force the sensor to populate the moving average array before using it
-		ReadSensor();
-	}
-	calibrationValue = ReadSensor();
+  for(int i = 0; i < SAMPLESIZE;i++)
+  {
+    //band-aid fix: this will force the sensor to populate the moving average array before using it
+    ReadSensor();
+  }
+  calibrationValue = ReadSensor();
 #else
-	float sum = 0.0;
+  float sum = 0.0;
 
-	for (int i = 0; i < SAMPLESIZE; i++)
-		sum += voutToPa(digitalToVout(analogRead(A2)));
+  for (i = 0; i < SAMPLESIZE; i++)
+    sum += voutToPa(digitalToVout(analogRead(A2)));
 
-	calibrationValue = sum / SAMPLESIZE;
+  calibrationValue = sum / SAMPLESIZE;
 #endif  
-	
-	isCalibrated = true;
+  
+  isCalibrated = true;
 }
 
 #if MOVING_AVERAGE
@@ -44,23 +44,23 @@ long sum = 0;
 float value;
 float ReadSensor()
 {
-	value = voutToPa(digitalToVout(analogRead(A2)))+7; // Jhonatan colou + 7 para o valor estável ficar em 0.0
+  value = voutToPa(digitalToVout(analogRead(A2)));
 
-	for (int i = SAMPLESIZE - 1; i > 0; i--)
-	{
-		vals[i] = vals[i - 1];
-	}
+  for (int i = SAMPLESIZE - 1; i > 0; i--)
+  {
+    vals[i] = vals[i - 1];
+  }
 
-	vals[0] = value;
+  vals[0] = value;
 
-	sum = 0;
+  sum = 0;
 
-	for (int i = 0; i < SAMPLESIZE; i++)
-	{
-		sum = sum + vals[i];
-	}
+  for (int i = 0; i < SAMPLESIZE; i++)
+  {
+    sum = sum + vals[i];
+  }
 
-	return sum / SAMPLESIZE;
+  return sum / SAMPLESIZE;
 }
 
 #else
@@ -69,12 +69,12 @@ float diffPressure = 0.0;
 int i = 0;
 float ReadSensor()
 {
-	diffPressure = 0.0;
+  diffPressure = 0.0;
 
-	for (i = 0; i < SAMPLESIZE; i++)
-		diffPressure += voutToPa(digitalToVout(analogRead(A2)));
+  for (i = 0; i < SAMPLESIZE; i++)
+    diffPressure += voutToPa(digitalToVout(analogRead(A2)));
 
-	return diffPressure / SAMPLESIZE;
+  return diffPressure / SAMPLESIZE;
 }
 
 #endif
@@ -82,46 +82,45 @@ float ReadSensor()
 bool isSampling = false;
 void ListenCommand(char cmd)
 {
-	//ECHO
-	if (cmd == 'e' || cmd == 'E')
-		Serial.println("echom");
+  //ECHO
+  if (cmd == 'e' || cmd == 'E')
+    Serial.println("echom");
 
-	//READ SAMPLES
-	else if (cmd == 'r' || cmd == 'R')
-		isSampling = true;
+  //READ SAMPLES
+  else if (cmd == 'r' || cmd == 'R')
+    isSampling = true;
 
-	//FINISH READ
-	else if (cmd == 'f' || cmd == 'F')
-	{
-		isSampling = false;
-		isCalibrated = false;
-	}
+  //FINISH READ
+  else if (cmd == 'f' || cmd == 'F')
+  {
+    isSampling = false;
+    isCalibrated = false;
+  }
 
-	//CALIBRATE
-	else if (cmd == 'c' || cmd == 'C')
-		isCalibrated = false;
+  //CALIBRATE
+  else if (cmd == 'c' || cmd == 'C')
+    isCalibrated = false;
 }
 
 void setup() 
 { 
-	Serial.begin(115200);
+  Serial.begin(115200);
 }
 
 void loop()
 {
 #if DEBUG
-	isSampling = true;
+  isSampling = true;
 #endif
 
-	if (Serial.available() > 0)
-		ListenCommand(Serial.read());
+  if (Serial.available() > 0)
+    ListenCommand(Serial.read());
 
-	if (isSampling && !isCalibrated)
-		Calibrate();
+  if (isSampling && !isCalibrated)
+    Calibrate();
 
-	if (isSampling && isCalibrated)
-		//Serial.println(ReadSensor() - calibrationValue);
-    Serial.println(ReadSensor());
+  if (isSampling && isCalibrated)
+    Serial.println(ReadSensor() - calibrationValue);
 }
 
 /**
@@ -141,23 +140,15 @@ const float MAX_VOUT = (VCC * ((COEFF_LIN_KPA * MAX_KPA) + COEFF_OFFSET_KPA));
 
 float voutToKPa(float v)
 {
-	return (v - MIN_VOUT) / (VCC * COEFF_LIN_KPA);
+  return (v - MIN_VOUT) / (VCC * COEFF_LIN_KPA);
 }
 
 float digitalToVout(long d)
 {
-	return (VCC * d) / 1023.0;
+  return (VCC * d) / 1023.0;
 }
 
-float voutToPa(float v) //Função modificada p/ o mano
+float voutToPa(float v)
 {
-  if((voutToKPa(v))>-0.1)
-  {
-    return 100.0 * voutToKPa(v);
-  } else
-  {
-    return 1000.0 * voutToKPa(v);
-  }
-  
-  //return 10*voutToKPa(v); // Esse valor eh modificado para a entrada do MV.
+  return 1000.0 * voutToKPa(v);
 }

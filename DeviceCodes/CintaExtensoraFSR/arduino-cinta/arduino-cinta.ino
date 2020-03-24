@@ -1,7 +1,7 @@
 /* 
  *  Anotações:
- *  Intervalo de medida do sensor: 0 a 1023
- *  Forçando muito consegui simular de 0 a 600 com a respiração
+ *  Intervalo de medida do sensor: 100g a 10kg
+ *  Forçando muito consegui simular de 0 a 400g com a respiração
 */
 
 /*
@@ -9,6 +9,11 @@
    https://github.com/UDESC-LARVA/IBLUEIT
    https://www.instructables.com/id/FSR-Tutorial/
 
+   Example sketch for SparkFun's force sensitive resistors
+    (https://www.sparkfun.com/products/9375)
+    Jim Lindblom @ SparkFun Electronics
+    April 28, 2016
+  
    Quanto mais pressão aplicar no sensor, menor a resistência.
    A faixa de resistência é realmente muito grande:> 10 MΩ (sem pressão) a ~ 200 Ω (pressão máxima).
    A maioria dos FSRs podem sentir força na faixa de 100g a 10kg.
@@ -25,6 +30,19 @@
 
 #define SAMPLESIZE 100 //Bloco para média de leituras
 
+const int FSR_PIN = A0; // Pin connected to FSR/resistor divider
+
+// Measure the voltage at 5V and resistance of your 3.3k resistor, and enter
+// their value's below:
+const float VCC = 4.98; // Measured voltage of Ardunio 5V line
+const float R_DIV = 10000.0; // Measured resistance of 10k resistor
+
+
+int fsrADC; //FSR ADC
+float fsrV; //FSR voutage
+float fsrR; //FSR Resistance
+float fsrG; //FSR Condutance
+float force; //FSR Force (em gramas)
 int i;
 long sum;
 
@@ -36,9 +54,32 @@ long sum;
 float ReadSensor()
 { 
   sum = 0;
+
   for (i = 0; i < SAMPLESIZE; i++)
   {
-    sum += analogRead(A0);
+    fsrADC = analogRead(FSR_PIN);
+    // If the FSR has no pressure, the resistance will be
+    // near infinite. So the voltage should be near 0.
+    if (fsrADC != 0) // If the analog reading is non-zero
+    {
+      // Use ADC reading to calculate voltage:
+      fsrV = fsrADC * VCC / 1023.0;
+      // Use voltage and static resistor value to 
+      // calculate FSR resistance:
+      fsrR = R_DIV * (VCC / fsrV - 1.0);
+      //Serial.println("Resistance: " + String(fsrR) + " ohms");
+    
+      // Guesstimate force based on slopes in figure 3 of
+      // FSR datasheet:
+      fsrG = 1.0 / fsrR; // Calculate conductance
+      // Break parabolic curve down into two linear slopes:
+      if (fsrR <= 600)
+        force = (fsrG - 0.00075) / 0.00000032639;
+      else
+        force =  fsrG / 0.000000642857;
+
+      sum += force;
+    }
   }
 
   return ((sum / SAMPLESIZE)*-1); // -400 porque é quase o meio das leituras de 0-600; *-1 pra ajustar INS para cima e EXP para baixo.

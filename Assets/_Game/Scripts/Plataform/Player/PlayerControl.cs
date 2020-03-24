@@ -1,4 +1,4 @@
-using Ibit.Core.Data;
+﻿using Ibit.Core.Data;
 using Ibit.Core.Util;
 using Ibit.Plataform.Camera;
 using UnityEngine;
@@ -19,39 +19,49 @@ namespace Ibit.Plataform
                 return;
 
 /////////////////////////// PITACO ///////////////////////////
-            //var sensorValue = Parsers.Float(msg);
+            var sensorValuePitaco = Parsers.Float(msg);
 
-            // sensorValue = sensorValue < -Pacient.Loaded.PitacoThreshold || sensorValue > Pacient.Loaded.PitacoThreshold ? sensorValue : 0f;
-            // // sensorValue = sensorValue < -Pacient.Loaded.PitacoThreshold || sensorValue > Pacient.Loaded.PitacoThreshold ? sensorValue : (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow+Pacient.Loaded.CapacitiesCinta.InsPeakFlow)/2f;
+            sensorValuePitaco = sensorValuePitaco < -Pacient.Loaded.PitacoThreshold || sensorValuePitaco > Pacient.Loaded.PitacoThreshold ? sensorValuePitaco : 0f;
+            // sensorValue = sensorValue < -Pacient.Loaded.PitacoThreshold || sensorValue > Pacient.Loaded.PitacoThreshold ? sensorValue : (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow+Pacient.Loaded.CapacitiesCinta.InsPeakFlow)/2f;
 
-            // var peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow * 0.3f : -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
+            var peakPitaco = sensorValuePitaco > 0 ? Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow * 0.3f : -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
+
+//////////////////////// MANO ///////////////////////////
+            var sensorValueMano = Parsers.Float(msg);
+
+            sensorValueMano = sensorValueMano < -Pacient.Loaded.ManoThreshold || sensorValueMano > Pacient.Loaded.ManoThreshold ? sensorValueMano : 0f;
+
+            var peakMano = sensorValueMano > 0 ? Pacient.Loaded.CapacitiesMano.ExpPeakFlow * 0.3f : -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
 
 /////////////////////////// CINTA ///////////////////////////
-            var sensorValue = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow);
+            var sensorValueCinta = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow);
 
-            if (sensorValue == Pacient.Loaded.CapacitiesCinta.ExpPeakFlow) //teste 01
+            if (sensorValueCinta == Pacient.Loaded.CapacitiesCinta.ExpPeakFlow) //teste 01
             {
-                sensorValue = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow);
-                if (sensorValue == Pacient.Loaded.CapacitiesCinta.ExpPeakFlow) //teste 02
+                sensorValueCinta = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow);
+                if (sensorValueCinta == Pacient.Loaded.CapacitiesCinta.ExpPeakFlow) //teste 02
                 {
-                    sensorValue = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow);
-                    if (sensorValue == Pacient.Loaded.CapacitiesCinta.ExpPeakFlow) //teste 03
+                    sensorValueCinta = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow);
+                    if (sensorValueCinta == Pacient.Loaded.CapacitiesCinta.ExpPeakFlow) //teste 03
                     {
-                        sensorValue = 0f;
+                        sensorValueCinta = 0f;
                     }
                 }
             }
 
-            var peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * 0.3f : -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
+            var peakCinta = sensorValueCinta > 0 ? Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * 0.3f : -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
 
 //////////////////////////////////////////////////////////////
 
-            var nextPosition = sensorValue * CameraLimits.Boundary / peak; // Ponto crucial do cálculo da posição do blue
+            // var nextPosition = ((sensorValuePitaco+sensorValueCinta)/2) * CameraLimits.Boundary / ((peakPitaco+peakCinta)/2); // Ponto crucial do cálculo da posição do blue
+            // nextPosition = Mathf.Clamp(nextPosition, -CameraLimits.Boundary, CameraLimits.Boundary);// Ponto crucial do cálculo da posição do blue
+
+             var nextPosition = sensorValueMano * CameraLimits.Boundary / peakMano; // Ponto crucial do cálculo da posição do blue
             nextPosition = Mathf.Clamp(nextPosition, -CameraLimits.Boundary, CameraLimits.Boundary);// Ponto crucial do cálculo da posição do blue
 
             //Debug.Log($"NextPosition: {nextPosition}\nPeak: {peak}\nSensorVal: {sensorValue}");
 
-            TestSensorValue = sensorValue; // p/ a plataforma de testes
+            TestSensorValue = sensorValueMano; // p/ a plataforma de testes
             TestPositionValue = nextPosition; // p/ a plataforma de testes
 
             var from = this.transform.position;
