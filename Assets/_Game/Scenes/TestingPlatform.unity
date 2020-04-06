@@ -2211,6 +2211,9 @@ MonoBehaviour:
   invincibilityTime: 2
   TestSensorValue: 0
   TestPositionValue: 0
+  scp: {fileID: 0}
+  scm: {fileID: 0}
+  scc: {fileID: 0}
 --- !u!70 &684932087
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

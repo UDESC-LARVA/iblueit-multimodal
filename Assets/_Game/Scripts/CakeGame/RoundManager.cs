@@ -623,6 +623,10 @@ namespace Ibit.CakeGame
 
                 Debug.Log("Saving minigame data...");
                 FindObjectOfType<MinigameLogger>().Save();
+
+                // Band aid fix para não ficar chamando várias vezes
+                partidaCompleta = false;
+                passo = 0;
             }
         }
     }

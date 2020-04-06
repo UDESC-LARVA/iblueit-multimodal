@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Threading.Tasks;
 using Ibit.Core.Audio;
 using Ibit.Core.Serial;
 using UnityEngine;
@@ -11,13 +12,13 @@ namespace Ibit.WaterGame
     {
 
         /*Events Declaration*/
-        public delegate void PlayerFlowDelegate (bool hasPlayed, int roundNumber);
+        public delegate void PlayerFlowDelegate(bool hasPlayed, int roundNumber);
         public event PlayerFlowDelegate AuthorizePlayerFlowEvent;
 
-        public delegate void FinalScoreDelegate ();
+        public delegate void FinalScoreDelegate();
         public event FinalScoreDelegate ShowFinalScoreEvent;
 
-        public delegate void CleanRoundDelegate ();
+        public delegate void CleanRoundDelegate();
         public event CleanRoundDelegate CleanRoundEvent;
 
         /*RoundManager Variables*/
@@ -25,7 +26,7 @@ namespace Ibit.WaterGame
         [SerializeField] private GameObject TextPanel;
 
 
-       [SerializeField] private Player player;         // adicionado 11/09/19
+        [SerializeField] private Player player;         // adicionado 11/09/19
 
         private bool playable, finished, toBackup;
         [SerializeField] private int state, backupState, _roundNumber;
@@ -36,23 +37,25 @@ namespace Ibit.WaterGame
         private SerialControllerCinta scc;
 
         public float SpicoInspiratorio;       // adicionado 11/09/19
-        public float picomomento=0;       // adicionado 10/16/19
+        public float picomomento = 0;       // adicionado 10/16/19
 
         public Slider slider; // adicionado 11/09/19
         public Slider sliderpico; // adicionado 10/16/19
         bool resetsliderpico = true; //adicionado 21/10/19
 
 
+        private Task _writeLogsTask;
+        private Core.MinigameLogger _logger;
 
-
-        private void Awake ()
+        private void Awake()
         {
             scp = FindObjectOfType<SerialControllerPitaco>();
             scm = FindObjectOfType<SerialControllerMano>();
             scc = FindObjectOfType<SerialControllerCinta>();
+            _logger = FindObjectOfType<Core.MinigameLogger>();
         }
 
-        private void Start ()
+        private void Start()
         {
             state = 1; // Player start point on State Machine
             finished = false; //To Verify if the player have finished the game
@@ -60,8 +63,8 @@ namespace Ibit.WaterGame
             toBackup = false; //Use old state value(Player haven't played->default state->continue to next state)
             countdownTimer = 10; //Time the player has to play(Flow only)
             _roundNumber = 0; //Defines in which round the the player is.
-            FindObjectOfType<Player> ().EnablePlayEvent += NotPlayable;
-            StartCoroutine (PlayGame ()); //Starts the Gameplay State Machine
+            FindObjectOfType<Player>().EnablePlayEvent += NotPlayable;
+            StartCoroutine(PlayGame()); //Starts the Gameplay State Machine
 
 
 
@@ -72,17 +75,23 @@ namespace Ibit.WaterGame
             {
                 SpicoInspiratorio = -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
 
-            } else {
-            if (scm.IsConnected) // Se Mano conectado
+            }
+            else
             {
-                SpicoInspiratorio = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
+                if (scm.IsConnected) // Se Mano conectado
+                {
+                    SpicoInspiratorio = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
 
-            } else {
-            if (scc.IsConnected) // Se Cinta conectada
-            {
-                SpicoInspiratorio = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
+                }
+                else
+                {
+                    if (scc.IsConnected) // Se Cinta conectada
+                    {
+                        SpicoInspiratorio = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
 
-            }}}
+                    }
+                }
+            }
 
 
             slider.maxValue = SpicoInspiratorio;         //adicionado 11/09/19
@@ -94,23 +103,23 @@ namespace Ibit.WaterGame
         }
 
         //Sending Event Area
-        protected virtual void EnablePlayerFlow (bool hasPlayed, int roundNumber)
+        protected virtual void EnablePlayerFlow(bool hasPlayed, int roundNumber)
         {
-            AuthorizePlayerFlowEvent?.Invoke (hasPlayed, roundNumber);
+            AuthorizePlayerFlowEvent?.Invoke(hasPlayed, roundNumber);
             resetsliderpico = true;  //add 21/10/19
         }
 
-        protected virtual void CleanRound ()
+        protected virtual void CleanRound()
         {
-            CleanRoundEvent?.Invoke ();
+            CleanRoundEvent?.Invoke();
         }
 
-        protected virtual void ShowFinalScore ()
+        protected virtual void ShowFinalScore()
         {
-            ShowFinalScoreEvent?.Invoke ();
+            ShowFinalScoreEvent?.Invoke();
         }
 
-        private void NotPlayable ()
+        private void NotPlayable()
         {
             playable = false;
             if (toBackup)
@@ -121,7 +130,7 @@ namespace Ibit.WaterGame
             state++;
         }
 
-        private void NotPlayedState ()
+        private void NotPlayedState()
         {
             playable = false;
             backupState = state;
@@ -130,41 +139,41 @@ namespace Ibit.WaterGame
         }
 
         //Start the Countdown Timer
-        private void StartCountdown ()
+        private void StartCountdown()
         {
-          
+
             countdownTimer -= Time.deltaTime;
-            displayTimer.text = "Timer: " + countdownTimer.ToString ("f0");
+            displayTimer.text = "Timer: " + countdownTimer.ToString("f0");
         }
 
         //Stop the Countdown Timer
-        private void ResetCountDown ()
+        private void ResetCountDown()
         {
-          //  resetsliderpico = true;  //add 21/10/19
+            //  resetsliderpico = true;  //add 21/10/19
             countdownTimer = 10;
             displayTimer.text = "Timer: 10";
         }
 
-        private void PlayerWakeUp ()
+        private void PlayerWakeUp()
         {
             displayHowTo.text = "Ei! Você esqueceu de jogar!...\n Aperte [Enter] para continuar";
             //Se não jogou mandar sinal false para a permissão do jogador.
-            EnablePlayerFlow (false, _roundNumber - 1);
-            ResetCountDown ();
-            NotPlayedState ();
+            EnablePlayerFlow(false, _roundNumber - 1);
+            ResetCountDown();
+            NotPlayedState();
         }
 
         #region Gameplay State Machine
 
         //Incremental states(put them into the correct order)
-        private IEnumerator PlayGame ()
+        private IEnumerator PlayGame()
         {
             while (!finished)
             {
                 while (!scp.IsConnected && !scm.IsConnected && !scc.IsConnected)
                 {
                     state = -1;
-                    TextPanel.SetActive (true);
+                    TextPanel.SetActive(true);
                     displayHowTo.text = "Nenhum dispositivo de controle conectado! Conecte e volte ao menu principal.";
                     yield return null;
                 }
@@ -186,176 +195,215 @@ namespace Ibit.WaterGame
                         case 2:
                         case 4:
                         case 6: //Pre-flow
-                            scp.Recalibrate ();
-                            scp.StartSamplingDelayed ();
-                            TextPanel.SetActive (true);
+                            scp.Recalibrate();
+                            scp.StartSamplingDelayed();
+                            TextPanel.SetActive(true);
                             displayHowTo.text = "Pressione [Enter] e INSPIRE \n o mais forte que conseguir dentro do tempo.";
                             while (playable)
                                 yield return null;
-                            CleanRound ();
+                            CleanRound();
                             playable = true;
-                            TextPanel.SetActive (false);
+                            TextPanel.SetActive(false);
                             break;
                         case 3:
                         case 5:
                         case 7: //Player's Flow
                             displayHowTo.text = "";
-                            EnablePlayerFlow (true, _roundNumber);
+                            EnablePlayerFlow(true, _roundNumber);
                             _roundNumber++;
 
                             while (playable)
                             {
-                                StartCountdown ();
+                                StartCountdown();
                                 yield return null;
                             }
 
-                            ResetCountDown ();
+                            ResetCountDown();
                             playable = true;
                             break;
                         case 8:
-                            scp.StopSampling ();
+                            scp.StopSampling();
                             FindObjectOfType<Core.Util.PitacoLogger>().StopLogging();
-                            TextPanel.SetActive (true);
+                            TextPanel.SetActive(true);
                             displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
-                            Debug.Log("Saving minigame data...");
-                            FindObjectOfType<Core.MinigameLogger>().Save();                        
-                            break;
-                        case 9:
-                            TextPanel.SetActive (false);
-                            ShowFinalScore ();
-                            break;
-                        case 99:
-                            TextPanel.SetActive (true);
-                            while (playable)
-                                yield return null;
-                            playable = true;
-                            break;
-                    }
-                } else {
-                // Se o Mano estiver conectado
-                if (scm.IsConnected)
-                {
-                    switch (state)
-                    {
-                        case 1: //Introduction
-                            displayHowTo.text = "Bem-Vindo ao jogo do copo d'agua![ENTER]";
 
-                            while (playable)
-                                yield return null;
-
-                            playable = true;
-                            break;
-                        case 2:
-                        case 4:
-                        case 6: //Pre-flow
-                            scm.Recalibrate ();
-                            scm.StartSamplingDelayed ();
-                            TextPanel.SetActive (true);
-                            displayHowTo.text = "Pressione [Enter] e INSPIRE \n o mais forte que conseguir dentro do tempo.";
-                            while (playable)
-                                yield return null;
-                            CleanRound ();
-                            playable = true;
-                            TextPanel.SetActive (false);
-                            break;
-                        case 3:
-                        case 5:
-                        case 7: //Player's Flow
-                            displayHowTo.text = "";
-                            EnablePlayerFlow (true, _roundNumber);
-                            _roundNumber++;
-
-                            while (playable)
+                            if (_writeLogsTask is null)
                             {
-                                StartCountdown ();
-                                yield return null;
+                                _writeLogsTask = Task.Run(() =>
+                                {
+                                    if (_logger != null)
+                                    {
+                                        Debug.Log("Saving minigame data...");
+                                        _logger.Save();
+                                        Debug.Log("Minigame logs saved.");
+                                    }
+                                });
                             }
-
-                            ResetCountDown ();
-                            playable = true;
-                            break;
-                        case 8:
-                            scm.StopSampling ();
-                            FindObjectOfType<Core.Util.ManoLogger>().StopLogging();
-                            TextPanel.SetActive (true);
-                            displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
-                            Debug.Log("Saving minigame data...");
-                            FindObjectOfType<Core.MinigameLogger>().Save();                        
                             break;
                         case 9:
-                            TextPanel.SetActive (false);
-                            ShowFinalScore ();
+                            TextPanel.SetActive(false);
+                            ShowFinalScore();
                             break;
                         case 99:
-                            TextPanel.SetActive (true);
+                            TextPanel.SetActive(true);
                             while (playable)
                                 yield return null;
                             playable = true;
                             break;
                     }
-                } else {
-                // Se a Cinta estiver conectada
-                if (scc.IsConnected)
+                }
+                else
                 {
-                    switch (state)
+                    // Se o Mano estiver conectado
+                    if (scm.IsConnected)
                     {
-                        case 1: //Introduction
-                            displayHowTo.text = "Bem-Vindo ao jogo do copo d'agua![ENTER]";
+                        switch (state)
+                        {
+                            case 1: //Introduction
+                                displayHowTo.text = "Bem-Vindo ao jogo do copo d'agua![ENTER]";
 
-                            while (playable)
-                                yield return null;
+                                while (playable)
+                                    yield return null;
 
-                            playable = true;
-                            break;
-                        case 2:
-                        case 4:
-                        case 6: //Pre-flow
-                            scc.Recalibrate ();
-                            scc.StartSamplingDelayed ();
-                            TextPanel.SetActive (true);
-                            displayHowTo.text = "Pressione [Enter] e INSPIRE \n o mais forte que conseguir dentro do tempo.";
-                            while (playable)
-                                yield return null;
-                            CleanRound ();
-                            playable = true;
-                            TextPanel.SetActive (false);
-                            break;
-                        case 3:
-                        case 5:
-                        case 7: //Player's Flow
-                            displayHowTo.text = "";
-                            EnablePlayerFlow (true, _roundNumber);
-                            _roundNumber++;
+                                playable = true;
+                                break;
+                            case 2:
+                            case 4:
+                            case 6: //Pre-flow
+                                scm.Recalibrate();
+                                scm.StartSamplingDelayed();
+                                TextPanel.SetActive(true);
+                                displayHowTo.text = "Pressione [Enter] e INSPIRE \n o mais forte que conseguir dentro do tempo.";
+                                while (playable)
+                                    yield return null;
+                                CleanRound();
+                                playable = true;
+                                TextPanel.SetActive(false);
+                                break;
+                            case 3:
+                            case 5:
+                            case 7: //Player's Flow
+                                displayHowTo.text = "";
+                                EnablePlayerFlow(true, _roundNumber);
+                                _roundNumber++;
 
-                            while (playable)
-                            {
-                                StartCountdown ();
-                                yield return null;
-                            }
+                                while (playable)
+                                {
+                                    StartCountdown();
+                                    yield return null;
+                                }
 
-                            ResetCountDown ();
-                            playable = true;
-                            break;
-                        case 8:
-                            scc.StopSampling ();
-                            FindObjectOfType<Core.Util.CintaLogger>().StopLogging();
-                            TextPanel.SetActive (true);
-                            displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
-                            Debug.Log("Saving minigame data...");
-                            FindObjectOfType<Core.MinigameLogger>().Save();                        
-                            break;
-                        case 9:
-                            TextPanel.SetActive (false);
-                            ShowFinalScore ();
-                            break;
-                        case 99:
-                            TextPanel.SetActive (true);
-                            while (playable)
-                                yield return null;
-                            playable = true;
-                            break;
+                                ResetCountDown();
+                                playable = true;
+                                break;
+                            case 8:
+                                scm.StopSampling();
+                                FindObjectOfType<Core.Util.ManoLogger>().StopLogging();
+                                TextPanel.SetActive(true);
+                                displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
+
+                                if (_writeLogsTask is null)
+                                {
+                                    _writeLogsTask = Task.Run(() =>
+                                    {
+                                        if (_logger != null)
+                                        {
+                                            Debug.Log("Saving minigame data...");
+                                            _logger.Save();
+                                            Debug.Log("Minigame logs saved.");
+                                        }
+                                    });
+                                }
+                                break;
+                            case 9:
+                                TextPanel.SetActive(false);
+                                ShowFinalScore();
+                                break;
+                            case 99:
+                                TextPanel.SetActive(true);
+                                while (playable)
+                                    yield return null;
+                                playable = true;
+                                break;
+                        }
                     }
-                }}} ////////////////////////////////////////
+                    else
+                    {
+                        // Se a Cinta estiver conectada
+                        if (scc.IsConnected)
+                        {
+                            switch (state)
+                            {
+                                case 1: //Introduction
+                                    displayHowTo.text = "Bem-Vindo ao jogo do copo d'agua![ENTER]";
+
+                                    while (playable)
+                                        yield return null;
+
+                                    playable = true;
+                                    break;
+                                case 2:
+                                case 4:
+                                case 6: //Pre-flow
+                                    scc.Recalibrate();
+                                    scc.StartSamplingDelayed();
+                                    TextPanel.SetActive(true);
+                                    displayHowTo.text = "Pressione [Enter] e INSPIRE \n o mais forte que conseguir dentro do tempo.";
+                                    while (playable)
+                                        yield return null;
+                                    CleanRound();
+                                    playable = true;
+                                    TextPanel.SetActive(false);
+                                    break;
+                                case 3:
+                                case 5:
+                                case 7: //Player's Flow
+                                    displayHowTo.text = "";
+                                    EnablePlayerFlow(true, _roundNumber);
+                                    _roundNumber++;
+
+                                    while (playable)
+                                    {
+                                        StartCountdown();
+                                        yield return null;
+                                    }
+
+                                    ResetCountDown();
+                                    playable = true;
+                                    break;
+                                case 8:
+                                    scc.StopSampling();
+                                    FindObjectOfType<Core.Util.CintaLogger>().StopLogging();
+                                    TextPanel.SetActive(true);
+                                    displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
+
+                                    if (_writeLogsTask is null)
+                                    {
+                                        _writeLogsTask = Task.Run(() =>
+                                        {
+                                            if (_logger != null)
+                                            {
+                                                Debug.Log("Saving minigame data...");
+                                                _logger.Save();
+                                                Debug.Log("Minigame logs saved.");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 9:
+                                    TextPanel.SetActive(false);
+                                    ShowFinalScore();
+                                    break;
+                                case 99:
+                                    TextPanel.SetActive(true);
+                                    while (playable)
+                                        yield return null;
+                                    playable = true;
+                                    break;
+                            }
+                        }
+                    }
+                } ////////////////////////////////////////
 
 
 
@@ -366,9 +414,9 @@ namespace Ibit.WaterGame
 
         #endregion;
 
-        private void Update ()
+        private void Update()
         {
-           slider.value = -player.sensorValue;  //adicionado 11/09/19
+            slider.value = -player.sensorValue;  //adicionado 11/09/19
 
 
             if (resetsliderpico == false)                     //adicionado 16/10/19
@@ -378,21 +426,22 @@ namespace Ibit.WaterGame
                 {
                     picomomento = player.sensorValue;                     //adicionado 16/10/19
                     sliderpico.value = -picomomento;            //adicionado 16/10/19   
-                } }
+                }
+            }
             else                                                    //adicionado 16/10/19
             {
                 sliderpico.value = 0;                     //adicionado 16/10/19
                 picomomento = 0;
                 resetsliderpico = false;                // add 21/10/19
             }
-            
+
 
 
 
             if (countdownTimer <= 0)
             {
-                SoundManager.Instance.PlaySound ("Failed");
-                PlayerWakeUp ();
+                SoundManager.Instance.PlaySound("Failed");
+                PlayerWakeUp();
             }
         }
     }

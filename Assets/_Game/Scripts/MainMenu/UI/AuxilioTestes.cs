@@ -18,9 +18,9 @@ public class AuxilioTestes : MonoBehaviour
     GameObject CreditsPanel;
     GameObject LoadMenu;
     //GameObject Parameters;
-    GameObject TratSignal;
-    GameObject Fusion;
-    GameObject Adaptation;
+    // GameObject TratSignal;
+    // GameObject Fusion;
+    // GameObject Adaptation;
     GameObject NewMenu;
     GameObject PlayerMenu;
     GameObject CalibDevices;
@@ -40,9 +40,9 @@ public class AuxilioTestes : MonoBehaviour
         CreditsPanel = GameObject.Find("Canvas").transform.Find("Credits Panel").gameObject;
         LoadMenu = GameObject.Find("Canvas").transform.Find("Load Menu").gameObject;
         //Parameters = GameObject.Find("Canvas").transform.Find("Parameters Menu").gameObject;
-        TratSignal = GameObject.Find("Canvas").transform.Find("Signal Treatment Menu").gameObject;
-        Fusion = GameObject.Find("Canvas").transform.Find("Fusion Menu").gameObject;
-        Adaptation = GameObject.Find("Canvas").transform.Find("Adaptation Menu").gameObject;
+        // TratSignal = GameObject.Find("Canvas").transform.Find("Signal Treatment Menu").gameObject;
+        // Fusion = GameObject.Find("Canvas").transform.Find("Fusion Menu").gameObject;
+        // Adaptation = GameObject.Find("Canvas").transform.Find("Adaptation Menu").gameObject;
         NewMenu = GameObject.Find("Canvas").transform.Find("New Menu").gameObject;
         PlayerMenu = GameObject.Find("Canvas").transform.Find("Player Menu").gameObject;
         CalibDevices = GameObject.Find("Canvas").transform.Find("CalibDevices").gameObject;
@@ -57,9 +57,9 @@ public class AuxilioTestes : MonoBehaviour
         CreditsPanel.SetActive(false);
         LoadMenu.SetActive(false);
         //Parameters.SetActive(false);
-        TratSignal.SetActive(false);
-        Fusion.SetActive(false);
-        Adaptation.SetActive(false);
+        // TratSignal.SetActive(false);
+        // Fusion.SetActive(false);
+        // Adaptation.SetActive(false);
         NewMenu.SetActive(false);
         PlayerMenu.SetActive(false);
         CalibDevices.SetActive(false);

@@ -1,142 +1,238 @@
+/*
+ * Cinta Serial Connection - Force Sensitive Resistor 0.5″ FSR402
+ * https://github.com/UDESC-LARVA/IBLUEIT
+ */
+ 
 /* 
  *  Anotações:
- *  Intervalo de medida do sensor: 100g a 10kg
- *  Forçando muito consegui simular de 0 a 400g com a respiração
+ *  Intervalos típicos de medida do sensor: 0 a 1023, ou 100g a 10kg(não linear).
+ *  Quanto mais pressão aplicar no sensor, menor a resistência e maior a tensão.
+ *  A faixa de resistência é: > 10MΩ (sem pressão) até ~ 200Ω (pressão máxima).
 */
 
-/*
-   Cinta Serial Connection
-   https://github.com/UDESC-LARVA/IBLUEIT
-   https://www.instructables.com/id/FSR-Tutorial/
-
-   Example sketch for SparkFun's force sensitive resistors
-    (https://www.sparkfun.com/products/9375)
-    Jim Lindblom @ SparkFun Electronics
-    April 28, 2016
-  
-   Quanto mais pressão aplicar no sensor, menor a resistência.
-   A faixa de resistência é realmente muito grande:> 10 MΩ (sem pressão) a ~ 200 Ω (pressão máxima).
-   A maioria dos FSRs podem sentir força na faixa de 100g a 10kg.
-
-   Este código faz cerca de 500.000 leituras por minuto, mas envia cerca de 5000 por minuto para o IBIT (cada leitura útil é tirada da média de 100)
-   Mudar a Taxa de Transmissão Serial de 115200, para 9600, ou para 250000 não muda a quantidade de leituras, que é sempre cerca de 5000;
-   Com o delay de 10 mlissegundos o arduino envia cerca de 2700 leituras por minuto para o IBIT.
-   ***Com o delay de 50 mlissegundos o arduino envia cerca de 970 leituras por minuto para o IBIT.
-   Com o delay de 100 mlissegundos o arduino envia cerca de 500 leituras por minuto para o IBIT.
-   Com o delay de 250 mlissegundos o arduino envia cerca de 228 leituras por minuto para o IBIT.
-   Com o delay de 500 mlissegundos o arduino envia cerca de 116 leituras por minuto para o IBIT.
-
+/* 
+ *  Credits: (Codes that helped)
+ *  FSR - https://www.instructables.com/id/FSR-Tutorial/
+ *  Sensor Transformations - http://www.ladyada.net/learn/sensors/fsr.html and https://www.mouser.com/datasheet/2/737/force-sensitive-resistor-fsr-932871.pdf
+ *     
 */
 
-#define SAMPLESIZE 100 //Bloco para média de leituras
+#define SAMPLESIZE 100 //Block for average readings
+#define FSR_PIN A0 // the FSR and 10K pulldown are connected to a0
+#define MOVING_AVERAGE true
+#define DEBUG false
 
-const int FSR_PIN = A0; // Pin connected to FSR/resistor divider
+bool isCalibrated = true; // original: isCalibrated = false
+float calibrationValue = 0.0;
+void Calibrate()
+{
 
-// Measure the voltage at 5V and resistance of your 3.3k resistor, and enter
-// their value's below:
-const float VCC = 4.98; // Measured voltage of Ardunio 5V line
-const float R_DIV = 10000.0; // Measured resistance of 10k resistor
-
-
-int fsrADC; //FSR ADC
-float fsrV; //FSR voutage
-float fsrR; //FSR Resistance
-float fsrG; //FSR Condutance
-float force; //FSR Force (em gramas)
-int i;
-long sum;
-
-
-//unsigned long time; // Leitura de Tempo
-//unsigned long leituras; // Quantidade de Leituras
-
-
-float ReadSensor()
-{ 
-  sum = 0;
+#if MOVING_AVERAGE
+  for(int i = 0; i < SAMPLESIZE;i++)
+  {
+    //band-aid fix: this will force the sensor to populate the moving average array before using it
+    ReadSensor();
+  }
+  calibrationValue = ReadSensor();
+#else
+  float sum = 0.0;
 
   for (i = 0; i < SAMPLESIZE; i++)
-  {
-    fsrADC = analogRead(FSR_PIN);
-    // If the FSR has no pressure, the resistance will be
-    // near infinite. So the voltage should be near 0.
-    if (fsrADC != 0) // If the analog reading is non-zero
-    {
-      // Use ADC reading to calculate voltage:
-      fsrV = fsrADC * VCC / 1023.0;
-      // Use voltage and static resistor value to 
-      // calculate FSR resistance:
-      fsrR = R_DIV * (VCC / fsrV - 1.0);
-      //Serial.println("Resistance: " + String(fsrR) + " ohms");
-    
-      // Guesstimate force based on slopes in figure 3 of
-      // FSR datasheet:
-      fsrG = 1.0 / fsrR; // Calculate conductance
-      // Break parabolic curve down into two linear slopes:
-      if (fsrR <= 600)
-        force = (fsrG - 0.00075) / 0.00000032639;
-      else
-        force =  fsrG / 0.000000642857;
+    sum += ForceNewtonToPascal(CondutanceToForceNewton(ResistanceToCondutance(voutToResistance(digitalToVout(Smoothing())))));
 
-      sum += force;
-    }
-  }
-
-  return ((sum / SAMPLESIZE)*-1); // -400 porque é quase o meio das leituras de 0-600; *-1 pra ajustar INS para cima e EXP para baixo.
+  calibrationValue = sum / SAMPLESIZE;
+#endif  
+  
+  isCalibrated = true;
 }
 
+//////////////////// SMOOTHING /////////////////////////////////////////////
+/*
+  Smoothing
+  http://www.arduino.cc/en/Tutorial/Smoothing
+*/
+
+// Define the number of samples to keep track of. The higher the number, the
+// more the readings will be smoothed, but the slower the output will respond to
+// the input. Using a constant rather than a normal variable lets us use this
+// value to determine the size of the readings array.
+const int numReadings = 20;
+
+float readings[numReadings];      // the readings from the analog input
+int readIndex = 0;              // the index of the current reading
+float total = 0;                  // the running total
+float average = 0;                // the average
+
+//int inputPin = A0;
+
+float Smoothing()
+{
+  // subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = analogRead(FSR_PIN);
+  // add the reading to the total:
+  total = total + readings[readIndex];
+  // advance to the next position in the array:
+  readIndex = readIndex + 1;
+
+  // if we're at the end of the array...
+  if (readIndex >= numReadings) {
+    // ...wrap around to the beginning:
+    readIndex = 0;
+  }
+
+  // calculate the average:
+  average = total / numReadings;
+  // send it to the computer as ASCII digits
+  
+  //Serial.print("Smoothing: ");
+  //Serial.println(average);
+  delay(1);        // delay in between reads for stability
+
+  return average;
+}
+
+/////////////////////////////////////////////////////////////////
 
 
-bool isSampling = false;
+#if MOVING_AVERAGE
 
+float vals[SAMPLESIZE];
+float sum = 0.0;
+float value;
+float ReadSensor()
+{
+  value = ForceNewtonToPascal(CondutanceToForceNewton(ResistanceToCondutance(voutToResistance(digitalToVout(Smoothing())))));
+
+  for (int i = SAMPLESIZE - 1; i > 0; i--)
+  {
+    vals[i] = vals[i - 1];
+  }
+
+  vals[0] = value;
+
+  sum = 0.0;
+
+  for (int i = 0; i < SAMPLESIZE; i++)
+  {
+    sum = sum + vals[i];
+  }
+
+  return sum / SAMPLESIZE;
+}
+
+#else
+
+float diffPressure = 0.0;
+int i = 0;
+float ReadSensor()
+{
+  diffPressure = 0.0;
+
+  for (i = 0; i < SAMPLESIZE; i++)
+    diffPressure += ForceNewtonToPascal(CondutanceToForceNewton(ResistanceToCondutance(voutToResistance(digitalToVout(Smoothing())))));
+
+  return diffPressure / SAMPLESIZE;
+}
+
+#endif
+
+bool isSampling = false; // Change to "true" to run on Plotter Serial.
 void ListenCommand(char cmd)
 {
   //ECHO
-  if (cmd == 'e' || cmd == 'E'){ // Arduino responde o IBIT com "echo"
+  if (cmd == 'e' || cmd == 'E')
     Serial.println("echoc");
 
   //READ SAMPLES
-  } else {
-    if (cmd == 'r' || cmd == 'R'){ // Arduino envia leituras da cinta ao IBIT 
-      isSampling = true;
+  else if (cmd == 'r' || cmd == 'R')
+    isSampling = true;
 
   //FINISH READ
-    } else {
-      if (cmd == 'f' || cmd == 'F'){ // Arduino interrompe o envio de leituras
-        isSampling = false;
-      }
-    }
+  else if (cmd == 'f' || cmd == 'F')
+  {
+    isSampling = false;
+    isCalibrated = false;
+  }
+
+  //CALIBRATE
+  else if (cmd == 'c' || cmd == 'C')
+    isCalibrated = false;
+}
+
+void setup() 
+{ 
+  Serial.begin(115200);
+
+  // initialize all the readings to 0 (SMOOTHING):
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0;
   }
 }
 
-
-void setup(void) 
+void loop()
 {
-  Serial.begin(115200); // We'll send debugging information via the Serial monitor
-
-//  time = millis(); // Leitura de Tempo
-}
-
-
-void loop(void) 
-{
-  //#if DEBUG
-  //isSampling = false;
-  //#endif
+#if DEBUG
+  isSampling = true;
+#endif
 
   if (Serial.available() > 0)
     ListenCommand(Serial.read());
-    
-  if (isSampling){
-    Serial.println(ReadSensor());
-//    leituras += 1; // Contagem de Leituras
-    delay(50); // 100 mlissegundos (0,1 segundo)
+
+  if (isSampling && !isCalibrated)
+    Calibrate();
+
+  if (isSampling && isCalibrated)
+    Serial.println((ReadSensor() - calibrationValue)*-1); //
+}
+
+/*
+ * Sensor Transformations
+*/
+
+const float VCC = 5000.0; // Measured voltage of Ardunio 5V line
+const float RESISTOR = 10000.0; // Measured resistance of 10k resistor
+const float area = 0.0127; // Active Area of sensor: 12.7mm, or 0.0127m - Datasheet FSR402
+
+float digitalToVout(long fsrReading) //fsrVoltage
+{
+  return map(fsrReading, 0, 1023, 0, VCC);
+}
+
+float voutToResistance(float v)
+{
+  unsigned long fsrResistance;
+  fsrResistance = VCC - v;     // fsrVoltage is in millivolts so 5V = 5000mV
+  fsrResistance *= RESISTOR;                // 10K resistor
+  fsrResistance /= v;
+  
+  return fsrResistance;
+}
+
+float ResistanceToCondutance(float r)
+{
+  unsigned long fsrConductance;
+  fsrConductance = 1000000.0;           // we measure in micromhos so 
+  fsrConductance /= r;
+      
+  return fsrConductance;
+}
+
+float CondutanceToForceNewton(float c)
+{
+  float fsrForceNewtons;
+  if (c <= 1000){
+        fsrForceNewtons = c / 80.0;
+  }else{
+        fsrForceNewtons = c - 1000.0;
+        fsrForceNewtons /= 30.0;
   }
   
-//  if ((millis()-time)>(60000)){  // Leitura de Tempo (60 segundos)
-//   Serial.print("Tempo: "); // Leitura de Tempo 
-//   Serial.println(millis()-time); // Leitura de Tempo
-//   Serial.print("Leituras: "); // Contagem de Leituras
-//   Serial.println(leituras); // Leitura de Tempo
-//  }
+  return fsrForceNewtons;
+}
+
+float ForceNewtonToPascal(float fn)
+{
+  return fn / area; // http://www.sengpielaudio.com/calculator-pressureunits.htm
 }

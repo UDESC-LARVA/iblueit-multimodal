@@ -9,12 +9,17 @@ namespace Ibit.Plataform
         {
             if (msg.Length < 1)
                 return;
+            
+           // Se o Pitaco estiver conectado
+            if (scp.IsConnected)
+            {
 
-            var f = Parsers.Float(msg);
+                var f = Parsers.Float(msg);
 
-            f = f < -Pacient.Loaded.PitacoThreshold || f > Pacient.Loaded.PitacoThreshold ? f : 0f;
+                f = f < -Pacient.Loaded.PitacoThreshold || f > Pacient.Loaded.PitacoThreshold ? f : 0f;
 
-            this.animator.Play(f < 0 ? "Dolphin-Jump" : "Dolphin-Move");
+                this.animator.Play(f < 0 ? "Dolphin-Jump" : "Dolphin-Move");
+            }
         }
 
         private void AnimateMano(string msg)
@@ -22,11 +27,16 @@ namespace Ibit.Plataform
             if (msg.Length < 1)
                 return;
 
-            var f = Parsers.Float(msg);
+            // Se o Pitaco não estiver conectado e Mano sim...
+            if (!scp.IsConnected && scm.IsConnected)
+            {
 
-            f = f < -Pacient.Loaded.ManoThreshold || f > Pacient.Loaded.ManoThreshold ? f : 0f;
+                var f = Parsers.Float(msg);
 
-            this.animator.Play(f < 0 ? "Dolphin-Jump" : "Dolphin-Move");
+                f = f < -Pacient.Loaded.ManoThreshold || f > Pacient.Loaded.ManoThreshold ? f : 0f;
+
+                this.animator.Play(f < 0 ? "Dolphin-Jump" : "Dolphin-Move");
+            }
         }
 
         private void AnimateCinta(string msg)
@@ -34,11 +44,15 @@ namespace Ibit.Plataform
             if (msg.Length < 1)
                 return;
 
-            var f = Parsers.Float(msg);
+            // Se o Pitaco não estiver conectado, o Mano não estiver conectado e a Cinta sim...
+            if (!scp.IsConnected && !scm.IsConnected && scc.IsConnected)
+            {
+                var f = Parsers.Float(msg) + Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
 
-            f = f < -Pacient.Loaded.CintaThreshold || f > Pacient.Loaded.CintaThreshold ? f : 0f;
+                f = f < -Pacient.Loaded.CintaThreshold || f > Pacient.Loaded.CintaThreshold ? f : 0f;
 
-            this.animator.Play(f < 0 ? "Dolphin-Jump" : "Dolphin-Move");
+                this.animator.Play(f < 0 ? "Dolphin-Jump" : "Dolphin-Move");
+            }
         }
     }
 }

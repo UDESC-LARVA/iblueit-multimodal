@@ -66,7 +66,7 @@ namespace Ibit.Core.Util
         /// <summary>
         /// Converts m³/s to L/min
         /// </summary>
-        private const float LitresPerMinuteConverter = 60000;
+        private const float LitresPerMinuteConverter = 60000; //60 seconds
 
         /// <summary>
         /// Returns the volumetric flow of air in Cubic Meter / Second
@@ -82,6 +82,6 @@ namespace Ibit.Core.Util
         /// <param name="differentialPressure">Pressure difference in Pascal (Pa)</param>
         /// <returns></returns>
         public static float ToLitresPerMinute(float differentialPressure) =>
-            Poiseulle(differentialPressure / 1000f) * LitresPerMinuteConverter;
+            Poiseulle(differentialPressure / 1000f) * LitresPerMinuteConverter; // Poiseulle(absolutePressure / 1000f) = Litre per second
     }
 }

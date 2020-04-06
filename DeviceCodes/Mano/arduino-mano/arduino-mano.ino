@@ -3,13 +3,13 @@
  * https://github.com/UDESC-LARVA/IBLUEIT
  * 
  * RANGE do Sensor MPX5700 p/ pressão absoluta
- * Max~: 150,00 L/min
- * Stop: 0.0 L/min
- * Min~: -150,00 L/min
- * 
+ * Vai de 0 a 700KPA, mas consegui dividir o range entre positivo e negativo
+ * Max~: 100,00 Pa
+ * Stop: 0.0 Pa
+ * Min~: -100,00 Pa
  */
 
-#define SAMPLESIZE 100
+#define SAMPLESIZE 200
 #define MOVING_AVERAGE true
 #define DEBUG false
 
@@ -125,13 +125,13 @@ void loop()
 
 /**
    Sensor Transformations
-   Range 0.2V = 0 kPa to 4.7V = 10.0 kPa
+   Range 0.2V = 0 kPa to 4.7V = 700.0 kPa
    https://github.com/AdamVStephen/gem-water-level-gauge/blob/master/WaterLevelSensor/WaterLevelSensor.ino
 */
 
 const float VCC = 5.0;
-const float MAX_KPA = 10.0;
-const float COEFF_LIN_KPA = 0.09;
+const float MAX_KPA = 700.0;
+const float COEFF_LIN_KPA = 0.0012858;
 const float COEFF_OFFSET_KPA = 0.04;
 // Min Vout 0.2 for standard values above
 const float MIN_VOUT = (VCC * COEFF_OFFSET_KPA);
