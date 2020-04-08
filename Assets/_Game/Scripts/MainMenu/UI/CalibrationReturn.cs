@@ -1,15 +1,9 @@
-﻿/*
-    Autor: Jhonatan Thallisson Cabral Néry
-    Script feito para facilitar os testes, ele inativa as telas modificadas e deixa apenas a tela inicial ativa
-*/
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Ibit.Core.Data;
 
-public class AuxilioTestes : MonoBehaviour
+public class CalibrationReturn : MonoBehaviour
 {
 
 // Variáveis que representam as telas
@@ -26,13 +20,23 @@ public class AuxilioTestes : MonoBehaviour
     GameObject CalibrationMenuCinta;
     GameObject PlataformMenu;
     GameObject MinigamesMenu;
+    GameObject CalibrationReturning;
 
 
-    
 // Start é chamado no início do primeiro frame
 
     void Start()
     {
+        StartCoroutine(ExampleCoroutine());
+    }
+
+
+    IEnumerator ExampleCoroutine()
+    {
+
+        //yield on a new YieldInstruction that waits for 2 seconds.
+        yield return new WaitForSeconds(2);
+
         StartPanel = GameObject.Find("Canvas").transform.Find("Start Panel").gameObject;
         SettingsMenu = GameObject.Find("Canvas").transform.Find("Settings Menu").gameObject;
         CreditsPanel = GameObject.Find("Canvas").transform.Find("Credits Panel").gameObject;
@@ -45,28 +49,21 @@ public class AuxilioTestes : MonoBehaviour
         CalibrationMenuCinta = GameObject.Find("Canvas").transform.Find("Calibration Menu Cinta").gameObject;
         PlataformMenu = GameObject.Find("Canvas").transform.Find("Plataform Menu").gameObject;
         MinigamesMenu = GameObject.Find("Canvas").transform.Find("Minigames Menu").gameObject;
+        CalibrationReturning = GameObject.Find("Canvas").transform.Find("Calibration Returning").gameObject;
 
-        if (Pacient.Loaded == null)
-        {
-        
-            StartPanel.SetActive(true);
-            SettingsMenu.SetActive(false);
-            CreditsPanel.SetActive(false);
-            LoadMenu.SetActive(false);
-            NewMenu.SetActive(false);
-            PlayerMenu.SetActive(false);
-            CalibDevices.SetActive(false);
-            CalibrationMenuPitaco.SetActive(false);
-            CalibrationMenuMano.SetActive(false);
-            CalibrationMenuCinta.SetActive(false);
-            PlataformMenu.SetActive(false);
-            MinigamesMenu.SetActive(false);
-
-        } else {
-
-            StartPanel.SetActive(false);
-            PlayerMenu.SetActive(true);
-
-        }
+        StartPanel.SetActive(false);
+        SettingsMenu.SetActive(false);
+        CreditsPanel.SetActive(false);
+        LoadMenu.SetActive(false);
+        NewMenu.SetActive(false);
+        PlayerMenu.SetActive(false);
+        CalibDevices.SetActive(true);
+        CalibrationMenuPitaco.SetActive(false);
+        CalibrationMenuMano.SetActive(false);
+        CalibrationMenuCinta.SetActive(false);
+        PlataformMenu.SetActive(false);
+        MinigamesMenu.SetActive(false);
+        CalibrationReturning.SetActive(false);
     }
+
 }

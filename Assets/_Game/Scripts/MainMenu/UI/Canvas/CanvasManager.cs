@@ -30,7 +30,7 @@ namespace Ibit.MainMenu.UI.Canvas
                 $"Tempo Exp.: {Pacient.Loaded.CapacitiesPitaco.RawExpFlowDuration / 1000f:F1} s\n" +
                 $"Tins/Texp: {((Pacient.Loaded.CapacitiesPitaco.RawInsFlowDuration / 1000f) / (Pacient.Loaded.CapacitiesPitaco.RawExpFlowDuration / 1000f)):F1}\n" +
                 $"Freq. Resp. Média: {Pacient.Loaded.CapacitiesPitaco.RawRespRate * 60f:F1} rpm\n" +
-                $"\n------- Manovacuômetro -------\n" +
+                $"\n-------------- Mano --------------\n" +
                 $"Pico Exp.: {ManoFlowMath.ToCentimetersofWater(Pacient.Loaded.CapacitiesMano.RawExpPeakFlow)} cmH2O ({Pacient.Loaded.CapacitiesMano.RawExpPeakFlow} Pa)\n" +
                 $"Pico Ins.: {ManoFlowMath.ToCentimetersofWater(Pacient.Loaded.CapacitiesMano.RawInsPeakFlow)} cmH2O ({Pacient.Loaded.CapacitiesMano.RawInsPeakFlow} Pa)\n" +
                 $"Tempo Ins.: {Pacient.Loaded.CapacitiesMano.RawInsFlowDuration / 1000f:F1} s\n" +

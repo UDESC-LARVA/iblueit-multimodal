@@ -30,6 +30,7 @@ namespace Ibit.CakeGame
 
         public Slider sliderpico; // adicionado 16/10/19
         float picomomento=0;      // adicionado 16/10/19
+        int flag = 0;
 
 
 
@@ -490,7 +491,7 @@ namespace Ibit.CakeGame
                 finalScore[(passo / 2) - 1] = 3;
             }
 
-            FindObjectOfType<MinigameLogger>().Write(flowValue);
+            FindObjectOfType<Core.MinigameLogger>().Write(flowValue);
         }
 
         #endregion Calculatin Flow Percentage
@@ -616,17 +617,30 @@ namespace Ibit.CakeGame
             if (partidaCompleta)
             {
 
-                //SoundManager.Instance.PlaySound("Finished");
-                TextPanel.SetActive(false);
-                finalScoreMenu.DisplayFinalScore(finalScore[0], finalScore[1], finalScore[2]);
-                finalScoreMenu.ToggleScoreMenu();
-
-                Debug.Log("Saving minigame data...");
-                FindObjectOfType<MinigameLogger>().Save();
-
                 // Band aid fix para não ficar chamando várias vezes
-                partidaCompleta = false;
+                if(flag < 2)
+                {
+                   //SoundManager.Instance.PlaySound("Finished");
+                    TextPanel.SetActive(false);
+                    finalScoreMenu.DisplayFinalScore(finalScore[0], finalScore[1], finalScore[2]);
+                    finalScoreMenu.ToggleScoreMenu();
+
+                    if(flag < 1)
+                    {
+                        Debug.Log("Saving minigame data...");
+                        FindObjectOfType<Core.MinigameLogger>().Save();
+                        Debug.Log("Minigame logs saved.");
+                    }
+                    
+
+                } else {
+
+                    partidaCompleta = false;
+
+                }
+
                 passo = 0;
+                flag++;
             }
         }
     }

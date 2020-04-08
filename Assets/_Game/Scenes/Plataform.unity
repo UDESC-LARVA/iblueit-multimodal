@@ -913,8 +913,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 37.3, y: 48.48001}
-  m_SizeDelta: {x: 75, y: 96.95}
+  m_AnchoredPosition: {x: 30, y: 17.59}
+  m_SizeDelta: {x: 60, y: 85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &503184170
 MonoBehaviour:
@@ -992,7 +992,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 1
     m_MaxSize: 40
-    m_Alignment: 1
+    m_Alignment: 7
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -1637,8 +1637,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 37.500008, y: 48.48}
-  m_SizeDelta: {x: 75, y: 96.95}
+  m_AnchoredPosition: {x: 30, y: 17.59}
+  m_SizeDelta: {x: 60, y: 85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &680714900
 MonoBehaviour:
@@ -1716,7 +1716,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 1
     m_MaxSize: 40
-    m_Alignment: 1
+    m_Alignment: 7
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -1890,6 +1890,11 @@ MonoBehaviour:
   heartPoints: 5
   animator: {fileID: 1451766584}
   invincibilityTime: 2
+  TestSensorValue: 0
+  TestPositionValue: 0
+  scp: {fileID: 0}
+  scm: {fileID: 0}
+  scc: {fileID: 0}
 --- !u!70 &684932087
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -4634,8 +4639,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 38.1, y: 50.48001}
-  m_SizeDelta: {x: 75, y: 96.95}
+  m_AnchoredPosition: {x: 30.7, y: 17.59}
+  m_SizeDelta: {x: 75, y: 85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1520931785
 MonoBehaviour:
@@ -4713,13 +4718,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 1
     m_MaxSize: 40
-    m_Alignment: 1
+    m_Alignment: 7
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Extensor
+  m_Text: Cinta Extensora
 --- !u!222 &1520931787
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5128,9 +5133,9 @@ RectTransform:
   m_Father: {fileID: 850678528}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 259.5, y: 12}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 180, y: -42.5}
   m_SizeDelta: {x: 65, y: 65}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1732110383
