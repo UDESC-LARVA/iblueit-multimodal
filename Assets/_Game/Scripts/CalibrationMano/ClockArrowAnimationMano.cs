@@ -26,6 +26,11 @@ namespace Ibit.Calibration
 
             snsrVal = snsrVal < -Pacient.Loaded.ManoThreshold || snsrVal > Pacient.Loaded.ManoThreshold ? snsrVal : 0f;
 
+            if (((snsrVal < 150)&&(snsrVal > 0))||((snsrVal > -150)&&(snsrVal < 0))) // evita oscilações do ponteiro em medidas próximas a zero
+                {
+                    snsrVal = 0f;
+                }
+
             this.transform.Rotate(Vector3.back, snsrVal);
         }
     }

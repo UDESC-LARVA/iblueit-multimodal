@@ -11,13 +11,11 @@ namespace Ibit.Core
     {
         [SerializeField] private string _filename;
         private StringBuilder _sb;
-        private DateTime _dt;
         private string _path;
         private int _dataWritten;
 
         private void Awake ()
         {
-            _dt = DateTime.Now;
             _sb = new StringBuilder ();
 
             _path = @"savedata/pacients/" + Pacient.Loaded.Id + @"/" + $"{_filename}-History.csv";
@@ -28,7 +26,7 @@ namespace Ibit.Core
         public void Write (float value)
         {
             _dataWritten++;
-            _sb.AppendLine ($"{_dt};{value}");
+            _sb.AppendLine ($"{DateTimeOffset.Now};{value}");
         }
 
         public void Save ()

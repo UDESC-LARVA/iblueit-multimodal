@@ -142,20 +142,22 @@ namespace Ibit.WaterGame
                     yield return null;
                 }
 
+                SoundManager.Instance.PlaySound("Success");
+
+                FindObjectOfType<MinigameLogger>().Write(PitacoFlowMath.ToLitresPerMinute(sensorValue));
+
             } else {
             if (scm.IsConnected) // Se Mano conectado
             {
                 //While player does not blow.
                 while (sensorValue >= -Pacient.Loaded.ManoThreshold * 2f)
                 {
-                //Debug.Log($"Wait: {sensorValue}");
                     yield return null;
                 }
 
                 //Player is blowing, take the highest value.
                 while (sensorValue < -Pacient.Loaded.ManoThreshold)
                 {
-                    //Debug.Log($"Blow: {sensorValue}");
 
                     if (sensorValue < maximumPeak)
                     {
@@ -166,6 +168,10 @@ namespace Ibit.WaterGame
                     //calculate the percentage of the pike.
                     yield return null;
                 }
+
+                SoundManager.Instance.PlaySound("Success");
+
+                FindObjectOfType<MinigameLogger>().Write(ManoFlowMath.ToCentimetersofWater(sensorValue));
 
             } else {
             if (scc.IsConnected) // Se Cinta conectada
@@ -192,12 +198,12 @@ namespace Ibit.WaterGame
                     yield return null;
                 }
 
+                SoundManager.Instance.PlaySound("Success");
+
+                FindObjectOfType<MinigameLogger>().Write(CintaFlowMath.ToLitresPerMinute(sensorValue));
+
             }}}
 
-
-            SoundManager.Instance.PlaySound("Success");
-
-            FindObjectOfType<MinigameLogger>().Write(PitacoFlowMath.ToLitresPerMinute(sensorValue));
 
             CalculateFlowPike(maximumPeak);
             waitSignal = false;

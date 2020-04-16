@@ -15,12 +15,15 @@ namespace Ibit.MainMenu.UI
         [SerializeField]
         private SerialControllerCinta serialControllerCinta;
 
-        public bool PitacoPrecisaCalib = false;
-        public bool ManoPrecisaCalib = false;
-        public bool CintaPrecisaCalib = false;
+        public bool PitacoPrecisaCalib;
+        public bool ManoPrecisaCalib;
+        public bool CintaPrecisaCalib;
 
         private void OnEnable()
         {
+            PitacoPrecisaCalib = false;
+            ManoPrecisaCalib = false;
+            CintaPrecisaCalib = false;
 
             if (serialControllerPitaco == null)
                 serialControllerPitaco = FindObjectOfType<SerialControllerPitaco>();
@@ -39,16 +42,6 @@ namespace Ibit.MainMenu.UI
 
             if (serialControllerCinta.IsConnected && !Pacient.Loaded.IsCalibrationCintaDone)
                 CintaPrecisaCalib = true;
-
-
-            // if (PitacoPrecisaCalib == true || ManoPrecisaCalib == true || CintaPrecisaCalib == true)
-            // {
-            //     SysMessage.Info("Para começar a jogar, você precisa \ncalibrar todos os dispositivos conectados!");
-            // }
-
-
-
-
 
 
             this.GetComponent<Button>().interactable = Pacient.Loaded != null && (PitacoPrecisaCalib == false && ManoPrecisaCalib == false && CintaPrecisaCalib == false);

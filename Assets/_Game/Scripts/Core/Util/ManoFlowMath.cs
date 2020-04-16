@@ -66,22 +66,18 @@ namespace Ibit.Core.Util
         /// <summary>
         /// Converts m³/s to L/min
         /// </summary>
-        private const float LitresPerMinuteConverter = 60000;
+        private const float CentimetersofWaterConverter = 0.01019716f; 
+        // 1 Pascal (Pa) = 0.01019716 Centimeters of Water (cmH2O)
+        // 1 Pascal (Pa) = 0,10197162 Milimeters of Water (mmH2O)
+        // 1 Pascal (Pa) = 0.00075006 Centimeters of Mercury (cmHg)
+        // 1 Pascal (Pa) = 0.00750064 Milimeters of Mercury (mmHg)
 
         /// <summary>
-        /// Returns the volumetric flow of air in Cubic Meter / Second
+        /// Returns the pressure in Centimeters of Water
         /// </summary>
-        /// <param name="differentialPressure">Pressure difference in Pascal (Pa)</param>
+        /// <param name="absolutePressure">Pressure in Pascal (Pa)</param>
         /// <returns></returns>
-        private static float Poiseulle(float differentialPressure) =>
-            differentialPressure * Mathf.PI * Mathf.Pow(Mano.Radius, 4) / (8 * Mano.AirViscosity * Mano.Lenght);
-
-        /// <summary>
-        /// Returns the volumetric flow of air in Litres/Minute
-        /// </summary>
-        /// <param name="differentialPressure">Pressure difference in Pascal (Pa)</param>
-        /// <returns></returns>
-        public static float ToLitresPerMinute(float differentialPressure) =>
-            Poiseulle(differentialPressure / 1000f) * LitresPerMinuteConverter;
+        public static float ToCentimetersofWater(float absolutePressure) =>
+            absolutePressure * CentimetersofWaterConverter;
     }
 }
