@@ -2,14 +2,14 @@
  * Pitaco Serial Connection - MPX5700AP
  * https://github.com/UDESC-LARVA/IBLUEIT
  * 
- * RANGE do Sensor MPX5700 p/ pressão absoluta
+ * RANGE do Sensor MPX5700AP p/ pressão absoluta
  * Vai de 0 a 700KPA, mas consegui dividir o range entre positivo e negativo
- * Max~: 100,00 Pa
+ * Max~: 5000 Pa
  * Stop: 0.0 Pa
- * Min~: -100,00 Pa
+ * Min~: -5000 Pa
  */
 
-#define SAMPLESIZE 200
+#define SAMPLESIZE 100
 #define MOVING_AVERAGE true
 #define DEBUG false
 
@@ -29,13 +29,59 @@ void Calibrate()
   float sum = 0.0;
 
   for (i = 0; i < SAMPLESIZE; i++)
-    sum += voutToPa(digitalToVout(analogRead(A2)));
+    sum += voutToKPa(digitalToVout(analogRead(A2)));
 
   calibrationValue = sum / SAMPLESIZE;
 #endif  
   
   isCalibrated = true;
 }
+
+
+//////////////////// SMOOTHING 01 /////////////////////////////////////////////
+/*
+  Smoothing
+  http://www.arduino.cc/en/Tutorial/Smoothing
+*/
+
+// Define the number of samples to keep track of. The higher the number, the
+// more the readings will be smoothed, but the slower the output will respond to
+// the input. Using a constant rather than a normal variable lets us use this
+// value to determine the size of the readings array.
+const int numReadings = 100;
+
+float readings[numReadings];    // the readings from the analog input
+int readIndex = 0;              // the index of the current reading
+float total = 0.0;              // the running total
+float average = 0.0;            // the average
+
+float Smoothing(float valuetosmooth)
+{
+  // subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = valuetosmooth;
+  // add the reading to the total:
+  total = total + readings[readIndex];
+  // advance to the next position in the array:
+  readIndex = readIndex + 1;
+
+  // if we're at the end of the array...
+  if (readIndex >= numReadings) {
+    // ...wrap around to the beginning:
+    readIndex = 0;
+  }
+
+  // calculate the average:
+  average = total / numReadings;
+  // send it to the computer as ASCII digits
+  delay(1);        // delay in between reads for stability
+
+  return average;
+}
+
+/////////////////////////////////////////////////////////////////
+
 
 #if MOVING_AVERAGE
 
@@ -44,7 +90,7 @@ long sum = 0;
 float value;
 float ReadSensor()
 {
-  value = voutToPa(digitalToVout(analogRead(A2)));
+  value = voutToKPa(digitalToVout(analogRead(A2)));
 
   for (int i = SAMPLESIZE - 1; i > 0; i--)
   {
@@ -72,14 +118,14 @@ float ReadSensor()
   diffPressure = 0.0;
 
   for (i = 0; i < SAMPLESIZE; i++)
-    diffPressure += voutToPa(digitalToVout(analogRead(A2)));
+    diffPressure += voutToKPa(digitalToVout(analogRead(A2)));
 
   return diffPressure / SAMPLESIZE;
 }
 
 #endif
 
-bool isSampling = false;
+bool isSampling = false; //true to plotter
 void ListenCommand(char cmd)
 {
   //ECHO
@@ -107,6 +153,7 @@ void setup()
   Serial.begin(115200);
 }
 
+
 void loop()
 {
 #if DEBUG
@@ -120,7 +167,7 @@ void loop()
     Calibrate();
 
   if (isSampling && isCalibrated)
-    Serial.println(ReadSensor() - calibrationValue);
+    Serial.println(Smoothing(ReadSensor() - calibrationValue)*1000.0); // *1000.0 = KPa to Pa
 }
 
 /**
@@ -148,7 +195,7 @@ float digitalToVout(long d)
   return (VCC * d) / 1023.0;
 }
 
-float voutToPa(float v)
-{
-  return 1000.0 * voutToKPa(v);
-}
+//float voutToPa(float v)
+//{
+//  return 1000.0 * voutToKPa(v); 
+//}

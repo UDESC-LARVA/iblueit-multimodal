@@ -72,8 +72,8 @@ namespace Ibit.Core.Data
                     CapacitiesPitaco = new Capacities
                     {
                     RespiratoryRate = 0.3f,
-                    ExpPeakFlow = 300, //203.85 L/min
-                    InsPeakFlow = -200,  //-135.90 L/min
+                    ExpPeakFlow = 60, //203.85 L/min
+                    InsPeakFlow = -100,  //-135.90 L/min
                     ExpFlowDuration = 18000,   //18 segundos
                     InsFlowDuration = 10000   //10 segundos
                     },

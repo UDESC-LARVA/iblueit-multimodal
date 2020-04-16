@@ -66,32 +66,26 @@ namespace Ibit.WaterGame
             FindObjectOfType<Player>().EnablePlayEvent += NotPlayable;
             StartCoroutine(PlayGame()); //Starts the Gameplay State Machine
 
-
-
-            slider.minValue = 0;    //adicionado 11/09/19
+            slider.minValue = 0;    //adicionado 11/04/20
 
 
             if (scp.IsConnected) // Se Pitaco conectado
             {
                 SpicoInspiratorio = -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
+                Debug.Log($"SpicoInspiratorio: {SpicoInspiratorio}");
 
-            }
-            else
+            } else {
+            if (scm.IsConnected) // Se Mano conectado
             {
-                if (scm.IsConnected) // Se Mano conectado
-                {
-                    SpicoInspiratorio = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
+                SpicoInspiratorio = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
+                Debug.Log($"SpicoInspiratorio: {SpicoInspiratorio}");
 
-                }
-                else
-                {
-                    if (scc.IsConnected) // Se Cinta conectada
-                    {
-                        SpicoInspiratorio = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
+            } else {
+            if (scc.IsConnected) // Se Cinta conectada
+            {
+                SpicoInspiratorio = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
 
-                    }
-                }
-            }
+            }}}
 
 
             slider.maxValue = SpicoInspiratorio;         //adicionado 11/09/19
@@ -417,7 +411,6 @@ namespace Ibit.WaterGame
         private void Update()
         {
             slider.value = -player.sensorValue;  //adicionado 11/09/19
-
 
             if (resetsliderpico == false)                     //adicionado 16/10/19
             {

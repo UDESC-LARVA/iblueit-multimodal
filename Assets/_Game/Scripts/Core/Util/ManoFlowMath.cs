@@ -73,7 +73,7 @@ namespace Ibit.Core.Util
         // 1 Pascal (Pa) = 0.00750064 Milimeters of Mercury (mmHg)
 
         /// <summary>
-        /// Returns the pressure in Centimeters of Mercury
+        /// Returns the pressure in Centimeters of Water
         /// </summary>
         /// <param name="absolutePressure">Pressure in Pascal (Pa)</param>
         /// <returns></returns>

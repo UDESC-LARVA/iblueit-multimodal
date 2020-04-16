@@ -18,9 +18,8 @@ namespace Ibit.MainMenu.UI
             Pacient.Loaded = pacient;
             
             GameObject.Find("Canvas").transform.Find("Load Menu").gameObject.SetActive(false);
-            GameObject.Find("Canvas").transform.Find("Player Menu").gameObject.SetActive(true);
-            //GameObject.Find("Canvas").transform.Find("Parameters Menu").gameObject.SetActive(true);
             Debug.Log($"{pacient.Name} loaded.");
+            GameObject.Find("Canvas").transform.Find("Player Menu").gameObject.SetActive(true);
         }
     }
 }

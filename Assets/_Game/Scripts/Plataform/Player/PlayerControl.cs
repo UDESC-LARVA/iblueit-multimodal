@@ -81,11 +81,6 @@ namespace Ibit.Plataform
 
                 sensorValueMano = sensorValueMano < -Pacient.Loaded.ManoThreshold || sensorValueMano > Pacient.Loaded.ManoThreshold ? sensorValueMano : 0f;
 
-                if (((sensorValueMano < 150)&&(sensorValueMano > 0))||((sensorValueMano > -150)&&(sensorValueMano < 0))) // evita oscilações do blue no centro da tela
-                {
-                    sensorValueMano = 0f;
-                }
-
                 peakMano = sensorValueMano > 0 ? Pacient.Loaded.CapacitiesMano.ExpPeakFlow : -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
 
             

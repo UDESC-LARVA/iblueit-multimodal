@@ -1,7 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Ibit.Core.Serial;
+using Ibit.Core.Data;
 
 public class CalibrationReturn : MonoBehaviour
 {
@@ -20,22 +21,56 @@ public class CalibrationReturn : MonoBehaviour
     GameObject CalibrationMenuCinta;
     GameObject PlataformMenu;
     GameObject MinigamesMenu;
-    GameObject CalibrationReturning;
+    // GameObject CalibrationReturning;
 
+    [SerializeField]
+    private SerialControllerPitaco serialControllerPitaco;
+    [SerializeField]
+    private SerialControllerMano serialControllerMano;
+    [SerializeField]
+    private SerialControllerCinta serialControllerCinta;
 
-// Start é chamado no início do primeiro frame
+    private bool PitacoConnected = false;
+    private bool ManoConnected = false;
+    private bool CintaConnected = false;
 
-    void Start()
+    // Start é chamado no início do primeiro frame
+    private void OnEnable()
     {
-        StartCoroutine(ExampleCoroutine());
+
+        if (serialControllerPitaco == null)
+            serialControllerPitaco = FindObjectOfType<SerialControllerPitaco>();
+
+        if (serialControllerMano == null)
+            serialControllerMano = FindObjectOfType<SerialControllerMano>();
+
+        if (serialControllerCinta == null)
+            serialControllerCinta = FindObjectOfType<SerialControllerCinta>();
+
+
+        if (serialControllerPitaco.IsConnected)
+            PitacoConnected = true;
+
+        if (serialControllerMano.IsConnected)
+            ManoConnected = true;
+
+        if (serialControllerCinta.IsConnected)
+            CintaConnected = true;
+
+
+        if(Pacient.Loaded != null)
+        {
+            if((PitacoConnected && !Pacient.Loaded.CalibrationPitacoDone)||(ManoConnected && !Pacient.Loaded.CalibrationManoDone)||(CintaConnected && !Pacient.Loaded.CalibrationCintaDone))
+                StartCoroutine(ExampleCoroutine());
+        }
     }
 
 
     IEnumerator ExampleCoroutine()
     {
 
-        //yield on a new YieldInstruction that waits for 2 seconds.
-        yield return new WaitForSeconds(2);
+        //yield on a new YieldInstruction that waits for 3 seconds.
+        yield return new WaitForSeconds(3);
 
         StartPanel = GameObject.Find("Canvas").transform.Find("Start Panel").gameObject;
         SettingsMenu = GameObject.Find("Canvas").transform.Find("Settings Menu").gameObject;
@@ -49,7 +84,7 @@ public class CalibrationReturn : MonoBehaviour
         CalibrationMenuCinta = GameObject.Find("Canvas").transform.Find("Calibration Menu Cinta").gameObject;
         PlataformMenu = GameObject.Find("Canvas").transform.Find("Plataform Menu").gameObject;
         MinigamesMenu = GameObject.Find("Canvas").transform.Find("Minigames Menu").gameObject;
-        CalibrationReturning = GameObject.Find("Canvas").transform.Find("Calibration Returning").gameObject;
+        // CalibrationReturning = GameObject.Find("Canvas").transform.Find("Calibration Returning").gameObject;
 
         StartPanel.SetActive(false);
         SettingsMenu.SetActive(false);
@@ -63,7 +98,7 @@ public class CalibrationReturn : MonoBehaviour
         CalibrationMenuCinta.SetActive(false);
         PlataformMenu.SetActive(false);
         MinigamesMenu.SetActive(false);
-        CalibrationReturning.SetActive(false);
+        // CalibrationReturning.SetActive(false);
     }
 
 }

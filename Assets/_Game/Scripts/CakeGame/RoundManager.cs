@@ -1,4 +1,4 @@
-﻿using Ibit.Core.Data;
+using Ibit.Core.Data;
 using Ibit.Core.Serial;
 using Ibit.Core.Util;
 using Ibit.Core.Audio;
@@ -52,6 +52,42 @@ namespace Ibit.CakeGame
 
         }
 
+        private void Start()
+        {
+            passo = 0;
+            ppasso = false;
+            partidaCompleta = false;
+            displayHowTo.text = "Pressione [Enter] para começar.";
+            StartCoroutine(PlayGame());
+
+            slider.minValue = 0;    //adicionado 11/04/20
+
+
+            if (scp.IsConnected) // Se Pitaco conectado
+            {
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow;
+
+            } else {
+            if (scm.IsConnected) // Se Mano conectado
+            {
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesMano.ExpPeakFlow;
+
+            } else {
+            if (scc.IsConnected) // Se Cinta conectada
+            {
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
+
+            }}}
+
+
+
+            slider.maxValue = SpicoExpiratorio;         //adicionado 09/09/19
+
+
+            sliderpico.minValue = 0;    //adicionado 16/10/19
+            sliderpico.maxValue = SpicoExpiratorio;         //adicionado 16/10/19
+        }
+
         private IEnumerator PlayGame()
         {
             while (!partidaCompleta)
@@ -87,7 +123,7 @@ namespace Ibit.CakeGame
 
                              TextPanel.SetActive(false);
 
-                             while (player.sensorValue <= Pacient.Loaded.PitacoThreshold * 2 && jogou)
+                             while (player.sensorValue <= Pacient.Loaded.PitacoThreshold && jogou)
                                  yield return null;
 
                              StopCountdown();
@@ -120,7 +156,7 @@ namespace Ibit.CakeGame
                          case 4:
                              displayHowTo.text = "";
                              TextPanel.SetActive(false);
-                             while (player.sensorValue <= Pacient.Loaded.PitacoThreshold * 2 && jogou)
+                             while (player.sensorValue <= Pacient.Loaded.PitacoThreshold && jogou)
                                  yield return null;
 
                              StopCountdown();
@@ -153,7 +189,7 @@ namespace Ibit.CakeGame
                          case 6:
                              displayHowTo.text = "";
                              TextPanel.SetActive(false);
-                             while (player.sensorValue <= Pacient.Loaded.PitacoThreshold * 2 && jogou)
+                             while (player.sensorValue <= Pacient.Loaded.PitacoThreshold && jogou)
                                  yield return null;
 
                              StopCountdown();
@@ -202,7 +238,7 @@ namespace Ibit.CakeGame
 
                              TextPanel.SetActive(false);
 
-                             while (player.sensorValue <= Pacient.Loaded.ManoThreshold * 2 && jogou)
+                             while (player.sensorValue <= Pacient.Loaded.ManoThreshold && jogou)
                                  yield return null;
 
                              StopCountdown();
@@ -235,7 +271,7 @@ namespace Ibit.CakeGame
                          case 4:
                              displayHowTo.text = "";
                              TextPanel.SetActive(false);
-                             while (player.sensorValue <= Pacient.Loaded.ManoThreshold * 2 && jogou)
+                             while (player.sensorValue <= Pacient.Loaded.ManoThreshold && jogou)
                                  yield return null;
 
                              StopCountdown();
@@ -268,7 +304,7 @@ namespace Ibit.CakeGame
                          case 6:
                              displayHowTo.text = "";
                              TextPanel.SetActive(false);
-                             while (player.sensorValue <= Pacient.Loaded.ManoThreshold * 2 && jogou)
+                             while (player.sensorValue <= Pacient.Loaded.ManoThreshold && jogou)
                                  yield return null;
 
                              StopCountdown();
@@ -318,7 +354,7 @@ namespace Ibit.CakeGame
 
                              TextPanel.SetActive(false);
 
-                             while (player.sensorValue <= Pacient.Loaded.CintaThreshold * 2 && jogou)
+                             while (player.sensorValue <= Pacient.Loaded.CintaThreshold && jogou)
                                  yield return null;
 
                              StopCountdown();
@@ -351,7 +387,7 @@ namespace Ibit.CakeGame
                          case 4:
                              displayHowTo.text = "";
                              TextPanel.SetActive(false);
-                             while (player.sensorValue <= Pacient.Loaded.CintaThreshold * 2 && jogou)
+                             while (player.sensorValue <= Pacient.Loaded.CintaThreshold && jogou)
                                  yield return null;
 
                              StopCountdown();
@@ -384,7 +420,7 @@ namespace Ibit.CakeGame
                          case 6:
                              displayHowTo.text = "";
                              TextPanel.SetActive(false);
-                             while (player.sensorValue <= Pacient.Loaded.CintaThreshold * 2 && jogou)
+                             while (player.sensorValue <= Pacient.Loaded.CintaThreshold && jogou)
                                  yield return null;
 
                              StopCountdown();
@@ -453,7 +489,11 @@ namespace Ibit.CakeGame
             
             var percentage = flowValue / picoJogador;
 
-            if (percentage > 0.333f)  //Modificado 02/10/19 Diogo. Original: 25,50 e 75%
+            // Debug.Log($"flowValue: {flowValue}");
+            // Debug.Log($"picoJogador: {picoJogador}");
+            // Debug.Log($"percentage: {percentage}");
+
+            if (percentage >= 0.333f)  //Modificado 02/10/19 Diogo. Original: 25,50 e 75%
             {
                 candle.TurnOff(0);
                 candle.TurnOff(1);
@@ -525,44 +565,6 @@ namespace Ibit.CakeGame
 
         #endregion Countdown Timer
 
-        private void Start()
-        {
-            passo = 0;
-            ppasso = false;
-            partidaCompleta = false;
-            displayHowTo.text = "Pressione [Enter] para começar.";
-            StartCoroutine(PlayGame());
-
-            slider.minValue = 0;    //adicionado 09/09/19
-
-            
-
-            if (scp.IsConnected) // Se Pitaco conectado
-            {
-                SpicoExpiratorio = Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow;
-
-            } else {
-            if (scm.IsConnected) // Se Mano conectado
-            {
-                SpicoExpiratorio = Pacient.Loaded.CapacitiesMano.ExpPeakFlow;
-
-            } else {
-            if (scc.IsConnected) // Se Cinta conectada
-            {
-                SpicoExpiratorio = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
-
-            }}}
-
-
-
-            slider.maxValue = SpicoExpiratorio;         //adicionado 09/09/19
-
-
-            sliderpico.minValue = 0;    //adicionado 16/10/19
-            sliderpico.maxValue = SpicoExpiratorio;         //adicionado 16/10/19
-        }
-
-
     
 
         // Update is called once per frame
@@ -570,6 +572,7 @@ namespace Ibit.CakeGame
         {
  
             slider.value = player.sensorValue;  //adicionado 09/09/19
+            //Debug.Log($"Slider Value: {slider.value}");
 
             if (passo == 2 || passo == 4 || passo == 6)                     //adicionado 16/10/19
             {
