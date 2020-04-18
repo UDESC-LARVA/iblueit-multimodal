@@ -18,7 +18,7 @@ namespace Ibit.Calibration
 
         [BoxGroup("Controls")][SerializeField] private CalibrationExerciseCinta _currentExercise;
         [BoxGroup("Controls")][SerializeField] private int FlowTimeThreshold = 2000; //ms
-        [BoxGroup("Controls")][SerializeField] private float RespiratoryFrequencyThreshold = 0.01f; //s //colocado para testes... Valor original 0.05f
+        [BoxGroup("Controls")][SerializeField] private float RespiratoryFrequencyThreshold = 0.05f; //s //colocado para testes... Valor original 0.05f
         [BoxGroup("Controls")][SerializeField] private int TimerRespFreq = 60; //seg
         [BoxGroup("Controls")][SerializeField] private int TimerPeakExercise = 8; //seg        
         [BoxGroup("Controls")][SerializeField] private int _currentStep = 1; //default: 1 
@@ -119,12 +119,12 @@ namespace Ibit.Calibration
                                     AirFlowEnable();
 
                                     StartCoroutine(DisplayCountdown(TimerRespFreq));
-                                    while (_flowWatch.ElapsedMilliseconds < TimerRespFreq * 1000)
+                                    while (_flowWatch.ElapsedMilliseconds < TimerRespFreq * 1000) //1000 
                                         yield return null;
 
                                     AirFlowDisable();
 
-                                    _flowMeter = FlowMath.RespiratoryRate(_capturedSamples, TimerRespFreq);
+                                    _flowMeter = CintaFlowMath.RespiratoryRate(_capturedSamples, TimerRespFreq);
 
                                     if (_flowMeter > RespiratoryFrequencyThreshold)
                                     {
@@ -212,7 +212,7 @@ namespace Ibit.Calibration
 
                                 case 4:
                                     SoundManager.Instance.PlaySound("Success");
-                                    DudeTalk($"Seu pico inspiratório é de {FlowMath.ToLitresPerMinute(_tmpCapacities.RawInsPeakFlow):F} L/min." +
+                                    DudeTalk($"Seu pico inspiratório é de {CintaFlowMath.ToLitresPerMinute(_tmpCapacities.RawInsPeakFlow):F} L/min." +
                                         " Pressione (Enter) para continuar com os outros exercícios.");
                                     SetupNextStep();
                                     break;
@@ -368,7 +368,7 @@ namespace Ibit.Calibration
 
                                 case 4:
                                     SoundManager.Instance.PlaySound("Success");
-                                    DudeTalk($"Seu pico expiratório é de {FlowMath.ToLitresPerMinute(_tmpCapacities.RawExpPeakFlow):F} L/min." +
+                                    DudeTalk($"Seu pico expiratório é de {CintaFlowMath.ToLitresPerMinute(_tmpCapacities.RawExpPeakFlow):F} L/min." +
                                         " Pressione (Enter) para continuar com os outros exercícios.");
                                     SetupNextStep();
                                     break;

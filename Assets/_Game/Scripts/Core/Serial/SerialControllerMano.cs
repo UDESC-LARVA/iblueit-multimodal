@@ -111,7 +111,7 @@ namespace Ibit.Core.Serial
 
 #if !UNITY_EDITOR
             if (ports.Length < 1)
-                Ibit.Core.Util.SysMessage.Warning("MANOVACUÔMETRO não encontrado!");
+                Ibit.Core.Util.SysMessage.Warning("MANO não encontrado!");
 #endif
 
             foreach (var port in ports)

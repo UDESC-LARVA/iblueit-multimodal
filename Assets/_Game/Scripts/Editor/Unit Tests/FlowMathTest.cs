@@ -8,6 +8,6 @@ public class FlowMathTest
     public void TestEquations()
     {
         var diffpress = 1100f;
-        Debug.Log("Volumetric Flow Rate: " + FlowMath.ToLitresPerMinute(diffpress) + " L/min");
+        Debug.Log("Volumetric Flow Rate: " + PitacoFlowMath.ToLitresPerMinute(diffpress) + " L/min");
     }
 }

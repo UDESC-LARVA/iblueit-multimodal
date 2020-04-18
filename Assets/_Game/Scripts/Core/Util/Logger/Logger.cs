@@ -22,6 +22,7 @@ namespace Ibit.Core.Util
             Debug.Log($"{typeof(T).Name} started.");
 
             recordStart = DateTime.Now;
+    
             isLogging = true;
         }
 
@@ -35,6 +36,7 @@ namespace Ibit.Core.Util
 
             isLogging = false;
             recordStop = DateTime.Now;
+
             Save();
 
             sb.Clear();

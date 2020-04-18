@@ -609,6 +609,9 @@ MonoBehaviour:
   - 
   - 
   - 
+  scp: {fileID: 0}
+  scm: {fileID: 0}
+  scc: {fileID: 0}
 --- !u!1 &126999899
 GameObject:
   m_ObjectHideFlags: 0
@@ -1099,7 +1102,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &353712444
 GameObject:
@@ -2118,7 +2121,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &773209747
 GameObject:
@@ -2555,7 +2558,6 @@ GameObject:
   m_Component:
   - component: {fileID: 858747749}
   - component: {fileID: 858747748}
-  - component: {fileID: 858747750}
   m_Layer: 0
   m_Name: LoggerPitaco
   m_TagString: Untagged
@@ -2590,19 +2592,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &858747750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 858747747}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6324378470d054941b6118ddb3e9358f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _filename: CakeGame
 --- !u!1 &874133778
 GameObject:
   m_ObjectHideFlags: 0
@@ -2685,7 +2674,6 @@ GameObject:
   m_Component:
   - component: {fileID: 883098276}
   - component: {fileID: 883098275}
-  - component: {fileID: 883098274}
   m_Layer: 0
   m_Name: LoggerMano
   m_TagString: Untagged
@@ -2693,19 +2681,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &883098274
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 883098273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6324378470d054941b6118ddb3e9358f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _filename: CakeGame
 --- !u!114 &883098275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3172,7 +3147,7 @@ RectTransform:
   - {fileID: 73596103}
   - {fileID: 1450934536}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3530,7 +3505,7 @@ Transform:
   m_LocalScale: {x: 1.8970194, y: 1.198454, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1024570935
 GameObject:
@@ -4083,6 +4058,50 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1151434393
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1151434395}
+  - component: {fileID: 1151434394}
+  m_Layer: 0
+  m_Name: LoggerMinigame
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1151434394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1151434393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6324378470d054941b6118ddb3e9358f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _filename: CakeGame
+--- !u!4 &1151434395
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1151434393}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1172100187
 GameObject:
   m_ObjectHideFlags: 0
@@ -5088,7 +5107,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1503174737
 PrefabInstance:
@@ -5385,7 +5404,7 @@ Transform:
   - {fileID: 1827964973}
   - {fileID: 894862195}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1601818165 stripped
 Animator:
@@ -5450,7 +5469,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1635979100
 PrefabInstance:
@@ -6577,7 +6596,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1905399951}
   - component: {fileID: 1905399950}
-  - component: {fileID: 1905399949}
   m_Layer: 0
   m_Name: LoggerCinta
   m_TagString: Untagged
@@ -6585,19 +6603,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1905399949
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1905399948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6324378470d054941b6118ddb3e9358f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _filename: CakeGame
 --- !u!114 &1905399950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6677,7 +6682,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1908596476
 GameObject:
@@ -7804,7 +7809,7 @@ Transform:
   m_Children:
   - {fileID: 2022454811}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2965968680952643720
 PrefabInstance:

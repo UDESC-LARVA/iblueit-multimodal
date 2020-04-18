@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace Ibit.Core.Util
 {
-    public class FlowMath
+    public class CintaFlowMath
     {
         /// <summary>
         /// Calculates a mean of respiratory duration in Seconds per Cycle.
         /// </summary>
-        /// <param name="data">Dictionary containing respiratory samples as [time,value] from PITACO.</param>
+        /// <param name="data">Dictionary containing respiratory samples as [time,value] from CINTA.</param>
         /// <param name="duration">Duration of the sample capture.</param>
         public static float RespiratoryRate(Dictionary<float, float> data, int duration)
         {
@@ -26,7 +26,7 @@ namespace Ibit.Core.Util
 
                 var lastTime = samples[i - 1].Key;
 
-                if (actualValue < -Pacient.Loaded.PitacoThreshold || actualValue > Pacient.Loaded.PitacoThreshold)
+                if (actualValue < -Pacient.Loaded.CintaThreshold || actualValue > Pacient.Loaded.CintaThreshold)
                 {
                     if (startTime == 0)
                     {
@@ -74,7 +74,7 @@ namespace Ibit.Core.Util
         /// <param name="differentialPressure">Pressure difference in Pascal (Pa)</param>
         /// <returns></returns>
         private static float Poiseulle(float differentialPressure) =>
-            differentialPressure * Mathf.PI * Mathf.Pow(Pitaco.Radius, 4) / (8 * Pitaco.AirViscosity * Pitaco.Lenght);
+            differentialPressure * Mathf.PI * Mathf.Pow(Cinta.Radius, 4) / (8 * Cinta.AirViscosity * Cinta.Lenght);
 
         /// <summary>
         /// Returns the volumetric flow of air in Litres/Minute

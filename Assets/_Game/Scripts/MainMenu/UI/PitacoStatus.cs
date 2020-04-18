@@ -23,6 +23,6 @@ namespace Ibit.MainMenu.UI
 
         private void FixedUpdate() => GetComponent<Image>().sprite = serialController.IsConnected ? online : offline;
 
-        public void Reboot() => UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        public void Reboot() => UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex); // Descobre o índice da scene atual e a reinicia pra tentar reconectar o Pitaco.
     }
 }

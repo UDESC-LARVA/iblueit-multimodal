@@ -14,12 +14,16 @@ namespace Ibit.MainMenu.UI
         [SerializeField]
         private SerialControllerCinta serialControllerCinta;
 
-        private bool PitacoPrecisaCalib = false;
-        private bool ManoPrecisaCalib = false;
-        private bool CintaPrecisaCalib = false;
+        private bool PitacoPrecisaCalib;
+        private bool ManoPrecisaCalib;
+        private bool CintaPrecisaCalib;
 
         private void OnEnable()
         {
+            PitacoPrecisaCalib = false;
+            ManoPrecisaCalib = false;
+            CintaPrecisaCalib = false;
+            
             if (serialControllerPitaco == null)
                 serialControllerPitaco = FindObjectOfType<SerialControllerPitaco>();
 
@@ -29,19 +33,28 @@ namespace Ibit.MainMenu.UI
             if (serialControllerCinta == null)
                 serialControllerCinta = FindObjectOfType<SerialControllerCinta>();
 
-            if (serialControllerPitaco.IsConnected && !Pacient.Loaded.IsCalibrationPitacoDone)
-                PitacoPrecisaCalib = true;
-
-            if (serialControllerMano.IsConnected && !Pacient.Loaded.IsCalibrationManoDone)
-                ManoPrecisaCalib = true;
-
-            if (serialControllerCinta.IsConnected && !Pacient.Loaded.IsCalibrationCintaDone)
-                CintaPrecisaCalib = true;
-
-
-            if (PitacoPrecisaCalib == true || ManoPrecisaCalib == true || CintaPrecisaCalib == true)
+            if(Pacient.Loaded.Name != null)
             {
-                SysMessage.Info("Para começar a jogar, você precisa \ncalibrar todos os dispositivos conectados!");
+
+                if (serialControllerPitaco.IsConnected && !Pacient.Loaded.IsCalibrationPitacoDone)
+                {
+                    PitacoPrecisaCalib = true;
+                }
+
+                if (serialControllerMano.IsConnected && !Pacient.Loaded.IsCalibrationManoDone)
+                {
+                    ManoPrecisaCalib = true;
+                }
+
+                if (serialControllerCinta.IsConnected && !Pacient.Loaded.IsCalibrationCintaDone)
+                {
+                    CintaPrecisaCalib = true;
+                }
+
+                if (PitacoPrecisaCalib == true || ManoPrecisaCalib == true || CintaPrecisaCalib == true)
+                {
+                    SysMessage.Info("Para começar a jogar, você precisa \ncalibrar todos os dispositivos conectados!");
+                }
             }
         }
     }
