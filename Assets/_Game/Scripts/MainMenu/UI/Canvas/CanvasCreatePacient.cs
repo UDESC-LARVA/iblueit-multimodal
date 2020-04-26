@@ -1,16 +1,17 @@
 ﻿using Ibit.Core.Data;
-using Ibit.Core.Database;
 using Ibit.Core.Util;
 using System;
-using System.Linq;
+using Assets._Game.Scripts.Core.Api.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
+using Assets._Game.Scripts.Core.Api.Dto;
+using Ibit.Core.Data.Manager;
 
 namespace Ibit.MainMenu.UI.Canvas
 {
     public partial class CanvasManager
     {
-        public void CreatePacient()
+        public async void CreatePacient()
         {
             var bDay = GameObject.Find("LabelBDay").GetComponent<Text>().text;
             var bMonth = GameObject.Find("LabelBMonth").GetComponent<Text>().text;
@@ -103,51 +104,80 @@ namespace Ibit.MainMenu.UI.Canvas
                 return;
             }
 
-            var plr = new Pacient
+
+            //TODO: removido a criação do jogador para ser guardado via CSV. Foi criado um DTO para que sejam feitas maniupulações nos envios/responstas da API.
+            //Caso seja necessário, criar um objeto do tipo Pacient e continuar o processamento como segue.
+
+            var plr = new PacientSendDto
             {
                 Name = playerName,
                 Birthday = birthday,
-                Condition = disfunction,
-                Sex = male ? Sex.Male : Sex.Female,
-                Id = PacientDb.Instance.PacientList.Count > 0 ? PacientDb.Instance.PacientList.Max(x => x.Id) + 1 : 1,
+                Condition = disfunction.GetDescription(),
+                Sex = male ? Sex.Male.GetDescription() : Sex.Female.GetDescription(),
                 Observations = observations,
-                CapacitiesPitaco = new Capacities(),
-                CapacitiesMano = new Capacities(),
-                CapacitiesCinta = new Capacities(),
-                CalibrationPitacoDone = false,
-                CalibrationManoDone = false,
-                CalibrationCintaDone = false,
+                CapacitiesPitaco = new CapacitiesDto(),
+                CapacitiesMano = new CapacitiesDto(),
+                CapacitiesCinta = new CapacitiesDto(),
                 UnlockedLevels = 1,
-                AccumulatedScore = 0,
                 Ethnicity = ethnicity,
                 Height = height,
-                HowToPlayDone = false,
                 PitacoThreshold = threshold,
                 ManoThreshold = threshold,
                 CintaThreshold = threshold,
-                PlaySessionsDone = 0,
-                Weight = weight,
-                CreatedOn = DateTime.Now
+                Weight = weight
             };
 
-            var tmpPlr = PacientDb.Instance.GetPacient(playerName);
+            //TODO: verificação não é mais necessária para a API
+            //var tmpPlr = PacientDb.Instance.GetPacient(playerName);
 
-            if (plr.Name.Equals(tmpPlr?.Name)
-                && plr.Birthday.Equals(tmpPlr?.Birthday)
-                && plr.Condition.Equals(tmpPlr?.Condition))
+            //if (plr.Name.Equals(tmpPlr?.Name)
+            //    && plr.Birthday.Equals(tmpPlr?.Birthday)
+            //    && plr.Condition.Equals(tmpPlr?.Condition))
+            //{
+            //    SysMessage.Warning("Jogador existente!");
+            //    return;
+            //}
+
+            GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
+
+            var apiResponse = await DataManager.Instance.SavePacient(plr);
+
+            GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
+
+            if (apiResponse.ApiResponse != null)
             {
-                SysMessage.Warning("Jogador existente!");
-                return;
+                var playerInstanceModel = Pacient.MapFromDto(apiResponse.ApiResponse.Result);
+                Pacient.Loaded = playerInstanceModel;
+                SysMessage.Info("Jogador criado com sucesso!");
             }
-
-            PacientDb.Instance.CreatePacient(plr);
-            Pacient.Loaded = plr;
+            else
+            {
+                SysMessage.Info("Erro ao salvar na nuvem!\n Os dados poderão ser enviados posteriormente.");
+                Pacient.Loaded = new Pacient
+                {
+                    IdApi = $"n_{Guid.NewGuid()}",
+                    Name = playerName,
+                    Birthday = birthday,
+                    Condition = disfunction,
+                    Sex = male ? Sex.Male : Sex.Female,
+                    Observations = observations,
+                    CapacitiesPitaco = new Capacities(),
+                    CapacitiesMano = new Capacities(),
+                    CapacitiesCinta = new Capacities(),
+                    UnlockedLevels = 1,
+                    Ethnicity = ethnicity,
+                    Height = height,
+                    PitacoThreshold = threshold,
+                    ManoThreshold = threshold,
+                    CintaThreshold = threshold,
+                    Weight = weight,
+                };
+            }
 
             GameObject.Find("Canvas").transform.Find("New Menu").gameObject.SetActive(false);
             GameObject.Find("Canvas").transform.Find("Player Menu").gameObject.SetActive(true);
             //GameObject.Find("Canvas").transform.Find("Parameters Menu").gameObject.SetActive(true);
 
-            SysMessage.Info("Jogador criado com sucesso!");
         }
     }
 }
