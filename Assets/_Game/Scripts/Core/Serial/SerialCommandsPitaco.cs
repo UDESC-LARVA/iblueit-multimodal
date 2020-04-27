@@ -40,5 +40,8 @@ namespace Ibit.Core.Serial
         /// </summary>
         [Button("Recalibrate")]
         public void Recalibrate() => SendSerialMessage("c");
+
+        [Button("[DEBUG] Reset PITACO Connection State")]
+        public void ResetConnection() => SendSerialMessage("dr");
     }
 }

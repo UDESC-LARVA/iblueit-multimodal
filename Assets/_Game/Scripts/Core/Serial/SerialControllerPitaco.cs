@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -58,6 +59,21 @@ namespace Ibit.Core.Serial
 
         private Thread thread;
 
+
+#if UNITY_EDITOR
+        [SerializeField]
+        [Tooltip("Valor de teste a ser enviado")]
+        [Range(-1000f, 1000f)]
+        public float testPitacoValue = 0;
+
+        [SerializeField]
+        [Tooltip("Conectar PITACO Teste?")]
+        public bool testPitacoConnection = true;
+
+        [SerializeField]
+        [Tooltip("Parar de receber valores do PITACO")]
+        public bool stopReceivePicatoValues;
+#endif
         #region Events
 
         // ------------------------------------------------------------------------
@@ -84,6 +100,18 @@ namespace Ibit.Core.Serial
 
         public void SendSerialMessage(string message)
         {
+
+#if UNITY_EDITOR
+
+            if (message == "f")
+                stopReceivePicatoValues = true;
+            else if (message == "dr")
+                Connect();
+            else if (message == "r") stopReceivePicatoValues = false;
+
+            return;
+#endif
+
             if (!IsConnected)
                 return;
 
@@ -173,6 +201,14 @@ namespace Ibit.Core.Serial
 
         public void Connect()
         {
+#if UNITY_EDITOR
+            if (testPitacoConnection)
+            {
+                Debug.Log("Debug PITACO connected!");
+                IsConnected = true;
+                return;
+            }
+#endif
             Debug.Log("Looking for PITACO...");
 
             var portName = AutoConnect();
@@ -195,6 +231,13 @@ namespace Ibit.Core.Serial
 
         private void Disconnect()
         {
+#if UNITY_EDITOR
+            if (testPitacoConnection)
+            {
+                IsConnected = false;
+                return;
+            }
+#endif
             if (!IsConnected)
                 return;
 
@@ -229,6 +272,13 @@ namespace Ibit.Core.Serial
 
         private void Update()
         {
+#if UNITY_EDITOR
+            if (testPitacoConnection && stopReceivePicatoValues == false)
+            {
+                OnSerialMessageReceived?.Invoke(testPitacoValue.ToString(CultureInfo.InvariantCulture));
+                return;
+            }
+#endif
             // Read the next message from the queue
             var message = serialThread?.ReadSerialMessage();
             if (message == null)

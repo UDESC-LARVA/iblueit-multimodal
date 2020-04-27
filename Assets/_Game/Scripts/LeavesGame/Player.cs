@@ -68,24 +68,30 @@ namespace Ibit.LeavesGame
             lastCoroutine = null;
             FindObjectOfType<RoundManager>().AuthorizePlayerFlowEvent += ReceivedMessage;
 
-            if (scp.IsConnected) // Se Pitaco conectado
+            if (scp.IsConnected) // Se PITACO conectado
             {
                 scp.OnSerialMessageReceived += OnMessageReceived;
                 scp.StartSamplingDelayed();
 
-            } else {
-            if (scm.IsConnected) // Se Mano conectado
+            }
+            else
             {
-                scm.OnSerialMessageReceived += OnMessageReceived;
-                scm.StartSamplingDelayed();
+                if (scm.IsConnected) // Se Mano conectado
+                {
+                    scm.OnSerialMessageReceived += OnMessageReceived;
+                    scm.StartSamplingDelayed();
 
-            } else {
-            if (scc.IsConnected) // Se Cinta conectada
-            {
-                scc.OnSerialMessageReceived += OnMessageReceived;
-                scc.StartSamplingDelayed();
+                }
+                else
+                {
+                    if (scc.IsConnected) // Se CINTA conectada
+                    {
+                        scc.OnSerialMessageReceived += OnMessageReceived;
+                        scc.StartSamplingDelayed();
 
-            }}}
+                    }
+                }
+            }
 
         }
 
@@ -141,24 +147,30 @@ namespace Ibit.LeavesGame
                 scc = FindObjectOfType<SerialControllerCinta>();
 
 
-                if (scp.IsConnected) // Se Pitaco conectado
+                if (scp.IsConnected) // Se PITACO conectado
                 {
                     sensorValue = sensorValue < -Pacient.Loaded.PitacoThreshold || sensorValue > Pacient.Loaded.PitacoThreshold ? sensorValue : 0f;
                     peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow * 0.5f : -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
 
-                } else {
-                if (scm.IsConnected) // Se Mano conectado
+                }
+                else
                 {
-                    sensorValue = sensorValue < -Pacient.Loaded.ManoThreshold || sensorValue > Pacient.Loaded.ManoThreshold ? sensorValue : 0f;
-                    peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesMano.ExpPeakFlow * 0.5f : -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
+                    if (scm.IsConnected) // Se Mano conectado
+                    {
+                        sensorValue = sensorValue < -Pacient.Loaded.ManoThreshold || sensorValue > Pacient.Loaded.ManoThreshold ? sensorValue : 0f;
+                        peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesMano.ExpPeakFlow * 0.5f : -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
 
-                } else {
-                if (scc.IsConnected) // Se Cinta conectada
-                {
-                    sensorValue = sensorValue < -Pacient.Loaded.CintaThreshold || sensorValue > Pacient.Loaded.CintaThreshold ? sensorValue : 0f;
-                    peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * 0.5f : -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
+                    }
+                    else
+                    {
+                        if (scc.IsConnected) // Se CINTA conectada
+                        {
+                            sensorValue = sensorValue < -Pacient.Loaded.CintaThreshold || sensorValue > Pacient.Loaded.CintaThreshold ? sensorValue : 0f;
+                            peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * 0.5f : -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
 
-                }}}
+                        }
+                    }
+                }
 
 
                 var nextPosition = sensorValue * CameraLimits.Boundary / peak;
