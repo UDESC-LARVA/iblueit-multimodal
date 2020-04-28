@@ -1,7 +1,5 @@
 ﻿using System;
-using Assets._Game.Scripts.Core.Api;
 using Ibit.Core.Data;
-using Ibit.Core.Data.Manager;
 using Ibit.Core.Util;
 using UnityEngine;
 
@@ -54,20 +52,6 @@ namespace Ibit.Core.Game
             Cinta.AirViscosity = Parsers.Float(grid[1][8]);
             Cinta.Lenght = Parsers.Float(grid[1][9]);
             Cinta.Radius = Parsers.Float(grid[1][10]);
-        }
-
-        public async void FlushLocalDataToCloudAction()
-        {
-
-            var hasInternetConnection = await ApiClient.Instance.HasInternetConnection();
-            if (!hasInternetConnection)
-            {
-                SysMessage.Info("Sem conexão com a internet!");
-                return;
-            }
-            GameObject.Find("Canvas").transform.Find("SendingBgPanel").gameObject.SetActive(true);
-            await DataManager.Instance.SendRemoteData();
-            GameObject.Find("Canvas").transform.Find("SendingBgPanel").gameObject.SetActive(false);
         }
     }
 }

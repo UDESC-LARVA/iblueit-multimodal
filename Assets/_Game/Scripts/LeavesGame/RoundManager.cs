@@ -134,7 +134,7 @@ namespace Ibit.LeavesGame
 
         private void PlayerWakeUp()
         {
-            Debug.Log(PitacoFlowMath.RespiratoryRate(Player.playerRespiratoryInfo, (int)countdownTime) + " bps");
+            Debug.Log(PitacoFlowMath.RespiratoryRate(Player.playerRespiratoryInfo,(int)countdownTime) + " bps");
             displayHowTo.text = "Acabou o tempo![Enter] para continuar.";
             //Se não jogou mandar sinal false para a permissão do jogador.
             EnablePlayerFlow(false);
@@ -149,8 +149,8 @@ namespace Ibit.LeavesGame
         {
             while (!finished)
             {
-
-
+                
+                
                 while (!scp.IsConnected && !scm.IsConnected && !scc.IsConnected)
                 {
                     state = -1;
@@ -158,8 +158,8 @@ namespace Ibit.LeavesGame
                     displayHowTo.text = "Nenhum dispositivo de controle conectado! Conecte e volte ao menu principal.";
                     yield return null;
                 }
-
-                // Se o PITACO estiver conectado
+                
+                // Se o Pitaco estiver conectado
                 if (scp.IsConnected)
                 {
                     switch (state)
@@ -226,151 +226,145 @@ namespace Ibit.LeavesGame
                             playable = true;
                             break;
                     }
-                }
-                else
-                { ////////////////////
-                  // Se o Mano estiver conectado
-                    if (scm.IsConnected)
+                } else { ////////////////////
+                // Se o Mano estiver conectado
+                if (scm.IsConnected)
+                {
+                    switch (state)
                     {
-                        switch (state)
-                        {
 
-                            case 1://Introduction
-                                TextPanel.SetActive(true);
-                                displayHowTo.text = "Bem-Vindo ao jogo Coletando as Folhas! Pressione [ENTER] para continuar.";
-                                while (playable)
-                                    yield return null;
+                        case 1://Introduction
+                            TextPanel.SetActive(true);
+                            displayHowTo.text = "Bem-Vindo ao jogo Coletando as Folhas! Pressione [ENTER] para continuar.";
+                            while (playable)
+                                yield return null;
 
-                                playable = true;
-                                break;
+                            playable = true;
+                            break;
 
 
-                            case 2:
-                            case 4:
-                            case 6://Pre-flow
-                                scm.Recalibrate();
-                                scm.StartSamplingDelayed();
-                                ResetCountDown();
-                                TextPanel.SetActive(true);
-                                displayHowTo.text = "Pressione [Enter] e RESPIRE normalmente dentro do tempo para coletar as folhas.";
-                                while (playable)
-                                    yield return null;
-                                CleanRound();
-                                playable = true;
-                                TextPanel.SetActive(false);
-                                break;
-                            case 3:
-                            case 5:
-                            case 7://Player's Flow
-                                displayHowTo.text = "";
+                        case 2:
+                        case 4:
+                        case 6://Pre-flow
+                            scm.Recalibrate();
+                            scm.StartSamplingDelayed();
+                            ResetCountDown();
+                            TextPanel.SetActive(true);
+                            displayHowTo.text = "Pressione [Enter] e RESPIRE normalmente dentro do tempo para coletar as folhas.";
+                            while (playable)
+                                yield return null;
+                            CleanRound();
+                            playable = true;
+                            TextPanel.SetActive(false);
+                            break;
+                        case 3:
+                        case 5:
+                        case 7://Player's Flow
+                            displayHowTo.text = "";
 
-                                EnablePlayerFlow(true);
-                                while (!timeOver && playable)
-                                {
-                                    StartCountdown();
-                                    yield return null;
-                                }
-                                Debug.Log("Terminei a jogada!");
-
-                                _scorer.PutRoundScore(_roundNumber);
-                                _roundNumber++;
-                                ResetCountDown();
-                                timeOver = false;
-                                playable = true;
-                                break;
-                            case 8:
-                                scm.StopSampling();
-                                FindObjectOfType<Core.Util.ManoLogger>().StopLogging();
-                                TextPanel.SetActive(true);
-                                displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
-                                break;
-                            case 9:
-                                TextPanel.SetActive(false);
-                                SoundManager.Instance.PlaySound("Finished");
-                                ShowFinalScore();
-                                break;
-                            case 99:
-                                TextPanel.SetActive(true);
-                                while (playable)
-                                    yield return null;
-                                playable = true;
-                                break;
-                        }
-                    }
-                    else
-                    { ////////////////////
-                      // Se a CINTA Extensora estiver conectada
-                        if (scc.IsConnected)
-                        {
-                            switch (state)
+                            EnablePlayerFlow(true);
+                            while (!timeOver && playable)
                             {
-
-                                case 1://Introduction
-                                    TextPanel.SetActive(true);
-                                    displayHowTo.text = "Bem-Vindo ao jogo Coletando as Folhas! Pressione [ENTER] para continuar.";
-                                    while (playable)
-                                        yield return null;
-
-                                    playable = true;
-                                    break;
-
-
-                                case 2:
-                                case 4:
-                                case 6://Pre-flow
-                                    scc.Recalibrate();
-                                    scc.StartSamplingDelayed();
-                                    ResetCountDown();
-                                    TextPanel.SetActive(true);
-                                    displayHowTo.text = "Pressione [Enter] e RESPIRE normalmente dentro do tempo para coletar as folhas.";
-                                    while (playable)
-                                        yield return null;
-                                    CleanRound();
-                                    playable = true;
-                                    TextPanel.SetActive(false);
-                                    break;
-                                case 3:
-                                case 5:
-                                case 7://Player's Flow
-                                    displayHowTo.text = "";
-
-                                    EnablePlayerFlow(true);
-                                    while (!timeOver && playable)
-                                    {
-                                        StartCountdown();
-                                        yield return null;
-                                    }
-                                    Debug.Log("Terminei a jogada!");
-
-                                    _scorer.PutRoundScore(_roundNumber);
-                                    _roundNumber++;
-                                    ResetCountDown();
-                                    timeOver = false;
-                                    playable = true;
-                                    break;
-                                case 8:
-                                    scc.StopSampling();
-                                    FindObjectOfType<Core.Util.CintaLogger>().StopLogging();
-                                    TextPanel.SetActive(true);
-                                    displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
-                                    break;
-                                case 9:
-                                    TextPanel.SetActive(false);
-                                    SoundManager.Instance.PlaySound("Finished");
-                                    ShowFinalScore();
-                                    break;
-                                case 99:
-                                    TextPanel.SetActive(true);
-                                    while (playable)
-                                        yield return null;
-                                    playable = true;
-                                    break;
+                                StartCountdown();
+                                yield return null;
                             }
-                        }
+                            Debug.Log("Terminei a jogada!");
+
+                            _scorer.PutRoundScore(_roundNumber);
+                            _roundNumber++;
+                            ResetCountDown();
+                            timeOver = false;
+                            playable = true;
+                            break;
+                        case 8:
+                            scm.StopSampling();
+                            FindObjectOfType<Core.Util.ManoLogger>().StopLogging();
+                            TextPanel.SetActive(true);
+                            displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
+                            break;
+                        case 9:
+                            TextPanel.SetActive(false);
+                            SoundManager.Instance.PlaySound("Finished");
+                            ShowFinalScore();
+                            break;
+                        case 99:
+                            TextPanel.SetActive(true);
+                            while (playable)
+                                yield return null;
+                            playable = true;
+                            break;
                     }
-                }
+                } else { ////////////////////
+                // Se a Cinta Extensora estiver conectada
+                if (scc.IsConnected)
+                {
+                    switch (state)
+                    {
+
+                        case 1://Introduction
+                            TextPanel.SetActive(true);
+                            displayHowTo.text = "Bem-Vindo ao jogo Coletando as Folhas! Pressione [ENTER] para continuar.";
+                            while (playable)
+                                yield return null;
+
+                            playable = true;
+                            break;
 
 
+                        case 2:
+                        case 4:
+                        case 6://Pre-flow
+                            scc.Recalibrate();
+                            scc.StartSamplingDelayed();
+                            ResetCountDown();
+                            TextPanel.SetActive(true);
+                            displayHowTo.text = "Pressione [Enter] e RESPIRE normalmente dentro do tempo para coletar as folhas.";
+                            while (playable)
+                                yield return null;
+                            CleanRound();
+                            playable = true;
+                            TextPanel.SetActive(false);
+                            break;
+                        case 3:
+                        case 5:
+                        case 7://Player's Flow
+                            displayHowTo.text = "";
+
+                            EnablePlayerFlow(true);
+                            while (!timeOver && playable)
+                            {
+                                StartCountdown();
+                                yield return null;
+                            }
+                            Debug.Log("Terminei a jogada!");
+
+                            _scorer.PutRoundScore(_roundNumber);
+                            _roundNumber++;
+                            ResetCountDown();
+                            timeOver = false;
+                            playable = true;
+                            break;
+                        case 8:
+                            scc.StopSampling();
+                            FindObjectOfType<Core.Util.CintaLogger>().StopLogging();
+                            TextPanel.SetActive(true);
+                            displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
+                            break;
+                        case 9:
+                            TextPanel.SetActive(false);
+                            SoundManager.Instance.PlaySound("Finished");
+                            ShowFinalScore();
+                            break;
+                        case 99:
+                            TextPanel.SetActive(true);
+                            while (playable)
+                                yield return null;
+                            playable = true;
+                            break;
+                    }
+                }}}
+
+                
                 yield return null;
             }
         }

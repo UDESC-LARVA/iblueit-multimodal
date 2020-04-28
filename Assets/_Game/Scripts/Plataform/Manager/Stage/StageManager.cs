@@ -20,7 +20,7 @@ namespace Ibit.Plataform.Manager.Stage
         #endregion Events
 
         #region Properties
-        public int Counter = 0;
+
         public bool IsRunning { get; private set; }
         public float Duration { get; private set; }
 
@@ -155,7 +155,7 @@ namespace Ibit.Plataform.Manager.Stage
 
             Duration += Time.deltaTime;
 
-            if (spawner.ObjectsOnScene < 1 && IsRunning)
+            if (spawner.ObjectsOnScene < 1)
                 EndStage();
         }
     }
