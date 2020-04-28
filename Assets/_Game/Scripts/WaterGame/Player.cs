@@ -39,7 +39,7 @@ namespace Ibit.WaterGame
             scp = FindObjectOfType<SerialControllerPitaco>();
             scm = FindObjectOfType<SerialControllerMano>();
             scc = FindObjectOfType<SerialControllerCinta>();
-            
+
 
 
             stop = false;
@@ -49,24 +49,30 @@ namespace Ibit.WaterGame
             FindObjectOfType<RoundManager>().AuthorizePlayerFlowEvent += ReceivedMessage;
 
 
-            if (scp.IsConnected) // Se Pitaco conectado
+            if (scp.IsConnected) // Se PITACO conectado
             {
                 scp.OnSerialMessageReceived += OnMessageReceived;
                 scp.StartSamplingDelayed();
 
-            } else {
-            if (scm.IsConnected) // Se Mano conectado
+            }
+            else
             {
-                scm.OnSerialMessageReceived += OnMessageReceived;
-                scm.StartSamplingDelayed();
+                if (scm.IsConnected) // Se Mano conectado
+                {
+                    scm.OnSerialMessageReceived += OnMessageReceived;
+                    scm.StartSamplingDelayed();
 
-            } else {
-            if (scc.IsConnected) // Se Cinta conectada
-            {
-                scc.OnSerialMessageReceived += OnMessageReceived;
-                scc.StartSamplingDelayed();
+                }
+                else
+                {
+                    if (scc.IsConnected) // Se CINTA conectada
+                    {
+                        scc.OnSerialMessageReceived += OnMessageReceived;
+                        scc.StartSamplingDelayed();
 
-            }}}
+                    }
+                }
+            }
 
         }
 
@@ -95,7 +101,7 @@ namespace Ibit.WaterGame
             _roundNumber = roundNumber;
 
             if (hasPlayed)
-                lastCoroutine = StartCoroutine(Flow());
+                lastCoroutine = StartCoroutine(Flow(roundNumber));
 
             if (!hasPlayed)
             {
@@ -105,25 +111,21 @@ namespace Ibit.WaterGame
         }
         public void ExecuteNextStep()
         {
-            //Debug.Log("tetris");
             OnAuthorize();
         }
-        private IEnumerator Flow()
+        private IEnumerator Flow(int round)
         {
-            
+
             scp = FindObjectOfType<SerialControllerPitaco>();
             scm = FindObjectOfType<SerialControllerMano>();
             scc = FindObjectOfType<SerialControllerCinta>();
-            
 
-
-
-            if (scp.IsConnected) // Se Pitaco conectado
+            if (scp.IsConnected) // Se PITACO conectado
             {
                 //While player does not blow.
                 while (sensorValue >= -Pacient.Loaded.PitacoThreshold * 2f)
                 {
-                //Debug.Log($"Wait: {sensorValue}");
+                    //Debug.Log($"Wait: {sensorValue}");
                     yield return null;
                 }
 
@@ -142,115 +144,133 @@ namespace Ibit.WaterGame
                     yield return null;
                 }
 
-                SoundManager.Instance.PlaySound("Success");
-
-                FindObjectOfType<MinigameLogger>().Write(PitacoFlowMath.ToLitresPerMinute(sensorValue));
-
-            } else {
-            if (scm.IsConnected) // Se Mano conectado
+            }
+            else
             {
-                //While player does not blow.
-                while (sensorValue >= -Pacient.Loaded.ManoThreshold * 2f)
+                if (scm.IsConnected) // Se Mano conectado
                 {
-                    yield return null;
-                }
-
-                //Player is blowing, take the highest value.
-                while (sensorValue < -Pacient.Loaded.ManoThreshold)
-                {
-
-                    if (sensorValue < maximumPeak)
+                    //While player does not blow.
+                    while (sensorValue >= -Pacient.Loaded.ManoThreshold * 2f)
                     {
-                        maximumPeak = sensorValue;
-                        //Debug.Log("Novo pico máximo: " + maximumPeak);
+                        //Debug.Log($"Wait: {sensorValue}");
+                        yield return null;
                     }
 
-                    //calculate the percentage of the pike.
-                    yield return null;
-                }
-
-                SoundManager.Instance.PlaySound("Success");
-
-                FindObjectOfType<MinigameLogger>().Write(ManoFlowMath.ToCentimetersofWater(sensorValue));
-
-            } else {
-            if (scc.IsConnected) // Se Cinta conectada
-            {
-                //While player does not blow.
-                while (sensorValue >= -Pacient.Loaded.CintaThreshold * 2f)
-                {
-                //Debug.Log($"Wait: {sensorValue}");
-                    yield return null;
-                }
-
-                //Player is blowing, take the highest value.
-                while (sensorValue < -Pacient.Loaded.CintaThreshold)
-                {
-                    //Debug.Log($"Blow: {sensorValue}");
-
-                    if (sensorValue < maximumPeak)
+                    //Player is blowing, take the highest value.
+                    while (sensorValue < -Pacient.Loaded.ManoThreshold)
                     {
-                        maximumPeak = sensorValue;
-                        //Debug.Log("Novo pico máximo: " + maximumPeak);
+                        //Debug.Log($"Blow: {sensorValue}");
+
+                        if (sensorValue < maximumPeak)
+                        {
+                            maximumPeak = sensorValue;
+                            //Debug.Log("Novo pico máximo: " + maximumPeak);
+                        }
+
+                        //calculate the percentage of the pike.
+                        yield return null;
                     }
 
-                    //calculate the percentage of the pike.
-                    yield return null;
                 }
+                else
+                {
+                    if (scc.IsConnected) // Se CINTA conectada
+                    {
+                        //While player does not blow.
+                        while (sensorValue >= -Pacient.Loaded.CintaThreshold * 2f)
+                        {
+                            //Debug.Log($"Wait: {sensorValue}");
+                            yield return null;
+                        }
 
-                SoundManager.Instance.PlaySound("Success");
+                        //Player is blowing, take the highest value.
+                        while (sensorValue < -Pacient.Loaded.CintaThreshold)
+                        {
+                            //Debug.Log($"Blow: {sensorValue}");
 
-                FindObjectOfType<MinigameLogger>().Write(CintaFlowMath.ToLitresPerMinute(sensorValue));
+                            if (sensorValue < maximumPeak)
+                            {
+                                maximumPeak = sensorValue;
+                                //Debug.Log("Novo pico máximo: " + maximumPeak);
+                            }
 
-            }}}
+                            //calculate the percentage of the pike.
+                            yield return null;
+                        }
+
+                    }
+                }
+            }
 
 
-            CalculateFlowPike(maximumPeak);
+            SoundManager.Instance.PlaySound("Success");
+
+
+
+            var roundScore = CalculateFlowPike(maximumPeak);
+            WriteMinigameLog(round, roundScore, PitacoFlowMath.ToLitresPerMinute(maximumPeak));
             waitSignal = false;
             OnAuthorize();
         }
 
-        private void CalculateFlowPike(float pikeValue)
+        private void WriteMinigameLog(int round, int roundScore, float flowScore)
+        {
+            FindObjectOfType<MinigameLogger>().WriteMinigameRound(round, roundScore, flowScore);
+        }
+
+        private int CalculateFlowPike(float pikeValue)
         {
             var playerPike = 0f;
+            var roundScore = 0;
 
-            if (scp.IsConnected) // Se Pitaco conectado
+            if (scp.IsConnected) // Se PITACO conectado
             {
                 playerPike = -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;  //originalmente RawInspeakFlow; alterado->02/10/19
 
-            } else {
-            if (scm.IsConnected) // Se Mano conectado
+            }
+            else
             {
-                playerPike = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;  //originalmente RawInspeakFlow; alterado->02/10/19
+                if (scm.IsConnected) // Se Mano conectado
+                {
+                    playerPike = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;  //originalmente RawInspeakFlow; alterado->02/10/19
 
-            } else {
-            if (scc.IsConnected) // Se Cinta conectada
-            {
-                playerPike = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;  //originalmente RawInspeakFlow; alterado->02/10/19
+                }
+                else
+                {
+                    if (scc.IsConnected) // Se CINTA conectada
+                    {
+                        playerPike = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;  //originalmente RawInspeakFlow; alterado->02/10/19
 
-            }}}
+                    }
+                }
+            }
 
 
-            
-            
+
+
             var percentage = -pikeValue / playerPike;
-            
+
             Debug.Log("Porcentagem: " + percentage);
 
             if (percentage > 1.00f)   //Originalmente seria 25,50 e 75%, Foi modificado em 02/10/19 por Diogo e Jhonatan para 33, 67 e 100%
             {
+                roundScore = 3;
                 OnHaveStar(3, _roundNumber, pikeValue);
             }
             else if (percentage > 0.667f)
             {
+                roundScore = 2;
                 OnHaveStar(2, _roundNumber, pikeValue);
             }
             else if (percentage > 0.333f)
             {
+                roundScore = 1;
                 OnHaveStar(1, _roundNumber, pikeValue);
             }
 
             maximumPeak = 0f;
+
+            return roundScore;
         }
 
         private void Update()

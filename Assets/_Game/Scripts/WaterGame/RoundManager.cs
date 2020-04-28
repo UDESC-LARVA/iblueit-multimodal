@@ -1,10 +1,11 @@
 ﻿using System.Collections;
-using System.Threading.Tasks;
 using Ibit.Core.Audio;
 using Ibit.Core.Serial;
 using UnityEngine;
 using UnityEngine.UI;
 using Ibit.Core.Data;
+using Ibit.Core.Data.Enums;
+using Ibit.Core.Util;
 
 namespace Ibit.WaterGame
 {
@@ -44,15 +45,13 @@ namespace Ibit.WaterGame
         bool resetsliderpico = true; //adicionado 21/10/19
 
 
-        private Task _writeLogsTask;
-        private Core.MinigameLogger _logger;
+
 
         private void Awake()
         {
             scp = FindObjectOfType<SerialControllerPitaco>();
             scm = FindObjectOfType<SerialControllerMano>();
             scc = FindObjectOfType<SerialControllerCinta>();
-            _logger = FindObjectOfType<Core.MinigameLogger>();
         }
 
         private void Start()
@@ -66,26 +65,32 @@ namespace Ibit.WaterGame
             FindObjectOfType<Player>().EnablePlayEvent += NotPlayable;
             StartCoroutine(PlayGame()); //Starts the Gameplay State Machine
 
-            slider.minValue = 0;    //adicionado 11/04/20
 
 
-            if (scp.IsConnected) // Se Pitaco conectado
+            slider.minValue = 0;    //adicionado 11/09/19
+
+
+            if (scp.IsConnected) // Se PITACO conectado
             {
                 SpicoInspiratorio = -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
-                Debug.Log($"SpicoInspiratorio: {SpicoInspiratorio}");
 
-            } else {
-            if (scm.IsConnected) // Se Mano conectado
+            }
+            else
             {
-                SpicoInspiratorio = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
-                Debug.Log($"SpicoInspiratorio: {SpicoInspiratorio}");
+                if (scm.IsConnected) // Se Mano conectado
+                {
+                    SpicoInspiratorio = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
 
-            } else {
-            if (scc.IsConnected) // Se Cinta conectada
-            {
-                SpicoInspiratorio = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
+                }
+                else
+                {
+                    if (scc.IsConnected) // Se CINTA conectada
+                    {
+                        SpicoInspiratorio = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
 
-            }}}
+                    }
+                }
+            }
 
 
             slider.maxValue = SpicoInspiratorio;         //adicionado 11/09/19
@@ -173,7 +178,7 @@ namespace Ibit.WaterGame
                 }
 
 
-                // Se o Pitaco estiver conectado
+                // Se o PITACO estiver conectado
                 if (scp.IsConnected)
                 {
                     switch (state)
@@ -189,8 +194,6 @@ namespace Ibit.WaterGame
                         case 2:
                         case 4:
                         case 6: //Pre-flow
-                            scp.Recalibrate();
-                            scp.StartSamplingDelayed();
                             TextPanel.SetActive(true);
                             displayHowTo.text = "Pressione [Enter] e INSPIRE \n o mais forte que conseguir dentro do tempo.";
                             while (playable)
@@ -202,6 +205,8 @@ namespace Ibit.WaterGame
                         case 3:
                         case 5:
                         case 7: //Player's Flow
+                            scp.StartSampling();
+                            scp.Recalibrate();
                             displayHowTo.text = "";
                             EnablePlayerFlow(true, _roundNumber);
                             _roundNumber++;
@@ -211,30 +216,22 @@ namespace Ibit.WaterGame
                                 StartCountdown();
                                 yield return null;
                             }
-
+                            scp.StopSampling();
                             ResetCountDown();
                             playable = true;
                             break;
                         case 8:
-                            scp.StopSampling();
-                            FindObjectOfType<Core.Util.PitacoLogger>().StopLogging();
                             TextPanel.SetActive(true);
                             displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
-
-                            if (_writeLogsTask is null)
-                            {
-                                _writeLogsTask = Task.Run(() =>
-                                {
-                                    if (_logger != null)
-                                    {
-                                        Debug.Log("Saving minigame data...");
-                                        _logger.Save();
-                                        Debug.Log("Minigame logs saved.");
-                                    }
-                                });
-                            }
                             break;
                         case 9:
+                            Debug.Log("Saving minigame data...");
+                            GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
+                            FindObjectOfType<Core.MinigameLogger>().Save(GameDevice.Pitaco, RespiratoryExercise.InspiratoryPeak, Minigame.WaterGame);
+                            GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
+
+                            break;
+                        case 10:
                             TextPanel.SetActive(false);
                             ShowFinalScore();
                             break;
@@ -295,21 +292,12 @@ namespace Ibit.WaterGame
                                 FindObjectOfType<Core.Util.ManoLogger>().StopLogging();
                                 TextPanel.SetActive(true);
                                 displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
-
-                                if (_writeLogsTask is null)
-                                {
-                                    _writeLogsTask = Task.Run(() =>
-                                    {
-                                        if (_logger != null)
-                                        {
-                                            Debug.Log("Saving minigame data...");
-                                            _logger.Save();
-                                            Debug.Log("Minigame logs saved.");
-                                        }
-                                    });
-                                }
                                 break;
                             case 9:
+                                Debug.Log("Saving minigame data...");
+                                FindObjectOfType<Core.MinigameLogger>().Save(GameDevice.Pitaco, RespiratoryExercise.InspiratoryPeak, Minigame.WaterGame);
+                                break;
+                            case 10:
                                 TextPanel.SetActive(false);
                                 ShowFinalScore();
                                 break;
@@ -323,7 +311,7 @@ namespace Ibit.WaterGame
                     }
                     else
                     {
-                        // Se a Cinta estiver conectada
+                        // Se a CINTA estiver conectada
                         if (scc.IsConnected)
                         {
                             switch (state)
@@ -370,21 +358,12 @@ namespace Ibit.WaterGame
                                     FindObjectOfType<Core.Util.CintaLogger>().StopLogging();
                                     TextPanel.SetActive(true);
                                     displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
-
-                                    if (_writeLogsTask is null)
-                                    {
-                                        _writeLogsTask = Task.Run(() =>
-                                        {
-                                            if (_logger != null)
-                                            {
-                                                Debug.Log("Saving minigame data...");
-                                                _logger.Save();
-                                                Debug.Log("Minigame logs saved.");
-                                            }
-                                        });
-                                    }
                                     break;
                                 case 9:
+                                    Debug.Log("Saving minigame data...");
+                                    FindObjectOfType<Core.MinigameLogger>().Save(GameDevice.Pitaco, RespiratoryExercise.InspiratoryPeak, Minigame.WaterGame);
+                                    break;
+                                case 10:
                                     TextPanel.SetActive(false);
                                     ShowFinalScore();
                                     break;
@@ -399,9 +378,6 @@ namespace Ibit.WaterGame
                     }
                 } ////////////////////////////////////////
 
-
-
-
                 yield return null;
             }
         }
@@ -411,6 +387,7 @@ namespace Ibit.WaterGame
         private void Update()
         {
             slider.value = -player.sensorValue;  //adicionado 11/09/19
+
 
             if (resetsliderpico == false)                     //adicionado 16/10/19
             {

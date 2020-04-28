@@ -1,4 +1,6 @@
 ﻿using System;
+using Assets._Game.Scripts.Core.Api.Dto;
+using Assets._Game.Scripts.Core.Api.Extensions;
 
 namespace Ibit.Core.Data
 {
@@ -8,13 +10,14 @@ namespace Ibit.Core.Data
         public static Pacient Loaded;
 
         public int Id;
+        public string IdApi;
         public string Name;
         public Sex Sex;
         public DateTime Birthday;
         public Capacities CapacitiesPitaco;
         public Capacities CapacitiesMano;
         public Capacities CapacitiesCinta;
-    
+
         public string Observations;
         public ConditionType Condition;
         public int UnlockedLevels;
@@ -55,6 +58,7 @@ namespace Ibit.Core.Data
             if (Loaded == null)
                 Loaded = new Pacient
                 {
+                    IdApi = "00000000-0000-0000-0000-000000000000",
                     Id = -1,
                     CalibrationPitacoDone = true,
                     CalibrationManoDone = true,
@@ -71,33 +75,134 @@ namespace Ibit.Core.Data
 
                     CapacitiesPitaco = new Capacities
                     {
-                    RespiratoryRate = 0.3f,
-                    ExpPeakFlow = 60, //203.85 L/min
-                    InsPeakFlow = -100,  //-135.90 L/min
-                    ExpFlowDuration = 18000,   //18 segundos
-                    InsFlowDuration = 10000   //10 segundos
+                        RespiratoryRate = 0.3f,
+                        ExpPeakFlow = 200, //valor original 1600
+                        InsPeakFlow = -80,  //valor original -330
+                        ExpFlowDuration = 18000,   //valor original
+                        InsFlowDuration = 10000   //valor original
                     },
 
                     CapacitiesMano = new Capacities
                     {
-                    ExpPeakFlow = 8451, //86.17 cmH2O
-                    InsPeakFlow = -7537,  //-76.85 cmH2O
-                    ExpFlowDuration = 18000,   //18 segundos
-                    InsFlowDuration = 10000   //10 segundos
+                        ExpPeakFlow = 400, //valor original 1600
+                        InsPeakFlow = -200,  //valor original -330
+                        ExpFlowDuration = 18000,   //valor original
+                        InsFlowDuration = 10000   //valor original
                     },
 
                     CapacitiesCinta = new Capacities
                     {
-                    RespiratoryRate = 0.3f,
-                    ExpPeakFlow = 700, //valor original 1600
-                    InsPeakFlow = -500,  //valor original -330
-                    ExpFlowDuration = 18000,   //valor original
-                    InsFlowDuration = 10000   //valor original
+                        RespiratoryRate = 0.3f,
+                        ExpPeakFlow = 200, //valor original 1600
+                        InsPeakFlow = -80,  //valor original -330
+                        ExpFlowDuration = 18000,   //valor original
+                        InsFlowDuration = 10000   //valor original
                     }
                 };
         }
 #endif
 
+        public static Pacient MapFromDto(PacientDto pacientDto)
+        {
+            return new Pacient
+            {
+                IdApi = pacientDto.Id,
+                CalibrationPitacoDone = pacientDto.CalibrationPitacoDone,
+                CalibrationManoDone = pacientDto.CalibrationManoDone,
+                CalibrationCintaDone = pacientDto.CalibrationCintaDone,
+                HowToPlayDone = pacientDto.HowToPlayDone,
+                Condition = EnumExtensions.GetValueFromDescription<ConditionType>(pacientDto.Condition),
+                Name = pacientDto.Name,
+                PlaySessionsDone = pacientDto.PlaySessionsDone,
+                UnlockedLevels = pacientDto.UnlockedLevels,
+                AccumulatedScore = pacientDto.AccumulatedScore,
+                PitacoThreshold = pacientDto.PitacoThreshold,
+                ManoThreshold = pacientDto.ManoThreshold,
+                CintaThreshold = pacientDto.CintaThreshold,
+
+                CapacitiesPitaco = new Capacities
+                {
+                    RespiratoryRate = pacientDto.CapacitiesPitaco.RespiratoryRate,
+                    ExpPeakFlow = pacientDto.CapacitiesPitaco.ExpPeakFlow, //valor original 1600
+                    InsPeakFlow = pacientDto.CapacitiesPitaco.InsPeakFlow,  //valor original -330
+                    ExpFlowDuration = pacientDto.CapacitiesPitaco.ExpFlowDuration,   //valor original
+                    InsFlowDuration = pacientDto.CapacitiesPitaco.InsFlowDuration   //valor original
+                },
+
+                CapacitiesMano = new Capacities
+                {
+                    RespiratoryRate = pacientDto.CapacitiesMano.RespiratoryRate,
+                    ExpPeakFlow = pacientDto.CapacitiesMano.ExpPeakFlow, //valor original 1600
+                    InsPeakFlow = pacientDto.CapacitiesMano.InsPeakFlow,  //valor original -330
+                    ExpFlowDuration = pacientDto.CapacitiesMano.ExpFlowDuration,   //valor original
+                    InsFlowDuration = pacientDto.CapacitiesMano.InsFlowDuration   //valor original
+                },
+
+                CapacitiesCinta = new Capacities
+                {
+                    RespiratoryRate = pacientDto.CapacitiesCinta.RespiratoryRate,
+                    ExpPeakFlow = pacientDto.CapacitiesCinta.ExpPeakFlow, //valor original 1600
+                    InsPeakFlow = pacientDto.CapacitiesCinta.InsPeakFlow,  //valor original -330
+                    ExpFlowDuration = pacientDto.CapacitiesCinta.ExpFlowDuration,   //valor original
+                    InsFlowDuration = pacientDto.CapacitiesCinta.InsFlowDuration   //valor original
+                },
+                Sex = EnumExtensions.GetValueFromDescription<Sex>(pacientDto.Sex),
+                Birthday = pacientDto.Birthday,
+                Weight = pacientDto.Weight,
+                Ethnicity = pacientDto.Ethnicity,
+                Height = pacientDto.Height,
+                Observations = pacientDto.Observations
+            };
+        }
+
+        public static PacientSendDto MapToPacientSendDto()
+        {
+            return new PacientSendDto
+            {
+                Name = Loaded.Name,
+                Sex = Loaded.Sex.GetDescription(),
+                Birthday = Loaded.Birthday,
+                Weight = Loaded.Weight,
+                Height = Loaded.Height,
+                Ethnicity = Loaded.Ethnicity,
+                AccumulatedScore = Loaded.AccumulatedScore,
+                UnlockedLevels = Loaded.UnlockedLevels,
+                CapacitiesPitaco = new CapacitiesDto
+                {
+                    InsPeakFlow = Loaded.CapacitiesPitaco.InsPeakFlow,
+                    ExpPeakFlow = Loaded.CapacitiesPitaco.ExpPeakFlow,
+                    RespiratoryRate = Loaded.CapacitiesPitaco.RespiratoryRate,
+                    ExpFlowDuration = Loaded.CapacitiesPitaco.ExpFlowDuration,
+                    InsFlowDuration = Loaded.CapacitiesPitaco.InsFlowDuration
+                },
+                CapacitiesCinta = new CapacitiesDto
+                {
+                    InsPeakFlow = Loaded.CapacitiesCinta.InsPeakFlow,
+                    ExpPeakFlow = Loaded.CapacitiesCinta.ExpPeakFlow,
+                    RespiratoryRate = Loaded.CapacitiesCinta.RespiratoryRate,
+                    ExpFlowDuration = Loaded.CapacitiesCinta.ExpFlowDuration,
+                    InsFlowDuration = Loaded.CapacitiesCinta.InsFlowDuration
+                },
+                CapacitiesMano = new CapacitiesDto
+                {
+                    InsPeakFlow = Loaded.CapacitiesMano.InsPeakFlow,
+                    ExpPeakFlow = Loaded.CapacitiesMano.ExpPeakFlow,
+                    RespiratoryRate = Loaded.CapacitiesMano.RespiratoryRate,
+                    ExpFlowDuration = Loaded.CapacitiesMano.ExpFlowDuration,
+                    InsFlowDuration = Loaded.CapacitiesMano.InsFlowDuration
+                },
+                CalibrationManoDone = Loaded.CalibrationManoDone,
+                CalibrationCintaDone = Loaded.CalibrationCintaDone,
+                CalibrationPitacoDone = Loaded.CalibrationPitacoDone,
+                CintaThreshold = Loaded.CintaThreshold,
+                Condition = Loaded.Condition.GetDescription(),
+                PlaySessionsDone = Loaded.PlaySessionsDone,
+                HowToPlayDone = Loaded.HowToPlayDone,
+                Observations = Loaded.Observations,
+                PitacoThreshold = Loaded.PitacoThreshold,
+                ManoThreshold = Loaded.ManoThreshold
+            };
+        }
     }
 
     public enum ConditionType
