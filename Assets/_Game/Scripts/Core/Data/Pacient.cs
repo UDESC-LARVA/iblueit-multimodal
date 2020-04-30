@@ -122,29 +122,29 @@ namespace Ibit.Core.Data
 
                 CapacitiesPitaco = new Capacities
                 {
-                    RespiratoryRate = pacientDto.CapacitiesPitaco.RespiratoryRate,
-                    ExpPeakFlow = pacientDto.CapacitiesPitaco.ExpPeakFlow, //valor original 1600
-                    InsPeakFlow = pacientDto.CapacitiesPitaco.InsPeakFlow,  //valor original -330
-                    ExpFlowDuration = pacientDto.CapacitiesPitaco.ExpFlowDuration,   //valor original
-                    InsFlowDuration = pacientDto.CapacitiesPitaco.InsFlowDuration   //valor original
+                    RespiratoryRate = pacientDto.CapacitiesPitaco.RawRespiratoryRate,
+                    ExpPeakFlow = pacientDto.CapacitiesPitaco.RawExpPeakFlow, //valor original 1600
+                    InsPeakFlow = pacientDto.CapacitiesPitaco.RawInsPeakFlow,  //valor original -330
+                    ExpFlowDuration = pacientDto.CapacitiesPitaco.RawExpFlowDuration,   //valor original
+                    InsFlowDuration = pacientDto.CapacitiesPitaco.RawInsFlowDuration   //valor original
                 },
 
                 CapacitiesMano = new Capacities
                 {
-                    RespiratoryRate = pacientDto.CapacitiesMano.RespiratoryRate,
-                    ExpPeakFlow = pacientDto.CapacitiesMano.ExpPeakFlow, //valor original 1600
-                    InsPeakFlow = pacientDto.CapacitiesMano.InsPeakFlow,  //valor original -330
-                    ExpFlowDuration = pacientDto.CapacitiesMano.ExpFlowDuration,   //valor original
-                    InsFlowDuration = pacientDto.CapacitiesMano.InsFlowDuration   //valor original
+                    RespiratoryRate = pacientDto.CapacitiesMano.RawRespiratoryRate,
+                    ExpPeakFlow = pacientDto.CapacitiesMano.RawExpPeakFlow, //valor original 1600
+                    InsPeakFlow = pacientDto.CapacitiesMano.RawInsPeakFlow,  //valor original -330
+                    ExpFlowDuration = pacientDto.CapacitiesMano.RawExpFlowDuration,   //valor original
+                    InsFlowDuration = pacientDto.CapacitiesMano.RawInsFlowDuration   //valor original
                 },
 
                 CapacitiesCinta = new Capacities
                 {
-                    RespiratoryRate = pacientDto.CapacitiesCinta.RespiratoryRate,
-                    ExpPeakFlow = pacientDto.CapacitiesCinta.ExpPeakFlow, //valor original 1600
-                    InsPeakFlow = pacientDto.CapacitiesCinta.InsPeakFlow,  //valor original -330
-                    ExpFlowDuration = pacientDto.CapacitiesCinta.ExpFlowDuration,   //valor original
-                    InsFlowDuration = pacientDto.CapacitiesCinta.InsFlowDuration   //valor original
+                    RespiratoryRate = pacientDto.CapacitiesCinta.RawRespiratoryRate,
+                    ExpPeakFlow = pacientDto.CapacitiesCinta.RawExpPeakFlow, //valor original 1600
+                    InsPeakFlow = pacientDto.CapacitiesCinta.RawInsPeakFlow,  //valor original -330
+                    ExpFlowDuration = pacientDto.CapacitiesCinta.RawExpFlowDuration,   //valor original
+                    InsFlowDuration = pacientDto.CapacitiesCinta.RawInsFlowDuration   //valor original
                 },
                 Sex = EnumExtensions.GetValueFromDescription<Sex>(pacientDto.Sex),
                 Birthday = pacientDto.Birthday,
@@ -169,27 +169,27 @@ namespace Ibit.Core.Data
                 UnlockedLevels = Loaded.UnlockedLevels,
                 CapacitiesPitaco = new CapacitiesDto
                 {
-                    InsPeakFlow = Loaded.CapacitiesPitaco.InsPeakFlow,
-                    ExpPeakFlow = Loaded.CapacitiesPitaco.ExpPeakFlow,
-                    RespiratoryRate = Loaded.CapacitiesPitaco.RespiratoryRate,
-                    ExpFlowDuration = Loaded.CapacitiesPitaco.ExpFlowDuration,
-                    InsFlowDuration = Loaded.CapacitiesPitaco.InsFlowDuration
+                    RawInsPeakFlow = Loaded.CapacitiesPitaco.RawInsPeakFlow,
+                    RawExpPeakFlow = Loaded.CapacitiesPitaco.RawExpPeakFlow,
+                    RawRespiratoryRate = Loaded.CapacitiesPitaco.RawRespRate,
+                    RawExpFlowDuration = Loaded.CapacitiesPitaco.RawExpFlowDuration,
+                    RawInsFlowDuration = Loaded.CapacitiesPitaco.RawInsFlowDuration
                 },
                 CapacitiesCinta = new CapacitiesDto
                 {
-                    InsPeakFlow = Loaded.CapacitiesCinta.InsPeakFlow,
-                    ExpPeakFlow = Loaded.CapacitiesCinta.ExpPeakFlow,
-                    RespiratoryRate = Loaded.CapacitiesCinta.RespiratoryRate,
-                    ExpFlowDuration = Loaded.CapacitiesCinta.ExpFlowDuration,
-                    InsFlowDuration = Loaded.CapacitiesCinta.InsFlowDuration
+                    RawInsPeakFlow = Loaded.CapacitiesPitaco.RawInsPeakFlow,
+                    RawExpPeakFlow = Loaded.CapacitiesPitaco.RawExpPeakFlow,
+                    RawRespiratoryRate = Loaded.CapacitiesPitaco.RawRespRate,
+                    RawExpFlowDuration = Loaded.CapacitiesPitaco.RawExpFlowDuration,
+                    RawInsFlowDuration = Loaded.CapacitiesPitaco.RawInsFlowDuration
                 },
                 CapacitiesMano = new CapacitiesDto
                 {
-                    InsPeakFlow = Loaded.CapacitiesMano.InsPeakFlow,
-                    ExpPeakFlow = Loaded.CapacitiesMano.ExpPeakFlow,
-                    RespiratoryRate = Loaded.CapacitiesMano.RespiratoryRate,
-                    ExpFlowDuration = Loaded.CapacitiesMano.ExpFlowDuration,
-                    InsFlowDuration = Loaded.CapacitiesMano.InsFlowDuration
+                    RawInsPeakFlow = Loaded.CapacitiesPitaco.RawInsPeakFlow,
+                    RawExpPeakFlow = Loaded.CapacitiesPitaco.RawExpPeakFlow,
+                    RawRespiratoryRate = Loaded.CapacitiesPitaco.RawRespRate,
+                    RawExpFlowDuration = Loaded.CapacitiesPitaco.RawExpFlowDuration,
+                    RawInsFlowDuration = Loaded.CapacitiesPitaco.RawInsFlowDuration
                 },
                 CalibrationManoDone = Loaded.CalibrationManoDone,
                 CalibrationCintaDone = Loaded.CalibrationCintaDone,
