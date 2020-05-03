@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Assets._Game.Scripts.Core.Api.Dto;
+using Assets._Game.Scripts.Core.Api.Extensions;
 using Ibit.Core.Audio;
 using Ibit.Core.Data;
-using Ibit.Core.Database;
+using Ibit.Core.Data.Enums;
+using Ibit.Core.Data.Manager;
 using Ibit.Core.Serial;
 using Ibit.Core.Util;
 using NaughtyAttributes;
@@ -16,18 +19,18 @@ namespace Ibit.Calibration
     {
         public static CalibrationExercisePitaco CalibrationToLoad = 0;
 
-        [BoxGroup("Controls")][SerializeField] private CalibrationExercisePitaco _currentExercise;
-        [BoxGroup("Controls")][SerializeField] private int FlowTimeThreshold = 2000; //ms
-        [BoxGroup("Controls")][SerializeField] private float RespiratoryFrequencyThreshold = 0.05f; //s
-        [BoxGroup("Controls")][SerializeField] private int TimerRespFreq = 60; //seg
-        [BoxGroup("Controls")][SerializeField] private int TimerPeakExercise = 8; //seg        
-        [BoxGroup("Controls")][SerializeField] private int _currentStep = 1; //default: 1 
-        [BoxGroup("Screen Objects")][SerializeField] private GameObject _clockObject;
-        [BoxGroup("Screen Objects")][SerializeField] private GameObject _dudeObject;
-        [BoxGroup("UI")][SerializeField] private Text _dialogText;
-        [BoxGroup("UI")][SerializeField] private Text _exerciseCountText;
-        [BoxGroup("UI")][SerializeField] private Text _timerText;
-        [BoxGroup("UI")][SerializeField] private GameObject _enterButton;
+        [BoxGroup("Controls")] [SerializeField] private CalibrationExercisePitaco _currentExercise;
+        [BoxGroup("Controls")] [SerializeField] private int FlowTimeThreshold = 2000; //ms
+        [BoxGroup("Controls")] [SerializeField] private float RespiratoryFrequencyThreshold = 0.05f; //s
+        [BoxGroup("Controls")] [SerializeField] private int TimerRespFreq = 60; //seg
+        [BoxGroup("Controls")] [SerializeField] private int TimerPeakExercise = 8; //seg        
+        [BoxGroup("Controls")] [SerializeField] private int _currentStep = 1; //default: 1 
+        [BoxGroup("Screen Objects")] [SerializeField] private GameObject _clockObject;
+        [BoxGroup("Screen Objects")] [SerializeField] private GameObject _dudeObject;
+        [BoxGroup("UI")] [SerializeField] private Text _dialogText;
+        [BoxGroup("UI")] [SerializeField] private Text _exerciseCountText;
+        [BoxGroup("UI")] [SerializeField] private Text _timerText;
+        [BoxGroup("UI")] [SerializeField] private GameObject _enterButton;
 
         private bool _acceptingValues;
         private bool _calibrationDone;
@@ -37,6 +40,7 @@ namespace Ibit.Calibration
         private Stopwatch _flowWatch;
         private Stopwatch _timerWatch;
         private Capacities _tmpCapacities;
+        private CalibrationOverviewSendDto _calibrationOverviewSendDto;
         private CalibrationLoggerPitaco _calibrationLogger;
         private Dictionary<float, float> _capturedSamples;
         private SerialControllerPitaco _serialController;
@@ -46,6 +50,11 @@ namespace Ibit.Calibration
             _serialController = FindObjectOfType<SerialControllerPitaco>();
             _serialController.OnSerialMessageReceived += OnSerialMessageReceived;
             _tmpCapacities = new Capacities();
+            _calibrationOverviewSendDto = new CalibrationOverviewSendDto
+            {
+                GameDevice = GameDevice.Pitaco.GetDescription(),
+                PacientId = Pacient.Loaded.IdApi
+            };
             _flowWatch = new Stopwatch();
             _timerWatch = new Stopwatch();
             _capturedSamples = new Dictionary<float, float>();
@@ -149,6 +158,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawRespRate;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.RespiratoryFrequency.GetDescription();
                                     Pacient.Loaded.CapacitiesPitaco.RespiratoryRate = _tmpCapacities.RawRespRate;
                                     SaveAndQuit();
                                     break;
@@ -218,6 +229,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawInsPeakFlow;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.InspiratoryPeak.GetDescription();
                                     Pacient.Loaded.CapacitiesPitaco.InsPeakFlow = _tmpCapacities.RawInsPeakFlow;
                                     SaveAndQuit();
                                     break;
@@ -302,6 +315,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawInsFlowDuration;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.InspiratoryDuration.GetDescription();
                                     Pacient.Loaded.CapacitiesPitaco.InsFlowDuration = _tmpCapacities.RawInsFlowDuration;
                                     SaveAndQuit();
                                     break;
@@ -374,6 +389,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawExpPeakFlow;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.ExpiratoryPeak.GetDescription();
                                     Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow = _tmpCapacities.RawExpPeakFlow;
                                     SaveAndQuit();
                                     break;
@@ -459,6 +476,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawExpFlowDuration;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.ExpiratoryDuration.GetDescription();
                                     Pacient.Loaded.CapacitiesPitaco.ExpFlowDuration = _tmpCapacities.RawExpFlowDuration;
                                     SaveAndQuit();
                                     break;
@@ -516,12 +535,26 @@ namespace Ibit.Calibration
             _acceptingValues = true;
         }
 
-        private void SaveAndQuit()
+        private async void SaveAndQuit()
         {
+            GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
+
             Pacient.Loaded.CalibrationPitacoDone = Pacient.Loaded.IsCalibrationPitacoDone;
-            PacientDb.Instance.Save();
+
+            var pacientSendDto = Pacient.MapToPacientSendDto();
+            var responsePacient = await DataManager.Instance.UpdatePacient(pacientSendDto);
+
+            var responseCalibration = await DataManager.Instance.SaveCalibrationOverview(_calibrationOverviewSendDto);
+
+            GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
+
+            if (responsePacient.ApiResponse == null)
+                SysMessage.Info("Erro ao atualizar os dados do paciente na nuvem!\n Os dados poderão ser enviados posteriormente..");
+
+            if (responseCalibration.ApiResponse == null)
+                SysMessage.Info("Erro salvar os dados de calibração na nuvem!\n Os dados poderão ser enviados posteriormente..");
+
             FindObjectOfType<PitacoLogger>().StopLogging();
-            _calibrationLogger.Save();
             ReturnToMainMenu();
         }
 

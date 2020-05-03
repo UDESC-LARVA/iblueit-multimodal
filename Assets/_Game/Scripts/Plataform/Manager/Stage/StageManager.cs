@@ -38,6 +38,9 @@ namespace Ibit.Plataform.Manager.Stage
         [SerializeField]
         private SerialControllerCinta serialControllerCinta;
 
+        [SerializeField]
+        private SerialControllerOximetro serialControllerOximetro;
+
 
 
 
@@ -64,12 +67,16 @@ namespace Ibit.Plataform.Manager.Stage
             serialControllerCinta = FindObjectOfType<SerialControllerCinta>();
             serialControllerCinta.OnSerialConnected += StartStage;
 
+            serialControllerOximetro = FindObjectOfType<SerialControllerOximetro>();
+            serialControllerOximetro.OnSerialConnected += StartStage;
+
 #if !UNITY_EDITOR
 
         // Caso algum dispositivo de controle seja disconectado.
         serialControllerPitaco.OnSerialDisconnected += PauseOnDisconnect;
         serialControllerMano.OnSerialDisconnected += PauseOnDisconnect;
         serialControllerCinta.OnSerialDisconnected += PauseOnDisconnect;
+        serialControllerOximetro.OnSerialDisconnected += PauseOnDisconnect;
 #endif
 
             FindObjectOfType<Player>().OnPlayerDeath += GameOver;
@@ -97,10 +104,12 @@ namespace Ibit.Plataform.Manager.Stage
             serialControllerPitaco.Connect();
             serialControllerMano.Connect();
             serialControllerCinta.Connect();
+            serialControllerOximetro.Connect();
 
             serialControllerPitaco.StartSamplingDelayed();
             serialControllerMano.StartSamplingDelayed();
-            serialControllerCinta.StartSamplingDelayed();      
+            serialControllerCinta.StartSamplingDelayed();
+             serialControllerOximetro.StartSamplingDelayed(); 
 
             IsRunning = true;
             OnStageStart?.Invoke();
@@ -144,6 +153,9 @@ namespace Ibit.Plataform.Manager.Stage
 
             FindObjectOfType<SerialControllerCinta>().StopSampling();
             FindObjectOfType<CintaLogger>().StopLogging();
+
+            FindObjectOfType<SerialControllerOximetro>().StopSampling();
+            FindObjectOfType<OximetroLogger>().StopLogging();
             
             OnStageEnd?.Invoke();
         }

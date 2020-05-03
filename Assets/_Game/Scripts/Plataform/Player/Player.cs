@@ -17,16 +17,19 @@ namespace Ibit.Plataform
             var scp = FindObjectOfType<SerialControllerPitaco>();
             var scm = FindObjectOfType<SerialControllerMano>();
             var scc = FindObjectOfType<SerialControllerCinta>();
+            var sco = FindObjectOfType<SerialControllerOximetro>();
 
 
-            scp.OnSerialMessageReceived += PositionOnSerial;
+            scp.OnSerialMessageReceived += PositionOnSerialPitaco;
             scp.OnSerialMessageReceived += AnimatePitaco;
 
-            scm.OnSerialMessageReceived += PositionOnSerial;
+            scm.OnSerialMessageReceived += PositionOnSerialMano;
             scm.OnSerialMessageReceived += AnimateMano;
 
-            scc.OnSerialMessageReceived += PositionOnSerial;
+            scc.OnSerialMessageReceived += PositionOnSerialCinta;
             scc.OnSerialMessageReceived += AnimateCinta;
+
+            sco.OnSerialMessageReceived += PositionOnSerialOximetro;
 
         }
 

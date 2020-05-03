@@ -47,7 +47,6 @@ namespace Ibit.WaterGame
         //Stores the score of the round and change the stars sprites
         public void ReceivedStars(int roundScore, int roundNumber, float pikeValue)
         {
-            Debug.Log(roundNumber);
             totalScores[roundNumber] = roundScore;
 
             // Se o Pitaco estiver conectado

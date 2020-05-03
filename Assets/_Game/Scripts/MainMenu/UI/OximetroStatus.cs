@@ -7,7 +7,7 @@ namespace Ibit.MainMenu.UI
     public class OximetroStatus : MonoBehaviour
     {
         [SerializeField]
-        private SerialControllerPitaco serialController;
+        private SerialControllerOximetro serialController;
 
         [SerializeField]
         private Sprite offline, online;
@@ -15,7 +15,7 @@ namespace Ibit.MainMenu.UI
         private void Awake()
         {
             if (serialController == null)
-                serialController = FindObjectOfType<SerialControllerPitaco>();
+                serialController = FindObjectOfType<SerialControllerOximetro>();
 
             if (serialController == null)
                 Debug.LogWarning("Serial Controller instance not found!");
@@ -23,6 +23,6 @@ namespace Ibit.MainMenu.UI
 
         private void FixedUpdate() => GetComponent<Image>().sprite = serialController.IsConnected ? online : offline;
 
-        public void Reboot() => UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        public void Reboot() => UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex); // Descobre o índice da scene atual e a reinicia pra tentar reconectar o Oxímetro.
     }
 }
