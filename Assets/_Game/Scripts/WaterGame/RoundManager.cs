@@ -26,7 +26,6 @@ namespace Ibit.WaterGame
         [SerializeField] private Text displayHowTo, displayTimer;
         [SerializeField] private GameObject TextPanel;
 
-
         [SerializeField] private Player player;         // adicionado 11/09/19
 
         private bool playable, finished, toBackup;
@@ -36,6 +35,7 @@ namespace Ibit.WaterGame
         private SerialControllerPitaco scp;
         private SerialControllerMano scm;
         private SerialControllerCinta scc;
+        private SerialControllerOximetro sco;
 
         public float SpicoInspiratorio;       // adicionado 11/09/19
         public float picomomento = 0;       // adicionado 10/16/19
@@ -44,14 +44,12 @@ namespace Ibit.WaterGame
         public Slider sliderpico; // adicionado 10/16/19
         bool resetsliderpico = true; //adicionado 21/10/19
 
-
-
-
         private void Awake()
         {
             scp = FindObjectOfType<SerialControllerPitaco>();
             scm = FindObjectOfType<SerialControllerMano>();
             scc = FindObjectOfType<SerialControllerCinta>();
+            sco = FindObjectOfType<SerialControllerOximetro>();
         }
 
         private void Start()
@@ -64,41 +62,31 @@ namespace Ibit.WaterGame
             _roundNumber = 0; //Defines in which round the the player is.
             FindObjectOfType<Player>().EnablePlayEvent += NotPlayable;
             StartCoroutine(PlayGame()); //Starts the Gameplay State Machine
-
-
-
             slider.minValue = 0;    //adicionado 11/09/19
 
 
             if (scp.IsConnected) // Se PITACO conectado
             {
                 SpicoInspiratorio = -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
-
             }
             else
             {
                 if (scm.IsConnected) // Se Mano conectado
                 {
                     SpicoInspiratorio = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
-
                 }
                 else
                 {
                     if (scc.IsConnected) // Se CINTA conectada
                     {
                         SpicoInspiratorio = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
-
                     }
                 }
             }
 
-
             slider.maxValue = SpicoInspiratorio;         //adicionado 11/09/19
-
             sliderpico.minValue = 0;    //adicionado 10/16/19
             sliderpico.maxValue = SpicoInspiratorio;         //adicionado 10/16/19
-
-
         }
 
         //Sending Event Area
@@ -169,6 +157,8 @@ namespace Ibit.WaterGame
         {
             while (!finished)
             {
+                sco.StartSampling();
+
                 while (!scp.IsConnected && !scm.IsConnected && !scc.IsConnected)
                 {
                     state = -1;
@@ -176,7 +166,6 @@ namespace Ibit.WaterGame
                     displayHowTo.text = "Nenhum dispositivo de controle conectado! Conecte e volte ao menu principal.";
                     yield return null;
                 }
-
 
                 // Se o PITACO estiver conectado
                 if (scp.IsConnected)
@@ -229,7 +218,9 @@ namespace Ibit.WaterGame
                             GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
                             FindObjectOfType<Core.MinigameLogger>().Save(GameDevice.Pitaco, RespiratoryExercise.InspiratoryPeak, Minigame.WaterGame);
                             GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
-
+                            Debug.Log("Minigame logs saved.");
+                            
+                            NotPlayable();
                             break;
                         case 10:
                             TextPanel.SetActive(false);
@@ -261,8 +252,6 @@ namespace Ibit.WaterGame
                             case 2:
                             case 4:
                             case 6: //Pre-flow
-                                scm.Recalibrate();
-                                scm.StartSamplingDelayed();
                                 TextPanel.SetActive(true);
                                 displayHowTo.text = "Pressione [Enter] e INSPIRE \n o mais forte que conseguir dentro do tempo.";
                                 while (playable)
@@ -274,6 +263,8 @@ namespace Ibit.WaterGame
                             case 3:
                             case 5:
                             case 7: //Player's Flow
+                                scm.StartSampling();
+                                scm.Recalibrate();
                                 displayHowTo.text = "";
                                 EnablePlayerFlow(true, _roundNumber);
                                 _roundNumber++;
@@ -283,19 +274,22 @@ namespace Ibit.WaterGame
                                     StartCountdown();
                                     yield return null;
                                 }
-
+                                scm.StopSampling();
                                 ResetCountDown();
                                 playable = true;
                                 break;
                             case 8:
-                                scm.StopSampling();
-                                FindObjectOfType<Core.Util.ManoLogger>().StopLogging();
                                 TextPanel.SetActive(true);
                                 displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
                                 break;
                             case 9:
                                 Debug.Log("Saving minigame data...");
-                                FindObjectOfType<Core.MinigameLogger>().Save(GameDevice.Pitaco, RespiratoryExercise.InspiratoryPeak, Minigame.WaterGame);
+                                GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
+                                FindObjectOfType<Core.MinigameLogger>().Save(GameDevice.Mano, RespiratoryExercise.InspiratoryPeak, Minigame.WaterGame);
+                                GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
+                                Debug.Log("Minigame logs saved.");
+                            
+                                NotPlayable();
                                 break;
                             case 10:
                                 TextPanel.SetActive(false);
@@ -314,7 +308,7 @@ namespace Ibit.WaterGame
                         // Se a CINTA estiver conectada
                         if (scc.IsConnected)
                         {
-                            switch (state)
+                             switch (state)
                             {
                                 case 1: //Introduction
                                     displayHowTo.text = "Bem-Vindo ao jogo do copo d'agua![ENTER]";
@@ -327,8 +321,6 @@ namespace Ibit.WaterGame
                                 case 2:
                                 case 4:
                                 case 6: //Pre-flow
-                                    scc.Recalibrate();
-                                    scc.StartSamplingDelayed();
                                     TextPanel.SetActive(true);
                                     displayHowTo.text = "Pressione [Enter] e INSPIRE \n o mais forte que conseguir dentro do tempo.";
                                     while (playable)
@@ -340,6 +332,8 @@ namespace Ibit.WaterGame
                                 case 3:
                                 case 5:
                                 case 7: //Player's Flow
+                                    scc.StartSampling();
+                                    scc.Recalibrate();
                                     displayHowTo.text = "";
                                     EnablePlayerFlow(true, _roundNumber);
                                     _roundNumber++;
@@ -349,19 +343,22 @@ namespace Ibit.WaterGame
                                         StartCountdown();
                                         yield return null;
                                     }
-
+                                    scc.StopSampling();
                                     ResetCountDown();
                                     playable = true;
                                     break;
                                 case 8:
-                                    scc.StopSampling();
-                                    FindObjectOfType<Core.Util.CintaLogger>().StopLogging();
                                     TextPanel.SetActive(true);
                                     displayHowTo.text = "Pressione [Enter] para visualizar sua pontuação.";
                                     break;
                                 case 9:
                                     Debug.Log("Saving minigame data...");
-                                    FindObjectOfType<Core.MinigameLogger>().Save(GameDevice.Pitaco, RespiratoryExercise.InspiratoryPeak, Minigame.WaterGame);
+                                    GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
+                                    FindObjectOfType<Core.MinigameLogger>().Save(GameDevice.Cinta, RespiratoryExercise.InspiratoryPeak, Minigame.WaterGame);
+                                    GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
+                                    Debug.Log("Minigame logs saved.");
+                            
+                                    NotPlayable();
                                     break;
                                 case 10:
                                     TextPanel.SetActive(false);
@@ -376,37 +373,84 @@ namespace Ibit.WaterGame
                             }
                         }
                     }
-                } ////////////////////////////////////////
+                }
 
                 yield return null;
             }
+            sco.StopSampling();
         }
 
         #endregion;
 
         private void Update()
         {
-            slider.value = -player.sensorValue;  //adicionado 11/09/19
-
-
-            if (resetsliderpico == false)                     //adicionado 16/10/19
+            if (scp.IsConnected) // Se PITACO conectado
             {
+                slider.value = -player.sensorValuePitaco;  //adicionado 11/09/19
 
-                if (player.sensorValue < picomomento)       //adicionado 16/10/19
+                if (resetsliderpico == false)                     //adicionado 16/10/19
                 {
-                    picomomento = player.sensorValue;                     //adicionado 16/10/19
-                    sliderpico.value = -picomomento;            //adicionado 16/10/19   
+
+                    if (player.sensorValuePitaco < picomomento)       //adicionado 16/10/19
+                    {
+                        picomomento = player.sensorValuePitaco;                     //adicionado 16/10/19
+                        sliderpico.value = -picomomento;            //adicionado 16/10/19   
+                    }
+                }
+                else                                                    //adicionado 16/10/19
+                {
+                    sliderpico.value = 0;                     //adicionado 16/10/19
+                    picomomento = 0;
+                    resetsliderpico = false;                // add 21/10/19
+                }
+
+            }
+            else
+            {
+                if (scm.IsConnected) // Se Mano conectado
+                {
+                    slider.value = -player.sensorValueMano;  //adicionado 11/09/19
+
+                    if (resetsliderpico == false)                     //adicionado 16/10/19
+                    {
+
+                        if (player.sensorValueMano < picomomento)       //adicionado 16/10/19
+                        {
+                            picomomento = player.sensorValueMano;                     //adicionado 16/10/19
+                            sliderpico.value = -picomomento;            //adicionado 16/10/19   
+                        }
+                    }
+                    else                                                    //adicionado 16/10/19
+                    {
+                        sliderpico.value = 0;                     //adicionado 16/10/19
+                        picomomento = 0;
+                        resetsliderpico = false;                // add 21/10/19
+                    }
+                }
+               else
+                {
+                    if (scc.IsConnected) // Se CINTA conectada
+                    {
+                        slider.value = -player.sensorValueCinta;  //adicionado 11/09/19
+
+                        if (resetsliderpico == false)                     //adicionado 16/10/19
+                        {
+
+                            if (player.sensorValueCinta < picomomento)       //adicionado 16/10/19
+                            {
+                                picomomento = player.sensorValueCinta;                     //adicionado 16/10/19
+                                sliderpico.value = -picomomento;            //adicionado 16/10/19   
+                            }
+                        }
+                        else                                                    //adicionado 16/10/19
+                        {
+                            sliderpico.value = 0;                     //adicionado 16/10/19
+                            picomomento = 0;
+                            resetsliderpico = false;                // add 21/10/19
+                        }
+                    }
                 }
             }
-            else                                                    //adicionado 16/10/19
-            {
-                sliderpico.value = 0;                     //adicionado 16/10/19
-                picomomento = 0;
-                resetsliderpico = false;                // add 21/10/19
-            }
-
-
-
 
             if (countdownTimer <= 0)
             {

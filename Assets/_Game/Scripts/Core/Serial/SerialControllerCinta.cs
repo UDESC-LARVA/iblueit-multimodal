@@ -131,21 +131,6 @@ namespace Ibit.Core.Serial
                     Thread.Sleep(arduinoOpenTime); // this is a fix to wait for arduino to open a connection :)
                     sp.Write("e");
 
-                    // if(sp.ReadLine().Contains("echop"))
-                    // {
-                    //     print("Pitaco conectado...");
-                    // }
-
-                    // if(sp.ReadLine().Contains("echom"))
-                    // {
-                    //     print("Mano conectado...");
-                    // }
-
-                    // if(sp.ReadLine().Contains("echoc"))
-                    // {
-                    //     print("Cinta conectada...");
-                    // }
-
                     if (!sp.ReadLine().Contains("echoc"))
                         throw new TimeoutException("No response from device.");
                 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 namespace Ibit.CakeGame
 {
     public class ScoreMenu : MonoBehaviour
@@ -62,6 +63,6 @@ namespace Ibit.CakeGame
 
         public void ToggleScoreMenu() => gameObject.SetActive(true);
 
-        private void Start() => gameObject.SetActive(false);
+        //private void Start() => gameObject.SetActive(false);
     }
 }
