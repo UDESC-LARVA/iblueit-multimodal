@@ -19,7 +19,10 @@ namespace Ibit.WaterGame
 
         /*Player Variables*/
         public float maximumPeak;
-        public float sensorValue;
+        public float sensorValuePitaco;
+        public float sensorValueMano;
+        public float sensorValueCinta;
+        public float sensorValueOximetro;
         public bool flowStoped;
 
         /*Utility Variables*/
@@ -32,6 +35,11 @@ namespace Ibit.WaterGame
         private SerialControllerPitaco scp;
         private SerialControllerMano scm;
         private SerialControllerCinta scc;
+        private SerialControllerOximetro sco;
+
+        public float HRValue;
+        public float SPO2Value;
+        public bool oxiActive = false;
 
 
         private void Start()
@@ -39,8 +47,7 @@ namespace Ibit.WaterGame
             scp = FindObjectOfType<SerialControllerPitaco>();
             scm = FindObjectOfType<SerialControllerMano>();
             scc = FindObjectOfType<SerialControllerCinta>();
-
-
+            sco = FindObjectOfType<SerialControllerOximetro>();
 
             stop = false;
             waitSignal = false;
@@ -51,7 +58,7 @@ namespace Ibit.WaterGame
 
             if (scp.IsConnected) // Se PITACO conectado
             {
-                scp.OnSerialMessageReceived += OnMessageReceived;
+                scp.OnSerialMessageReceived += OnMessageReceivedPitaco;
                 scp.StartSamplingDelayed();
 
             }
@@ -59,7 +66,7 @@ namespace Ibit.WaterGame
             {
                 if (scm.IsConnected) // Se Mano conectado
                 {
-                    scm.OnSerialMessageReceived += OnMessageReceived;
+                    scm.OnSerialMessageReceived += OnMessageReceivedMano;
                     scm.StartSamplingDelayed();
 
                 }
@@ -67,11 +74,17 @@ namespace Ibit.WaterGame
                 {
                     if (scc.IsConnected) // Se CINTA conectada
                     {
-                        scc.OnSerialMessageReceived += OnMessageReceived;
+                        scc.OnSerialMessageReceived += OnMessageReceivedCinta;
                         scc.StartSamplingDelayed();
 
                     }
                 }
+            }
+
+            if (sco.IsConnected) // Se Cinta conectada
+            {
+                sco.OnSerialMessageReceived += OnMessageReceivedOximetro;
+
             }
 
         }
@@ -86,13 +99,42 @@ namespace Ibit.WaterGame
         protected virtual void OnAuthorize() => EnablePlayEvent?.Invoke();
 
         //Flow values being received by the serial controller
-        private void OnMessageReceived(string msg)
+        private void OnMessageReceivedPitaco(string msg)
         {
             if (msg.Length < 1)
                 return;
 
-            sensorValue = Parsers.Float(msg);
+            sensorValuePitaco = Parsers.Float(msg);
         }
+
+        private void OnMessageReceivedMano(string msg)
+        {
+            if (msg.Length < 1)
+                return;
+
+            sensorValueMano = Parsers.Float(msg);
+        }
+
+        private void OnMessageReceivedCinta(string msg)
+        {
+            if (msg.Length < 1)
+                return;
+
+            sensorValueCinta = Parsers.Float(msg);
+        }
+
+        private void OnMessageReceivedOximetro(string msg)
+        {
+             if (msg.Length < 1)
+                return;
+
+            oxiActive = true;
+            string[] sensorValueOxi = msg.Split(',');
+            HRValue = Parsers.Float(sensorValueOxi[0]);
+            SPO2Value = Parsers.Float(sensorValueOxi[1]);
+        }
+
+
 
         public void ReceivedMessage(bool hasPlayed, int roundNumber)
         {
@@ -109,6 +151,7 @@ namespace Ibit.WaterGame
                 OnHaveStar(0, roundNumber, 0);
             }
         }
+
         public void ExecuteNextStep()
         {
             OnAuthorize();
@@ -123,20 +166,20 @@ namespace Ibit.WaterGame
             if (scp.IsConnected) // Se PITACO conectado
             {
                 //While player does not blow.
-                while (sensorValue >= -Pacient.Loaded.PitacoThreshold * 2f)
+                while (sensorValuePitaco >= -Pacient.Loaded.PitacoThreshold * 2f)
                 {
                     //Debug.Log($"Wait: {sensorValue}");
                     yield return null;
                 }
 
                 //Player is blowing, take the highest value.
-                while (sensorValue < -Pacient.Loaded.PitacoThreshold)
+                while (sensorValuePitaco < -Pacient.Loaded.PitacoThreshold)
                 {
                     //Debug.Log($"Blow: {sensorValue}");
 
-                    if (sensorValue < maximumPeak)
+                    if (sensorValuePitaco < maximumPeak)
                     {
-                        maximumPeak = sensorValue;
+                        maximumPeak = sensorValuePitaco;
                         //Debug.Log("Novo pico máximo: " + maximumPeak);
                     }
 
@@ -150,20 +193,20 @@ namespace Ibit.WaterGame
                 if (scm.IsConnected) // Se Mano conectado
                 {
                     //While player does not blow.
-                    while (sensorValue >= -Pacient.Loaded.ManoThreshold * 2f)
+                    while (sensorValueMano >= -Pacient.Loaded.ManoThreshold * 2f)
                     {
                         //Debug.Log($"Wait: {sensorValue}");
                         yield return null;
                     }
 
                     //Player is blowing, take the highest value.
-                    while (sensorValue < -Pacient.Loaded.ManoThreshold)
+                    while (sensorValueMano < -Pacient.Loaded.ManoThreshold)
                     {
                         //Debug.Log($"Blow: {sensorValue}");
 
-                        if (sensorValue < maximumPeak)
+                        if (sensorValueMano < maximumPeak)
                         {
-                            maximumPeak = sensorValue;
+                            maximumPeak = sensorValueMano;
                             //Debug.Log("Novo pico máximo: " + maximumPeak);
                         }
 
@@ -177,20 +220,20 @@ namespace Ibit.WaterGame
                     if (scc.IsConnected) // Se CINTA conectada
                     {
                         //While player does not blow.
-                        while (sensorValue >= -Pacient.Loaded.CintaThreshold * 2f)
+                        while (sensorValueCinta >= -Pacient.Loaded.CintaThreshold * 2f)
                         {
                             //Debug.Log($"Wait: {sensorValue}");
                             yield return null;
                         }
 
                         //Player is blowing, take the highest value.
-                        while (sensorValue < -Pacient.Loaded.CintaThreshold)
+                        while (sensorValueCinta < -Pacient.Loaded.CintaThreshold)
                         {
                             //Debug.Log($"Blow: {sensorValue}");
 
-                            if (sensorValue < maximumPeak)
+                            if (sensorValueCinta < maximumPeak)
                             {
-                                maximumPeak = sensorValue;
+                                maximumPeak = sensorValueCinta;
                                 //Debug.Log("Novo pico máximo: " + maximumPeak);
                             }
 
@@ -249,8 +292,6 @@ namespace Ibit.WaterGame
 
 
             var percentage = -pikeValue / playerPike;
-
-            Debug.Log("Porcentagem: " + percentage);
 
             if (percentage > 1.00f)   //Originalmente seria 25,50 e 75%, Foi modificado em 02/10/19 por Diogo e Jhonatan para 33, 67 e 100%
             {

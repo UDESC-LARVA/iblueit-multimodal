@@ -1,0 +1,7 @@
+1. Mova o arquivo scriptInstalador_NSIS.nsi para dentro da pasta raiz do formato executável (após feita build) do I Blue It.
+
+2. Abra o NSIS, escolha a opção "Compile NSI Scripts".
+
+3. Arraste para a janela do NSIS o arquivo .nsi dentro da pasta do I Blue It.
+
+4. O instalador será gerado dentro da pasta. Mova ou delete, caso seja necessário refazer o instalador. Do contrário, o script irá considerá-lo como arquivo a ser compactado junto ao jogo.

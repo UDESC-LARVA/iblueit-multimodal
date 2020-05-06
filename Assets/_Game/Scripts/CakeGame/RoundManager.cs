@@ -22,46 +22,72 @@ namespace Ibit.CakeGame
         private float timer = 10;
 
         private SerialControllerPitaco scp;
-        //private SerialControllerMano scm;
-        //private SerialControllerCinta scc;
-
+        private SerialControllerMano scm;
+        private SerialControllerCinta scc;
+        private SerialControllerOximetro sco;
 
         public float SpicoExpiratorio;       // adicionado 09/09/19
-
-
         public Slider slider; // adicionado 09/09/19
-
         public Slider sliderpico; // adicionado 16/10/19
         float picomomento = 0;      // adicionado 16/10/19
-
-
 
         [SerializeField] private Stars score;
         [SerializeField] public GameObject TextPanel;
 
-
         [SerializeField] private Candles candle;
         [SerializeField] private Text displayHowTo, displayTimer;
         [SerializeField] private int[] finalScore = new int[3];
-        [SerializeField] private ScoreMenu finalScoreMenu;
+        [SerializeField] public ScoreMenu finalScoreMenu;
         [SerializeField] private Player player;
 
         private void Awake()
         {
             scp = FindObjectOfType<SerialControllerPitaco>();
-            //scm = FindObjectOfType<SerialControllerMano>();
-            //scc = FindObjectOfType<SerialControllerCinta>();
+            scm = FindObjectOfType<SerialControllerMano>();
+            scc = FindObjectOfType<SerialControllerCinta>();
+            sco = FindObjectOfType<SerialControllerOximetro>();
+        }
+
+        private void Start()
+        {
+            passo = 0;
+            ppasso = false;
+            partidaCompleta = false;
+            displayHowTo.text = "Pressione [Enter] para começar.";
+            StartCoroutine(PlayGame());
+            slider.minValue = 0;    //adicionado 09/09/19
+
+            if (scp.IsConnected) // Se Pitaco conectado
+            {
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow;
+
+            } else {
+            if (scm.IsConnected) // Se Mano conectado
+            {
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesMano.ExpPeakFlow;
+
+            } else {
+            if (scc.IsConnected) // Se Cinta conectada
+            {
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
+            }}}
+
+            slider.maxValue = SpicoExpiratorio;         //adicionado 09/09/19
+            sliderpico.minValue = 0;    //adicionado 16/10/19
+            sliderpico.maxValue = SpicoExpiratorio;         //adicionado 16/10/19
         }
 
         private IEnumerator PlayGame()
         {
             while (!partidaCompleta)
             {
+                sco.StartSampling();
+
                 if (ppasso)
                 {
                     CleanScene();
-                    //Para voltar os outros controladores, voltar a condição AND com scm e scc
-                    while (!scp.IsConnected)
+                    
+                    while (!scp.IsConnected && !scm.IsConnected && !scc.IsConnected)
                     {
                         passo = -1;
                         TextPanel.SetActive(true);
@@ -87,14 +113,14 @@ namespace Ibit.CakeGame
 
                                 TextPanel.SetActive(false);
 
-                                while (player.sensorValue <= Pacient.Loaded.PitacoThreshold * 2 && jogou)
+                                while (player.sensorValuePitaco <= Pacient.Loaded.PitacoThreshold && jogou)
                                     yield return null;
 
                                 StopCountdown();
                                 paraTempo = true;
 
                                 //saiu do 0
-                                while (player.sensorValue > Pacient.Loaded.PitacoThreshold && jogou)
+                                while (player.sensorValuePitaco > Pacient.Loaded.PitacoThreshold && jogou)
                                 {
                                     FlowAction(player.picoExpiratorio, 1);
                                     yield return null;
@@ -127,14 +153,14 @@ namespace Ibit.CakeGame
 
                                 displayHowTo.text = "";
                                 TextPanel.SetActive(false);
-                                while (player.sensorValue <= Pacient.Loaded.PitacoThreshold * 2 && jogou)
+                                while (player.sensorValuePitaco <= Pacient.Loaded.PitacoThreshold && jogou)
                                     yield return null;
 
                                 StopCountdown();
                                 paraTempo = true;
 
                                 //saiu do 0
-                                while (player.sensorValue > Pacient.Loaded.PitacoThreshold && jogou)
+                                while (player.sensorValuePitaco > Pacient.Loaded.PitacoThreshold && jogou)
                                 {
                                     FlowAction(player.picoExpiratorio, 2);
                                     yield return null;
@@ -152,7 +178,6 @@ namespace Ibit.CakeGame
                                     SoundManager.Instance.PlaySound("Success");
                                 }
 
-                                player.picoExpiratorio = 0;
                                 break;
 
                             case 5:
@@ -168,14 +193,14 @@ namespace Ibit.CakeGame
 
                                 displayHowTo.text = "";
                                 TextPanel.SetActive(false);
-                                while (player.sensorValue <= Pacient.Loaded.PitacoThreshold * 2 && jogou)
+                                while (player.sensorValuePitaco <= Pacient.Loaded.PitacoThreshold && jogou)
                                     yield return null;
 
                                 StopCountdown();
                                 paraTempo = true;
 
                                 //saiu do 0
-                                while (player.sensorValue > Pacient.Loaded.PitacoThreshold && jogou)
+                                while (player.sensorValuePitaco > Pacient.Loaded.PitacoThreshold && jogou)
                                 {
                                     FlowAction(player.picoExpiratorio, 3);
                                     yield return null;
@@ -193,6 +218,7 @@ namespace Ibit.CakeGame
                                     SoundManager.Instance.PlaySound("Success");
                                 }
 
+                                player.picoExpiratorio = 0;
                                 break;
 
                             case 7:
@@ -206,6 +232,7 @@ namespace Ibit.CakeGame
                                 GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
                                 FindObjectOfType<MinigameLogger>().Save(GameDevice.Pitaco, RespiratoryExercise.ExpiratoryPeak, Minigame.CakeGame);
                                 GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
+                                Debug.Log("Minigame logs saved.");
 
                                 player.picoExpiratorio = 0;
 
@@ -219,249 +246,312 @@ namespace Ibit.CakeGame
 
                     #region Other Controllers
 
-                    //else
-                    //{ ////////////////////
-                    //  // Se o Mano estiver conectado
-                    //    if (scm.IsConnected)
-                    //    {
-                    //        switch (passo)
-                    //        {
-                    //            case 1:
-                    //                displayHowTo.text = "Pressione [Enter] e assopre o mais forte que conseguir dentro do tempo.";
-                    //                break;
+                    else {
+                    // Se o MANO estiver conectado
+                    if (scm.IsConnected)
+                    {
+                        switch (passo)
+                        {
+                            case 1:
+                                displayHowTo.text = "Pressione [Enter] e assopre o mais forte que conseguir dentro do tempo.";
+                                break;
 
-                    //            case 2:
+                            case 2:
 
-                    //                scm.StartSampling();
-                    //                scm.Recalibrate();
+                                scm.StartSampling();
+                                scm.Recalibrate();
 
-                    //                displayHowTo.text = "";
+                                displayHowTo.text = "";
 
-                    //                TextPanel.SetActive(false);
+                                TextPanel.SetActive(false);
 
-                    //                while (player.sensorValue <= Pacient.Loaded.ManoThreshold * 2 && jogou)
-                    //                    yield return null;
+                                while (player.sensorValueMano <= Pacient.Loaded.ManoThreshold && jogou)
+                                    yield return null;
 
-                    //                StopCountdown();
-                    //                paraTempo = true;
+                                StopCountdown();
+                                paraTempo = true;
 
-                    //                //saiu do 0
-                    //                while (player.sensorValue > Pacient.Loaded.ManoThreshold && jogou)
-                    //                {
-                    //                    FlowAction(player.picoExpiratorio, 1);
-                    //                    yield return null;
-                    //                }
+                                //saiu do 0
+                                while (player.sensorValueMano > Pacient.Loaded.ManoThreshold && jogou)
+                                {
+                                    FlowAction(player.picoExpiratorio, 1);
+                                    yield return null;
+                                }
 
-                    //                //voltou pro 0
-                    //                finalScoreMenu.pikeString[0] = player.picoExpiratorio.ToString();
-                    //                TextPanel.SetActive(true);
+                                scm.StopSampling();
 
-                    //                if (jogou)
-                    //                {
-                    //                    displayHowTo.text = "Parabéns!\nPressione [Enter] para ir para a proxima rodada.";
-                    //                    SoundManager.Instance.PlaySound("Success");
-                    //                }
+                                //voltou pro 0
+                                finalScoreMenu.pikeString[0] = player.picoExpiratorio.ToString();
+                                TextPanel.SetActive(true);
 
-                    //                player.picoExpiratorio = 0;
-                    //                break;
+                                if (jogou)
+                                {
+                                    displayHowTo.text = "Parabéns!\nPressione [Enter] para ir para a proxima rodada.";
+                                    SoundManager.Instance.PlaySound("Success");
+                                }
 
-                    //            case 3:
-                    //                RestauraVariaveis();
-                    //                break;
+                                break;
 
-                    //            case 4:
-                    //                displayHowTo.text = "";
-                    //                TextPanel.SetActive(false);
-                    //                while (player.sensorValue <= Pacient.Loaded.ManoThreshold * 2 && jogou)
-                    //                    yield return null;
+                            case 3:
+                                FindObjectOfType<MinigameLogger>().WriteMinigameRound(1, finalScore[0], player.picoExpiratorio);
+                                RestauraVariaveis();
+                                displayHowTo.text = "Pressione [Enter] e assopre o mais forte que conseguir";
+                                break;
 
-                    //                StopCountdown();
-                    //                paraTempo = true;
+                            case 4:
 
-                    //                //saiu do 0
-                    //                while (player.sensorValue > Pacient.Loaded.ManoThreshold && jogou)
-                    //                {
-                    //                    FlowAction(player.picoExpiratorio, 2);
-                    //                    yield return null;
-                    //                }
+                                scm.StartSampling();
+                                scm.Recalibrate();
 
-                    //                //voltou pro 0
-                    //                finalScoreMenu.pikeString[1] = player.picoExpiratorio.ToString();
-                    //                TextPanel.SetActive(true);
+                                displayHowTo.text = "";
+                                TextPanel.SetActive(false);
+                                while (player.sensorValueMano <= Pacient.Loaded.ManoThreshold && jogou)
+                                    yield return null;
 
-                    //                if (jogou)
-                    //                {
-                    //                    displayHowTo.text = "Parabéns!\nPressione [Enter] para ir para a proxima rodada.";
-                    //                    SoundManager.Instance.PlaySound("Success");
-                    //                }
+                                StopCountdown();
+                                paraTempo = true;
 
-                    //                player.picoExpiratorio = 0;
-                    //                break;
+                                //saiu do 0
+                                while (player.sensorValueMano > Pacient.Loaded.ManoThreshold && jogou)
+                                {
+                                    FlowAction(player.picoExpiratorio, 2);
+                                    yield return null;
+                                }
 
-                    //            case 5:
-                    //                RestauraVariaveis();
-                    //                break;
+                                scm.StopSampling();
 
-                    //            case 6:
-                    //                displayHowTo.text = "";
-                    //                TextPanel.SetActive(false);
-                    //                while (player.sensorValue <= Pacient.Loaded.ManoThreshold * 2 && jogou)
-                    //                    yield return null;
+                                //voltou pro 0
+                                finalScoreMenu.pikeString[1] = player.picoExpiratorio.ToString();
+                                TextPanel.SetActive(true);
 
-                    //                StopCountdown();
-                    //                paraTempo = true;
+                                if (jogou)
+                                {
+                                    displayHowTo.text = "Parabéns!\nPressione [Enter] para ir para a proxima rodada.";
+                                    SoundManager.Instance.PlaySound("Success");
+                                }
 
-                    //                //saiu do 0
-                    //                while (player.sensorValue > Pacient.Loaded.ManoThreshold && jogou)
-                    //                {
-                    //                    FlowAction(player.picoExpiratorio, 3);
-                    //                    yield return null;
-                    //                }
+                                break;
 
-                    //                //voltou pro 0
-                    //                finalScoreMenu.pikeString[2] = player.picoExpiratorio.ToString();
-                    //                TextPanel.SetActive(true);
+                            case 5:
+                                FindObjectOfType<MinigameLogger>().WriteMinigameRound(2, finalScore[1], player.picoExpiratorio);
+                                RestauraVariaveis();
+                                displayHowTo.text = "Pressione [Enter] e assopre o mais forte que conseguir";
+                                break;
 
-                    //                if (jogou)
-                    //                {
-                    //                    displayHowTo.text = "Parabéns!\nPressione [Enter] para ver a sua pontuação.";
-                    //                    SoundManager.Instance.PlaySound("Success");
-                    //                }
+                            case 6:
 
-                    //                player.picoExpiratorio = 0;
-                    //                scm.StopSampling();
-                    //                FindObjectOfType<ManoLogger>().StopLogging();
+                                scm.StartSampling();
+                                scm.Recalibrate();
 
-                    //                break;
-                    //        }
-                    //        ppasso = false;
-                    //    }
-                    //    else
-                    //    {
-                    //        // Se a CINTA Extensora estiver conectada
-                    //        if (scc.IsConnected)
-                    //        {
-                    //            switch (passo)
-                    //            {
-                    //                case 1:
-                    //                    displayHowTo.text = "Pressione [Enter] e assopre o mais forte que conseguir dentro do tempo.";
-                    //                    break;
+                                displayHowTo.text = "";
+                                TextPanel.SetActive(false);
+                                while (player.sensorValueMano <= Pacient.Loaded.ManoThreshold && jogou)
+                                    yield return null;
 
-                    //                case 2:
+                                StopCountdown();
+                                paraTempo = true;
 
-                    //                    scc.StartSampling();
-                    //                    scc.Recalibrate();
+                                //saiu do 0
+                                while (player.sensorValueMano > Pacient.Loaded.ManoThreshold && jogou)
+                                {
+                                    FlowAction(player.picoExpiratorio, 3);
+                                    yield return null;
+                                }
+
+                                scm.StopSampling();
+
+                                //voltou pro 0
+                                finalScoreMenu.pikeString[2] = player.picoExpiratorio.ToString();
+                                TextPanel.SetActive(true);
+
+                                if (jogou)
+                                {
+                                    displayHowTo.text = "Parabéns!\nPressione [Enter] para ver a sua pontuação.";
+                                    SoundManager.Instance.PlaySound("Success");
+                                }
+
+                                player.picoExpiratorio = 0;
+                                break;
+
+                            case 7:
+                                FindObjectOfType<MinigameLogger>().WriteMinigameRound(3, finalScore[2], player.picoExpiratorio);
+
+                                TextPanel.SetActive(false);
+                                finalScoreMenu.DisplayFinalScore(finalScore[0], finalScore[1], finalScore[2]);
+                                finalScoreMenu.ToggleScoreMenu();
+
+                                Debug.Log("Saving minigame data...");
+                                GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
+                                FindObjectOfType<MinigameLogger>().Save(GameDevice.Mano, RespiratoryExercise.ExpiratoryPeak, Minigame.CakeGame);
+                                GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
+                                Debug.Log("Minigame logs saved.");
+
+                                player.picoExpiratorio = 0;
+
+                                partidaCompleta = true;
+                                break;
 
 
-                    //                    displayHowTo.text = "";
+                        }
+                        ppasso = false;
+                    }
+                    else {
 
-                    //                    TextPanel.SetActive(false);
+                    // Se o CINTA estiver conectado
+                    if (scc.IsConnected)
+                    {
+                        switch (passo)
+                        {
+                            case 1:
+                                displayHowTo.text = "Pressione [Enter] e assopre o mais forte que conseguir dentro do tempo.";
+                                break;
 
-                    //                    while (player.sensorValue <= Pacient.Loaded.CintaThreshold * 2 && jogou)
-                    //                        yield return null;
+                            case 2:
 
-                    //                    StopCountdown();
-                    //                    paraTempo = true;
+                                scc.StartSampling();
+                                scc.Recalibrate();
 
-                    //                    //saiu do 0
-                    //                    while (player.sensorValue > Pacient.Loaded.CintaThreshold && jogou)
-                    //                    {
-                    //                        FlowAction(player.picoExpiratorio, 1);
-                    //                        yield return null;
-                    //                    }
+                                displayHowTo.text = "";
 
-                    //                    //voltou pro 0
-                    //                    finalScoreMenu.pikeString[0] = player.picoExpiratorio.ToString();
-                    //                    TextPanel.SetActive(true);
+                                TextPanel.SetActive(false);
 
-                    //                    if (jogou)
-                    //                    {
-                    //                        displayHowTo.text = "Parabéns!\nPressione [Enter] para ir para a proxima rodada.";
-                    //                        SoundManager.Instance.PlaySound("Success");
-                    //                    }
+                                while (player.sensorValueCinta <= Pacient.Loaded.CintaThreshold && jogou)
+                                    yield return null;
 
-                    //                    player.picoExpiratorio = 0;
-                    //                    break;
+                                StopCountdown();
+                                paraTempo = true;
 
-                    //                case 3:
-                    //                    RestauraVariaveis();
-                    //                    break;
+                                //saiu do 0
+                                while (player.sensorValueCinta > Pacient.Loaded.CintaThreshold && jogou)
+                                {
+                                    FlowAction(player.picoExpiratorio, 1);
+                                    yield return null;
+                                }
 
-                    //                case 4:
-                    //                    displayHowTo.text = "";
-                    //                    TextPanel.SetActive(false);
-                    //                    while (player.sensorValue <= Pacient.Loaded.CintaThreshold * 2 && jogou)
-                    //                        yield return null;
+                                scc.StopSampling();
 
-                    //                    StopCountdown();
-                    //                    paraTempo = true;
+                                //voltou pro 0
+                                finalScoreMenu.pikeString[0] = player.picoExpiratorio.ToString();
+                                TextPanel.SetActive(true);
 
-                    //                    //saiu do 0
-                    //                    while (player.sensorValue > Pacient.Loaded.CintaThreshold && jogou)
-                    //                    {
-                    //                        FlowAction(player.picoExpiratorio, 2);
-                    //                        yield return null;
-                    //                    }
+                                if (jogou)
+                                {
+                                    displayHowTo.text = "Parabéns!\nPressione [Enter] para ir para a proxima rodada.";
+                                    SoundManager.Instance.PlaySound("Success");
+                                }
 
-                    //                    //voltou pro 0
-                    //                    finalScoreMenu.pikeString[1] = player.picoExpiratorio.ToString();
-                    //                    TextPanel.SetActive(true);
+                                break;
 
-                    //                    if (jogou)
-                    //                    {
-                    //                        displayHowTo.text = "Parabéns!\nPressione [Enter] para ir para a proxima rodada.";
-                    //                        SoundManager.Instance.PlaySound("Success");
-                    //                    }
+                            case 3:
+                                FindObjectOfType<MinigameLogger>().WriteMinigameRound(1, finalScore[0], player.picoExpiratorio);
+                                RestauraVariaveis();
+                                displayHowTo.text = "Pressione [Enter] e assopre o mais forte que conseguir";
+                                break;
 
-                    //                    player.picoExpiratorio = 0;
-                    //                    break;
+                            case 4:
 
-                    //                case 5:
-                    //                    RestauraVariaveis();
-                    //                    break;
+                                scc.StartSampling();
+                                scc.Recalibrate();
 
-                    //                case 6:
-                    //                    displayHowTo.text = "";
-                    //                    TextPanel.SetActive(false);
-                    //                    while (player.sensorValue <= Pacient.Loaded.CintaThreshold * 2 && jogou)
-                    //                        yield return null;
+                                displayHowTo.text = "";
+                                TextPanel.SetActive(false);
+                                while (player.sensorValueCinta <= Pacient.Loaded.CintaThreshold && jogou)
+                                    yield return null;
 
-                    //                    StopCountdown();
-                    //                    paraTempo = true;
+                                StopCountdown();
+                                paraTempo = true;
 
-                    //                    //saiu do 0
-                    //                    while (player.sensorValue > Pacient.Loaded.CintaThreshold && jogou)
-                    //                    {
-                    //                        FlowAction(player.picoExpiratorio, 3);
-                    //                        yield return null;
-                    //                    }
+                                //saiu do 0
+                                while (player.sensorValueCinta > Pacient.Loaded.CintaThreshold && jogou)
+                                {
+                                    FlowAction(player.picoExpiratorio, 2);
+                                    yield return null;
+                                }
 
-                    //                    //voltou pro 0
-                    //                    finalScoreMenu.pikeString[2] = player.picoExpiratorio.ToString();
-                    //                    TextPanel.SetActive(true);
+                                scc.StopSampling();
 
-                    //                    if (jogou)
-                    //                    {
-                    //                        displayHowTo.text = "Parabéns!\nPressione [Enter] para ver a sua pontuação.";
-                    //                        SoundManager.Instance.PlaySound("Success");
-                    //                    }
+                                //voltou pro 0
+                                finalScoreMenu.pikeString[1] = player.picoExpiratorio.ToString();
+                                TextPanel.SetActive(true);
 
-                    //                    player.picoExpiratorio = 0;
-                    //                    scc.StopSampling();
-                    //                    FindObjectOfType<CintaLogger>().StopLogging();
+                                if (jogou)
+                                {
+                                    displayHowTo.text = "Parabéns!\nPressione [Enter] para ir para a proxima rodada.";
+                                    SoundManager.Instance.PlaySound("Success");
+                                }
 
-                    //                    break;
-                    //            }
-                    //            ppasso = false;
-                    //        }
-                    //    }
-                    //}
+                                break;
+
+                            case 5:
+                                FindObjectOfType<MinigameLogger>().WriteMinigameRound(2, finalScore[1], player.picoExpiratorio);
+                                RestauraVariaveis();
+                                displayHowTo.text = "Pressione [Enter] e assopre o mais forte que conseguir";
+                                break;
+
+                            case 6:
+
+                                scc.StartSampling();
+                                scc.Recalibrate();
+
+                                displayHowTo.text = "";
+                                TextPanel.SetActive(false);
+                                while (player.sensorValueCinta <= Pacient.Loaded.CintaThreshold && jogou)
+                                    yield return null;
+
+                                StopCountdown();
+                                paraTempo = true;
+
+                                //saiu do 0
+                                while (player.sensorValueCinta > Pacient.Loaded.CintaThreshold && jogou)
+                                {
+                                    FlowAction(player.picoExpiratorio, 3);
+                                    yield return null;
+                                }
+
+                                scc.StopSampling();
+
+                                //voltou pro 0
+                                finalScoreMenu.pikeString[2] = player.picoExpiratorio.ToString();
+                                TextPanel.SetActive(true);
+
+                                if (jogou)
+                                {
+                                    displayHowTo.text = "Parabéns!\nPressione [Enter] para ver a sua pontuação.";
+                                    SoundManager.Instance.PlaySound("Success");
+                                }
+
+                                player.picoExpiratorio = 0;
+                                break;
+
+                            case 7:
+                                FindObjectOfType<MinigameLogger>().WriteMinigameRound(3, finalScore[2], player.picoExpiratorio);
+
+                                TextPanel.SetActive(false);
+                                finalScoreMenu.DisplayFinalScore(finalScore[0], finalScore[1], finalScore[2]);
+                                finalScoreMenu.ToggleScoreMenu();
+
+                                Debug.Log("Saving minigame data...");
+                                GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
+                                FindObjectOfType<MinigameLogger>().Save(GameDevice.Cinta, RespiratoryExercise.ExpiratoryPeak, Minigame.CakeGame);
+                                GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
+                                Debug.Log("Minigame logs saved.");
+
+                                player.picoExpiratorio = 0;
+
+                                partidaCompleta = true;
+                                break;
+
+
+                        }
+                        ppasso = false;
+                    }}}
 
                     #endregion
 
                 }
                 yield return null;
             }
+            sco.StopSampling();
         }
 
         private void SaveRoundData(int round, float flowValue, int roundScore)
@@ -485,24 +575,21 @@ namespace Ibit.CakeGame
             if (scp.IsConnected) // Se PITACO conectado
             {
                 picoJogador = Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow;
-
             }
-            //else
-            //{
-            //    if (scm.IsConnected) // Se Mano conectado
-            //    {
-            //        picoJogador = Pacient.Loaded.CapacitiesMano.ExpPeakFlow;
-
-            //    }
-            //    else
-            //    {
-            //        if (scc.IsConnected) // Se CINTA conectada
-            //        {
-            //            picoJogador = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
-
-            //        }
-            //    }
-            //}
+            else
+            {
+               if (scm.IsConnected) // Se Mano conectado
+               {
+                   picoJogador = Pacient.Loaded.CapacitiesMano.ExpPeakFlow;
+               }
+               else
+               {
+                   if (scc.IsConnected) // Se CINTA conectada
+                   {
+                       picoJogador = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
+                   }
+               }
+            }
 
             var percentage = flowValue / picoJogador;
 
@@ -531,7 +618,7 @@ namespace Ibit.CakeGame
                 score.FillStars(1);
                 finalScore[round - 1] = 2;
             }
-            if (percentage > 1.00f)
+            if (percentage >= 1.00f)
             {
                 candle.TurnOff(14);
                 candle.TurnOff(15);
@@ -577,72 +664,67 @@ namespace Ibit.CakeGame
 
         #endregion Countdown Timer
 
-        private void Start()
-        {
-            passo = 0;
-            ppasso = false;
-            partidaCompleta = false;
-            displayHowTo.text = "Pressione [Enter] para começar.";
-            StartCoroutine(PlayGame());
-
-            slider.minValue = 0;    //adicionado 09/09/19
-
-
-
-            if (scp.IsConnected) // Se PITACO conectado
-            {
-                SpicoExpiratorio = Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow;
-
-            }
-            //else
-            //{
-            //    if (scm.IsConnected) // Se Mano conectado
-            //    {
-            //        SpicoExpiratorio = Pacient.Loaded.CapacitiesMano.ExpPeakFlow;
-
-            //    }
-            //    else
-            //    {
-            //        if (scc.IsConnected) // Se CINTA conectada
-            //        {
-            //            SpicoExpiratorio = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
-
-            //        }
-            //    }
-            //}
-
-
-
-            slider.maxValue = SpicoExpiratorio;         //adicionado 09/09/19
-
-
-            sliderpico.minValue = 0;    //adicionado 16/10/19
-            sliderpico.maxValue = SpicoExpiratorio;         //adicionado 16/10/19
-        }
-
-
-
 
         // Update is called once per frame
         private void Update()
         {
 
-            slider.value = player.sensorValue;  //adicionado 09/09/19
 
-            if (passo == 2 || passo == 4 || passo == 6)                     //adicionado 16/10/19
+            if (scp.IsConnected) // Se PITACO conectado
             {
-                if (player.sensorValue > picomomento)                     //adicionado 16/10/19
-                    picomomento = player.sensorValue;                     //adicionado 16/10/19
-                sliderpico.value = picomomento;                      //adicionado 16/10/19
+                slider.value = player.sensorValuePitaco;  //adicionado 09/09/19
+
+                if (passo == 2 || passo == 4 || passo == 6)                     //adicionado 16/10/19
+                {
+                    if (player.sensorValuePitaco > picomomento)                     //adicionado 16/10/19
+                        picomomento = player.sensorValuePitaco;                     //adicionado 16/10/19
+                    sliderpico.value = picomomento;                      //adicionado 16/10/19
+                }
+                else                                                    //adicionado 16/10/19
+                {
+                    sliderpico.value = 0;                     //adicionado 16/10/19
+                    picomomento = 0;
+                }
             }
-            else                                                    //adicionado 16/10/19
+            else
             {
-                sliderpico.value = 0;                     //adicionado 16/10/19
-                picomomento = 0;
+               if (scm.IsConnected) // Se Mano conectado
+               {
+                    slider.value = player.sensorValueMano;  //adicionado 09/09/19
+
+                    if (passo == 2 || passo == 4 || passo == 6)                     //adicionado 16/10/19
+                    {
+                        if (player.sensorValueMano > picomomento)                     //adicionado 16/10/19
+                            picomomento = player.sensorValueMano;                     //adicionado 16/10/19
+                        sliderpico.value = picomomento;                      //adicionado 16/10/19
+                    }
+                    else                                                    //adicionado 16/10/19
+                    {
+                        sliderpico.value = 0;                     //adicionado 16/10/19
+                        picomomento = 0;
+                    }
+               }
+               else
+               {
+                   if (scc.IsConnected) // Se CINTA conectada
+                   {
+                        slider.value = player.sensorValueCinta;  //adicionado 09/09/19
+
+                        if (passo == 2 || passo == 4 || passo == 6)                     //adicionado 16/10/19
+                        {
+                            if (player.sensorValueCinta > picomomento)                     //adicionado 16/10/19
+                                picomomento = player.sensorValueCinta;                     //adicionado 16/10/19
+                            sliderpico.value = picomomento;                      //adicionado 16/10/19
+                        }
+                        else                                                    //adicionado 16/10/19
+                        {
+                            sliderpico.value = 0;                     //adicionado 16/10/19
+                            picomomento = 0;
+                        }
+                   }
+               }
             }
 
-
-            //print(passo);
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
             {
                 ppasso = true;

@@ -6,9 +6,11 @@ namespace Ibit.Core.Data.Enums
     {
         [Description("Pitaco")]
         Pitaco,
-        [Description("Manovacuometro")]
-        Manovacuometro,
+        [Description("Mano")]
+        Mano,
         [Description("Cinta")]
-        Cinta
+        Cinta,
+        [Description("Oximetro")]
+        Oximetro
     }
 }

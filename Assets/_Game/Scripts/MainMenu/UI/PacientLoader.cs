@@ -21,5 +21,7 @@ namespace Ibit.MainMenu.UI
             Debug.Log($"{pacient.Name} loaded.");
             GameObject.Find("Canvas").transform.Find("Player Menu").gameObject.SetActive(true);
         }
+
+        
     }
 }

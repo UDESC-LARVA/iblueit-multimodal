@@ -21,7 +21,6 @@ public class CalibrationReturn : MonoBehaviour
     GameObject CalibrationMenuCinta;
     GameObject PlataformMenu;
     GameObject MinigamesMenu;
-    // GameObject CalibrationReturning;
 
     [SerializeField]
     private SerialControllerPitaco serialControllerPitaco;
