@@ -36,8 +36,6 @@ namespace Assets._Game.Scripts.Core.Api
 
         public async Task<ApiResponse<PacientDto>> SavePacient(PacientSendDto pacient, string jsonText = null)
         {
-            var apiResponse = new ApiResponse<PacientDto>();
-
             var requestUrl = $"{_baseUrl}/{PacientUrl}";
 
             var jsonContent = jsonText ?? JsonConvert.SerializeObject(pacient);
@@ -54,29 +52,20 @@ namespace Assets._Game.Scripts.Core.Api
             catch (HttpRequestException httpRequestException)
             {
                 Debug.LogWarning($"No internet connection!. Error: {httpRequestException}");
-                apiResponse.Success = false;
-                return apiResponse;
+                return new ApiResponse<PacientDto>();
             }
 
             if (!response.IsSuccessStatusCode)
-            {
-                apiResponse.Success = false;
-                return apiResponse;
-            }
+                return new ApiResponse<PacientDto>();
 
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var responseDto = JsonConvert.DeserializeObject<PacientDto>(stringResponse);
-
-            apiResponse.Success = true;
-            apiResponse.Result = responseDto;
+            var apiResponse = JsonConvert.DeserializeObject<ApiResponse<PacientDto>>(stringResponse);
 
             return apiResponse;
         }
 
         public async Task<ApiResponse<CalibrationOverviewDto>> SaveCalibrationOverview(CalibrationOverviewSendDto calibrationOverviewSendDto)
         {
-            var apiResponse = new ApiResponse<CalibrationOverviewDto>();
-
             var requestUrl = $"{_baseUrl}/{CalibrationsUrl}";
 
             var jsonContent = JsonConvert.SerializeObject(calibrationOverviewSendDto);
@@ -93,29 +82,20 @@ namespace Assets._Game.Scripts.Core.Api
             catch (HttpRequestException httpRequestException)
             {
                 Debug.LogWarning($"No internet connection!. Error: {httpRequestException}");
-                apiResponse.Success = false;
-                return apiResponse;
+                return new ApiResponse<CalibrationOverviewDto>();
             }
 
             if (!response.IsSuccessStatusCode)
-            {
-                apiResponse.Success = false;
-                return apiResponse;
-            }
+                return new ApiResponse<CalibrationOverviewDto>();
 
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var responseDto = JsonConvert.DeserializeObject<CalibrationOverviewDto>(stringResponse);
-
-            apiResponse.Success = true;
-            apiResponse.Result = responseDto;
+            var apiResponse = JsonConvert.DeserializeObject<ApiResponse<CalibrationOverviewDto>>(stringResponse);
 
             return apiResponse;
         }
 
         public async Task<ApiResponse<MinigameOverviewDto>> SaveMinigameOverview(MinigameOverviewSendDto minigameOverview)
         {
-            var apiResponse = new ApiResponse<MinigameOverviewDto>();
-
             var requestUrl = $"{_baseUrl}/{MinigamesUrl}";
 
             var jsonContent = JsonConvert.SerializeObject(minigameOverview);
@@ -132,29 +112,20 @@ namespace Assets._Game.Scripts.Core.Api
             catch (HttpRequestException httpRequestException)
             {
                 Debug.LogWarning($"No internet connection!. Error: {httpRequestException}");
-                apiResponse.Success = false;
-                return apiResponse;
+                return new ApiResponse<MinigameOverviewDto>();
             }
 
             if (!response.IsSuccessStatusCode)
-            {
-                apiResponse.Success = false;
-                return apiResponse;
-            }
+                return new ApiResponse<MinigameOverviewDto>();
 
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var responseDto = JsonConvert.DeserializeObject<MinigameOverviewDto>(stringResponse);
-
-            apiResponse.Success = true;
-            apiResponse.Result = responseDto;
+            var apiResponse = JsonConvert.DeserializeObject<ApiResponse<MinigameOverviewDto>>(stringResponse);
 
             return apiResponse;
         }
 
         public async Task<ApiResponse<PlataformOverviewDto>> SavePlataformOverview(PlataformOverviewSendDto plataformOverview)
         {
-            var apiResponse = new ApiResponse<PlataformOverviewDto>();
-
             var requestUrl = $"{_baseUrl}/{PlataformsUrl}";
 
             var jsonContent = JsonConvert.SerializeObject(plataformOverview);
@@ -171,29 +142,20 @@ namespace Assets._Game.Scripts.Core.Api
             catch (HttpRequestException httpRequestException)
             {
                 Debug.LogWarning($"No internet connection!. Error: {httpRequestException}");
-                apiResponse.Success = false;
-                return apiResponse;
+                return new ApiResponse<PlataformOverviewDto>();
             }
 
             if (!response.IsSuccessStatusCode)
-            {
-                apiResponse.Success = false;
-                return apiResponse;
-            }
+                return new ApiResponse<PlataformOverviewDto>();
 
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var responseDto = JsonConvert.DeserializeObject<PlataformOverviewDto>(stringResponse);
-
-            apiResponse.Success = true;
-            apiResponse.Result = responseDto;
+            var apiResponse = JsonConvert.DeserializeObject<ApiResponse<PlataformOverviewDto>>(stringResponse);
 
             return apiResponse;
         }
 
         public async Task<ApiResponse<List<PacientDto>>> GetPacients()
         {
-            var apiResponse = new ApiResponse<List<PacientDto>>();
-
             var requestUrl = $"{_baseUrl}/{PacientUrl}";
 
             HttpResponseMessage response;
@@ -206,21 +168,20 @@ namespace Assets._Game.Scripts.Core.Api
             catch (HttpRequestException httpRequestException)
             {
                 Debug.LogWarning($"No internet connection!. Error: {httpRequestException}");
-                apiResponse.Success = false;
-                return apiResponse;
+                return new ApiResponse<List<PacientDto>>();
             }
 
+            if(!response.IsSuccessStatusCode)
+                return new ApiResponse<List<PacientDto>>();
+
             var content = await response.Content.ReadAsStringAsync();
-            apiResponse.Result = JsonConvert.DeserializeObject<List<PacientDto>>(content);
-            apiResponse.Success = true;
+            var apiResponse = JsonConvert.DeserializeObject<ApiResponse<List<PacientDto>>>(content);
             
             return apiResponse;
         }
 
         public async Task<ApiResponse<PacientDto>> UpdatePacient(PacientSendDto pacient, string idPacient, string jsonText = null)
         {
-            var apiResponse = new ApiResponse<PacientDto>();
-
             var requestUrl = $"{_baseUrl}/{PacientUrl}/{idPacient}";
 
             var jsonContent = jsonText ?? JsonConvert.SerializeObject(pacient);
@@ -237,20 +198,14 @@ namespace Assets._Game.Scripts.Core.Api
             catch (HttpRequestException httpRequestException)
             {
                 Debug.LogWarning($"No internet connection!. Error: {httpRequestException}");
-                return apiResponse;
+                return new ApiResponse<PacientDto>();
             }
 
             if (!response.IsSuccessStatusCode)
-            {
-                apiResponse.Success = false;
-                return apiResponse;
-            }
+                return new ApiResponse<PacientDto>();
 
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var responseDto = JsonConvert.DeserializeObject<PacientDto>(stringResponse);
-
-            apiResponse.Success = true;
-            apiResponse.Result = responseDto;
+            var apiResponse = JsonConvert.DeserializeObject<ApiResponse<PacientDto>>(stringResponse);
 
             return apiResponse;
         }

@@ -229,7 +229,7 @@ namespace Ibit.WaterGame
                             GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
                             FindObjectOfType<Core.MinigameLogger>().Save(GameDevice.Pitaco, RespiratoryExercise.InspiratoryPeak, Minigame.WaterGame);
                             GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
-
+                            //Verificar se colocar um state++ aqui ele passa para o 10.
                             break;
                         case 10:
                             TextPanel.SetActive(false);

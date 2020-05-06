@@ -30,7 +30,7 @@ namespace Ibit.MainMenu.UI
             var restrictiveTranslation = "Restritivo";
             var healthyTranslation = "Saudável";
 
-            foreach (var pacient in pacientList.Result.OrderBy(p => p.Name))
+            foreach (var pacient in pacientList.Data.OrderBy(p => p.Name))
             {
                 var item = Instantiate(itemPrefab);
                 item.transform.SetParent(this.transform);

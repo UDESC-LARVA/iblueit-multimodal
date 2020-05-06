@@ -146,7 +146,7 @@ namespace Ibit.MainMenu.UI.Canvas
 
             if (apiResponse.ApiResponse != null)
             {
-                var playerInstanceModel = Pacient.MapFromDto(apiResponse.ApiResponse.Result);
+                var playerInstanceModel = Pacient.MapFromDto(apiResponse.ApiResponse.Data);
                 Pacient.Loaded = playerInstanceModel;
                 SysMessage.Info("Jogador criado com sucesso!");
             }

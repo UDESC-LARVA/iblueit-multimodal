@@ -131,7 +131,7 @@ namespace Ibit.Core.Data.Manager
                 return new ApiResponse<List<PacientDto>>
                 {
                     Success = false,
-                    Result = LocalDataManager.Instance.GetPacientsLocal()
+                    Data = LocalDataManager.Instance.GetPacientsLocal()
                 };
             }
             return await ApiClient.Instance.GetPacients();
