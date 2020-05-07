@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SerialCommUnity (Serial Communication for Unity)
  * Author: Daniel Wilches <dwilches@gmail.com>
  *

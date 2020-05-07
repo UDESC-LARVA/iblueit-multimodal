@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using Ibit.Core.Data;
 using Ibit.Core.Serial;
 using Ibit.Core.Util;
