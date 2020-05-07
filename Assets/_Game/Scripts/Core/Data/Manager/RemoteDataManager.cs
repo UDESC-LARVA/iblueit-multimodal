@@ -47,7 +47,7 @@ namespace Ibit.Core.Data.Manager
                 if (!apiResponse.Success)
                     return false;
 
-                pacientId = apiResponse.Result.Id;
+                pacientId = apiResponse.Data.Id;
 
                 File.Delete(pacientFilePath);
             }
