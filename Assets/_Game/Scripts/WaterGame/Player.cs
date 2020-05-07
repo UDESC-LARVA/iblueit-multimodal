@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using Ibit.Core.Data;
 using Ibit.Core.Serial;
 using Ibit.Core.Util;
@@ -125,7 +125,7 @@ namespace Ibit.WaterGame
 
         private void OnMessageReceivedOximetro(string msg)
         {
-             if (msg.Length < 1)
+            if (msg.Length < 1)
                 return;
 
             oxiActive = true;
@@ -245,14 +245,12 @@ namespace Ibit.WaterGame
                 }
             }
 
-
             SoundManager.Instance.PlaySound("Success");
-
-
 
             var roundScore = CalculateFlowPike(maximumPeak);
             WriteMinigameLog(round, roundScore, PitacoFlowMath.ToLitresPerMinute(maximumPeak));
             waitSignal = false;
+            maximumPeak = 0f;
             OnAuthorize();
         }
 
@@ -309,7 +307,6 @@ namespace Ibit.WaterGame
                 OnHaveStar(1, _roundNumber, pikeValue);
             }
 
-            maximumPeak = 0f;
 
             return roundScore;
         }

@@ -30,26 +30,31 @@ namespace Ibit.MainMenu.UI
             var restrictiveTranslation = "Restritivo";
             var healthyTranslation = "Saudável";
 
-            foreach (var pacient in pacientList.Result.OrderBy(p => p.Name))
+            if (pacientList.Data.Count != 0)
             {
-                var item = Instantiate(itemPrefab);
-                item.transform.SetParent(this.transform);
-                item.transform.localScale = Vector3.one;
-                item.name = $"ITEM_{pacient.Id}_{pacient.Name}";
 
-                var holder = item.AddComponent<PacientLoader>();
-                holder.pacient = Pacient.MapFromDto(pacient);
+                foreach (var pacient in pacientList.Data.OrderBy(p => p.Name))
+                {
+                    var item = Instantiate(itemPrefab);
+                    item.transform.SetParent(this.transform);
+                    item.transform.localScale = Vector3.one;
+                    item.name = $"ITEM_{pacient.Id}_{pacient.Name}";
 
-                var disfunction = EnumExtensions.GetValueFromDescription<ConditionType>(pacient.Condition) == ConditionType.Healthy ? healthyTranslation :
-                    (EnumExtensions.GetValueFromDescription<ConditionType>(pacient.Condition) == ConditionType.Obstructive ? obstructiveTranslation : restrictiveTranslation);
+                    var holder = item.AddComponent<PacientLoader>();
+                    holder.pacient = Pacient.MapFromDto(pacient);
 
-                item.GetComponentInChildren<Text>().text = $"Nome: {pacient.Name} - {pacient.Birthday:dd/MM/yyyy} - {disfunction}";
-                item.GetComponentInChildren<Text>().alignment = TextAnchor.MiddleLeft; // Texto alinhado na vertical e a esquerda
+                    var disfunction = EnumExtensions.GetValueFromDescription<ConditionType>(pacient.Condition) == ConditionType.Healthy ? healthyTranslation :
+                        (EnumExtensions.GetValueFromDescription<ConditionType>(pacient.Condition) == ConditionType.Obstructive ? obstructiveTranslation : restrictiveTranslation);
+
+                    item.GetComponentInChildren<Text>().text = $"Nome: {pacient.Name} - {pacient.Birthday:dd/MM/yyyy} - {disfunction}";
+                    item.GetComponentInChildren<Text>().alignment = TextAnchor.MiddleLeft; // Texto alinhado na vertical e a esquerda
+                }
+
+                StartCoroutine(AdjustGrip());
+
+                _populated = true;
+
             }
-
-            StartCoroutine(AdjustGrip());
-
-            _populated = true;
 
             GameObject.Find("Canvas").transform.Find("LoadingBgPanel").gameObject.SetActive(false);
         }

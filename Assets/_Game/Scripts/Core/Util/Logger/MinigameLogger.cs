@@ -37,12 +37,7 @@ namespace Ibit.Core
                 FlowData = new List<FlowData>(_pitacoLogger.flowDataDevice.FlowData)
             });
 
-            _minigameOverviewSendDto.FlowDataRound.Add(new FlowDataMinigame
-            {
-                MinigameRound = round,
-                RoundScore = score,
-                RoundFlowScore = flowScore,
-            });
+            _minigameOverviewSendDto.FlowDataRound.Add(flowDataMinigame);
 
             _pitacoLogger.flowDataDevice.FlowData.Clear();
         }
