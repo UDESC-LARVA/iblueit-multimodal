@@ -422,6 +422,6 @@ MigrationBackup/
 # End of https://www.gitignore.io/api/unity,visualstudio,visualstudiocode
 
 #I BLUE IT LOCAL DATA FOLDERS
-/Data/
-/Config/
-/savedata/
+Data/
+Config/
+savedata/
