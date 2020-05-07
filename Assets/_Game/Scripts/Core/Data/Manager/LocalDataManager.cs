@@ -94,6 +94,9 @@ namespace Ibit.Core.Data.Manager
         
         public List<PacientDto> GetPacientsLocal()
         {
+            if(!Directory.Exists($"{GameDataPaths.localDataPath}/Pacients"))
+                Directory.CreateDirectory($"{GameDataPaths.localDataPath}/Pacients");
+
             var pacientsDirectories = Directory.GetDirectories($"{GameDataPaths.localDataPath}/Pacients");
             var pacientsInfoPaths = pacientsDirectories.Select(x=>Directory.GetFiles(x).First()).ToArray();
             var pacients = pacientsInfoPaths.Select(DataManagerUtil.LoadJsonFile<PacientDto>).ToList();
