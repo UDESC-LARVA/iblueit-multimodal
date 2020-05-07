@@ -420,6 +420,8 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/unity,visualstudio,visualstudiocode
-/Data/LocalData/
-/Data/RemoteData/
+
+#I BLUE IT LOCAL DATA FOLDERS
+/Data/
+/Config/
 /savedata/

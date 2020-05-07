@@ -9,7 +9,6 @@ namespace Ibit.Core.Data.Manager
     public sealed class DataManager
     {
         public static DataManager Instance { get; } = new DataManager();
-        public bool IsSendingRemoteData { get; internal set; }
 
         static DataManager() { }
 
@@ -21,7 +20,7 @@ namespace Ibit.Core.Data.Manager
 
             LocalDataManager.Instance.SaveLocalData("Pacient", pacient, Pacient.Loaded.Name);
 
-            if (!ConfigurationManager.SendRemoteData)
+            if (!ConfigurationManager.SendRemoteData || string.IsNullOrWhiteSpace(ConfigurationManager.GameApiToken))
                 return response;
 
             var hasInternetConnection = await ApiClient.Instance.HasInternetConnection();
@@ -43,7 +42,7 @@ namespace Ibit.Core.Data.Manager
 
             LocalDataManager.Instance.SaveLocalData("Pacient", pacient, Pacient.Loaded.Name);
 
-            if (!ConfigurationManager.SendRemoteData)
+            if (!ConfigurationManager.SendRemoteData || string.IsNullOrWhiteSpace(ConfigurationManager.GameApiToken))
                 return response;
 
             var hasInternetConnection = await ApiClient.Instance.HasInternetConnection();
@@ -65,7 +64,7 @@ namespace Ibit.Core.Data.Manager
 
             LocalDataManager.Instance.SaveLocalData("PlataformOverview", plataform, Pacient.Loaded.Name);
 
-            if (!ConfigurationManager.SendRemoteData)
+            if (!ConfigurationManager.SendRemoteData || string.IsNullOrWhiteSpace(ConfigurationManager.GameApiToken))
                 return response;
 
             var hasInternetConnection = await ApiClient.Instance.HasInternetConnection();
@@ -87,7 +86,7 @@ namespace Ibit.Core.Data.Manager
 
             LocalDataManager.Instance.SaveLocalData("CalibrationOverview", calibration, Pacient.Loaded.Name);
 
-            if (!ConfigurationManager.SendRemoteData)
+            if (!ConfigurationManager.SendRemoteData || string.IsNullOrWhiteSpace(ConfigurationManager.GameApiToken))
                 return response;
 
             var hasInternetConnection = await ApiClient.Instance.HasInternetConnection();
@@ -109,7 +108,7 @@ namespace Ibit.Core.Data.Manager
 
             LocalDataManager.Instance.SaveLocalData("MinigameOverview", minigame, Pacient.Loaded.Name);
 
-            if (!ConfigurationManager.SendRemoteData)
+            if (!ConfigurationManager.SendRemoteData || string.IsNullOrWhiteSpace(ConfigurationManager.GameApiToken))
                 return response;
 
             var hasInternetConnection = await ApiClient.Instance.HasInternetConnection();
@@ -126,7 +125,7 @@ namespace Ibit.Core.Data.Manager
 
         public async Task<ApiResponse<List<PacientDto>>> GetPacients()
         {
-            if (!await ApiClient.Instance.HasInternetConnection() || !ConfigurationManager.SendRemoteData)
+            if (!await ApiClient.Instance.HasInternetConnection() || !ConfigurationManager.SendRemoteData || string.IsNullOrWhiteSpace(ConfigurationManager.GameApiToken))
             {
                 return new ApiResponse<List<PacientDto>>
                 {

@@ -6521,7 +6521,7 @@ MonoBehaviour:
   m_LineType: 0
   m_HideMobileInput: 0
   m_CharacterValidation: 0
-  m_CharacterLimit: 33
+  m_CharacterLimit: 36
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
