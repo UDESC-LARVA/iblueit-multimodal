@@ -168,11 +168,11 @@ namespace Assets._Game.Scripts.Core.Api
             catch (HttpRequestException httpRequestException)
             {
                 Debug.LogWarning($"No internet connection!. Error: {httpRequestException}");
-                return new ApiResponse<List<PacientDto>>();
+                return new ApiResponse<List<PacientDto>>{Data = new List<PacientDto>()};
             }
 
             if(!response.IsSuccessStatusCode)
-                return new ApiResponse<List<PacientDto>>();
+                return new ApiResponse<List<PacientDto>> { Data = new List<PacientDto>() };
 
             var content = await response.Content.ReadAsStringAsync();
             var apiResponse = JsonConvert.DeserializeObject<ApiResponse<List<PacientDto>>>(content);
