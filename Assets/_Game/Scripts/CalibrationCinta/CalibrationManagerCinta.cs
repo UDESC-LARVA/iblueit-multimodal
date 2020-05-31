@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Assets._Game.Scripts.Core.Api.Dto;
+using Assets._Game.Scripts.Core.Api.Extensions;
 using Ibit.Core.Audio;
 using Ibit.Core.Data;
-using Ibit.Core.Database;
+using Ibit.Core.Data.Enums;
+using Ibit.Core.Data.Manager;
 using Ibit.Core.Serial;
 using Ibit.Core.Util;
 using NaughtyAttributes;
@@ -18,7 +21,7 @@ namespace Ibit.Calibration
 
         [BoxGroup("Controls")][SerializeField] private CalibrationExerciseCinta _currentExercise;
         [BoxGroup("Controls")][SerializeField] private int FlowTimeThreshold = 2000; //ms
-        [BoxGroup("Controls")][SerializeField] private float RespiratoryFrequencyThreshold = 0.05f; //s //colocado para testes... Valor original 0.05f
+        [BoxGroup("Controls")][SerializeField] private float RespiratoryFrequencyThreshold = 0.05f; //s
         [BoxGroup("Controls")][SerializeField] private int TimerRespFreq = 60; //seg
         [BoxGroup("Controls")][SerializeField] private int TimerPeakExercise = 8; //seg        
         [BoxGroup("Controls")][SerializeField] private int _currentStep = 1; //default: 1 
@@ -33,19 +36,30 @@ namespace Ibit.Calibration
         private bool _calibrationDone;
         private bool _runStep;
         private int _currentExerciseCount;
-        public float _flowMeter; //colocado para testes... Valor original: private
+        private float _flowMeter;
         private Stopwatch _flowWatch;
         private Stopwatch _timerWatch;
         private Capacities _tmpCapacities;
+        private CalibrationOverviewSendDto _calibrationOverviewSendDto;
         private CalibrationLoggerCinta _calibrationLogger;
         private Dictionary<float, float> _capturedSamples;
         private SerialControllerCinta _serialController;
+
+        public static bool RecentlyCalibrated_InsPeak = false;
+        public static bool RecentlyCalibrated_ExpPeak = false;
+
+        public static float _maxFlowINS;
 
         private void Awake()
         {
             _serialController = FindObjectOfType<SerialControllerCinta>();
             _serialController.OnSerialMessageReceived += OnSerialMessageReceived;
             _tmpCapacities = new Capacities();
+            _calibrationOverviewSendDto = new CalibrationOverviewSendDto
+            {
+                GameDevice = GameDevice.Cinta.GetDescription(),
+                PacientId = Pacient.Loaded.IdApi
+            };
             _flowWatch = new Stopwatch();
             _timerWatch = new Stopwatch();
             _capturedSamples = new Dictionary<float, float>();
@@ -74,6 +88,8 @@ namespace Ibit.Calibration
         private IEnumerator Start()
         {
             _runStep = true;
+            _serialController.Recalibrate();
+            UnityEngine.Debug.Log("recalibrando...");
 
             while (!_calibrationDone)
             {
@@ -119,7 +135,7 @@ namespace Ibit.Calibration
                                     AirFlowEnable();
 
                                     StartCoroutine(DisplayCountdown(TimerRespFreq));
-                                    while (_flowWatch.ElapsedMilliseconds < TimerRespFreq * 1000) //1000 
+                                    while (_flowWatch.ElapsedMilliseconds < TimerRespFreq * 1000) 
                                         yield return null;
 
                                     AirFlowDisable();
@@ -149,6 +165,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawRespRate;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.RespiratoryFrequency.GetDescription();
                                     Pacient.Loaded.CapacitiesCinta.RespiratoryRate = _tmpCapacities.RawRespRate;
                                     SaveAndQuit();
                                     break;
@@ -163,7 +181,7 @@ namespace Ibit.Calibration
                             switch (_currentStep)
                             {
                                 case 1:
-                                    DudeTalk("Neste exercício, você deve PUXAR O AR COM FORÇA. Serão 3 tentativas. Ao apertar (Enter), o relógio ficará verde para você começar o exercício.");
+                                    DudeTalk("Neste exercício, você deve PUXAR O AR COM FORÇA dilatando peito e abdome. Serão 3 tentativas. Ao apertar (Enter), o relógio ficará verde para você começar o exercício.");
                                     SetupNextStep();
                                     break;
 
@@ -188,6 +206,8 @@ namespace Ibit.Calibration
                                     AirFlowDisable();
 
                                     var insCheck = _flowMeter;
+                                    _maxFlowINS = insCheck;
+                                    
                                     ResetFlowMeter();
 
                                     if (insCheck < -Pacient.Loaded.CintaThreshold)
@@ -212,14 +232,101 @@ namespace Ibit.Calibration
 
                                 case 4:
                                     SoundManager.Instance.PlaySound("Success");
-                                    DudeTalk($"Seu pico inspiratório é de {CintaFlowMath.ToLitresPerMinute(_tmpCapacities.RawInsPeakFlow):F} L/min." +
+
+                                    _tmpCapacities.InsPeakFlow = _tmpCapacities.RawInsPeakFlow/2;
+
+                                    DudeTalk($"Seu pico inspiratório é de {CintaFlowMath.ToLitresPerMinute(_tmpCapacities.RawInsPeakFlow/2):F} L/min." +
                                         " Pressione (Enter) para continuar com os outros exercícios.");
+                                        
                                     SetupNextStep();
                                     break;
 
                                 case 5:
-                                    Pacient.Loaded.CapacitiesCinta.InsPeakFlow = _tmpCapacities.RawInsPeakFlow;
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawInsPeakFlow/2;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.InspiratoryPeak.GetDescription();
+                                    Pacient.Loaded.CapacitiesCinta.InsPeakFlow = _tmpCapacities.RawInsPeakFlow/2;
                                     SaveAndQuit();
+                                    RecentlyCalibrated_InsPeak = true;
+                                    break;
+
+                                default:
+                                    FindObjectOfType<SceneLoader>().LoadScene(0);
+                                    break;
+                            }
+
+                            break;
+
+                        case CalibrationExerciseCinta.ExpiratoryPeak:
+
+                            switch (_currentStep)
+                            {
+                                case 1:
+                                    DudeTalk("Neste exercício, você deve ASSOPRAR FORTE contraindo peito e abdome. Serão 3 tentativas. Ao apertar (Enter), o relógio ficará verde para você começar o exercício.");
+                                    SetupNextStep();
+                                    break;
+
+                                case 2:
+                                    if (!_serialController.IsConnected)
+                                    {
+                                        SerialDisconnectedWarning();
+                                        continue;
+                                    }
+
+                                    _serialController.StartSampling();
+
+                                    _exerciseCountText.text = $"Exercício: {_currentExerciseCount + 1}/3";
+                                    yield return new WaitForSeconds(1);
+
+                                    AirFlowEnable();
+                                    StartCoroutine(DisplayCountdown(TimerPeakExercise));
+                                    _dialogText.text = "(ASSOPRE FORTE 1 vez! E aguarde o próximo passo...)";
+
+                                    // Wait for player input
+                                    yield return new WaitForSeconds(TimerPeakExercise);
+
+                                    AirFlowDisable();
+
+                                    var expCheck = _flowMeter; //_tmpCapacities.RawInsPeakFlow-_flowMeter
+                                    
+                                    ResetFlowMeter();
+
+                                    if (expCheck > Pacient.Loaded.CintaThreshold)
+                                    {
+                                        _calibrationLogger.Write(CalibrationExerciseResultCinta.Success, _currentExercise, expCheck);
+                                        _currentExerciseCount++;
+                                        SetupNextStep(true);
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        _calibrationLogger.Write(CalibrationExerciseResultCinta.Failure, _currentExercise, expCheck);
+                                        DudeWarnUnknownFlow();
+                                        SetupStep(_currentStep);
+                                        break;
+                                    }
+
+                                case 3:
+                                    DudeCongratulate();
+                                    SetupStep(_currentExerciseCount == 3 ? _currentStep + 1 : _currentStep - 1);
+                                    break;
+
+                                case 4:
+                                    SoundManager.Instance.PlaySound("Success");
+
+                                    _tmpCapacities.ExpPeakFlow = _tmpCapacities.RawExpPeakFlow/2;
+
+                                    DudeTalk($"Seu pico expiratório é de {CintaFlowMath.ToLitresPerMinute(_tmpCapacities.RawExpPeakFlow/2):F} L/min." +
+                                        " Pressione (Enter) para continuar.");
+                                    
+                                    SetupNextStep();
+                                    break;
+
+                                case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawExpPeakFlow/2;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.ExpiratoryPeak.GetDescription();
+                                    Pacient.Loaded.CapacitiesCinta.ExpPeakFlow = _tmpCapacities.RawExpPeakFlow/2;
+                                    SaveAndQuit();
+                                    RecentlyCalibrated_ExpPeak = true;
                                     break;
 
                                 default:
@@ -302,79 +409,9 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawInsFlowDuration;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.InspiratoryDuration.GetDescription();
                                     Pacient.Loaded.CapacitiesCinta.InsFlowDuration = _tmpCapacities.RawInsFlowDuration;
-                                    SaveAndQuit();
-                                    break;
-
-                                default:
-                                    FindObjectOfType<SceneLoader>().LoadScene(0);
-                                    break;
-                            }
-
-                            break;
-
-                        case CalibrationExerciseCinta.ExpiratoryPeak:
-
-                            switch (_currentStep)
-                            {
-                                case 1:
-                                    DudeTalk("Neste exercício, você deve ASSOPRAR FORTE. Serão 3 tentativas. Ao apertar (Enter), o relógio ficará verde para você começar o exercício.");
-                                    SetupNextStep();
-                                    break;
-
-                                case 2:
-                                    if (!_serialController.IsConnected)
-                                    {
-                                        SerialDisconnectedWarning();
-                                        continue;
-                                    }
-
-                                    _serialController.StartSampling();
-
-                                    _exerciseCountText.text = $"Exercício: {_currentExerciseCount + 1}/3";
-                                    yield return new WaitForSeconds(1);
-
-                                    AirFlowEnable();
-                                    StartCoroutine(DisplayCountdown(TimerPeakExercise));
-                                    _dialogText.text = "(ASSOPRE FORTE 1 vez! E aguarde o próximo passo...)";
-
-                                    // Wait for player input
-                                    yield return new WaitForSeconds(TimerPeakExercise);
-
-                                    AirFlowDisable();
-
-                                    var expCheck = _flowMeter;
-                                    ResetFlowMeter();
-
-                                    if (expCheck > Pacient.Loaded.CintaThreshold)
-                                    {
-                                        _calibrationLogger.Write(CalibrationExerciseResultCinta.Success, _currentExercise, expCheck);
-                                        _currentExerciseCount++;
-                                        SetupNextStep(true);
-                                        continue;
-                                    }
-                                    else
-                                    {
-                                        _calibrationLogger.Write(CalibrationExerciseResultCinta.Failure, _currentExercise, expCheck);
-                                        DudeWarnUnknownFlow();
-                                        SetupStep(_currentStep);
-                                        break;
-                                    }
-
-                                case 3:
-                                    DudeCongratulate();
-                                    SetupStep(_currentExerciseCount == 3 ? _currentStep + 1 : _currentStep - 1);
-                                    break;
-
-                                case 4:
-                                    SoundManager.Instance.PlaySound("Success");
-                                    DudeTalk($"Seu pico expiratório é de {CintaFlowMath.ToLitresPerMinute(_tmpCapacities.RawExpPeakFlow):F} L/min." +
-                                        " Pressione (Enter) para continuar com os outros exercícios.");
-                                    SetupNextStep();
-                                    break;
-
-                                case 5:
-                                    Pacient.Loaded.CapacitiesCinta.ExpPeakFlow = _tmpCapacities.RawExpPeakFlow;
                                     SaveAndQuit();
                                     break;
 
@@ -459,6 +496,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawExpFlowDuration;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.ExpiratoryDuration.GetDescription();
                                     Pacient.Loaded.CapacitiesCinta.ExpFlowDuration = _tmpCapacities.RawExpFlowDuration;
                                     SaveAndQuit();
                                     break;
@@ -516,18 +555,38 @@ namespace Ibit.Calibration
             _acceptingValues = true;
         }
 
-        private void SaveAndQuit()
+        private async void SaveAndQuit()
         {
+            GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
+
             Pacient.Loaded.CalibrationCintaDone = Pacient.Loaded.IsCalibrationCintaDone;
-            PacientDb.Instance.Save();
+
+            var pacientSendDto = Pacient.MapToPacientSendDto();
+            var responsePacient = await DataManager.Instance.UpdatePacient(pacientSendDto);
+
+            var responseCalibration = await DataManager.Instance.SaveCalibrationOverview(_calibrationOverviewSendDto);
+
+            GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
+
+            if (responsePacient.ApiResponse == null)
+                SysMessage.Info("Erro ao atualizar os dados do paciente na nuvem!\n Os dados poderão ser enviados posteriormente..");
+
+            if (responseCalibration.ApiResponse == null)
+                SysMessage.Info("Erro salvar os dados de calibração na nuvem!\n Os dados poderão ser enviados posteriormente..");
+
             FindObjectOfType<CintaLogger>().StopLogging();
-            _calibrationLogger.Save();
             ReturnToMainMenu();
         }
 
         private void ReturnToMainMenu()
         {
-            FindObjectOfType<SceneLoader>().LoadScene(0);
+            if (_currentExercise == CalibrationExerciseCinta.InspiratoryPeak) // Se estiver no INSPeak vai direto para EXPPeak
+            {
+                CalibrationToLoad = CalibrationExerciseCinta.ExpiratoryPeak;
+                FindObjectOfType<SceneLoader>().LoadScene(4); // Scene 4 é a Calibração Cinta
+            } else {
+                FindObjectOfType<SceneLoader>().LoadScene(0);
+            }
         }
 
         private void SerialDisconnectedWarning()

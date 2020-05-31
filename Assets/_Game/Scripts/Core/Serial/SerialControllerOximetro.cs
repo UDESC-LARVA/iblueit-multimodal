@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -136,7 +137,7 @@ namespace Ibit.Core.Serial
                 }
                 catch (Exception e)
                 {
-                    Debug.LogWarning($"Unable to connect {sp.PortName}:{sp.BaudRate}:OXÍMETRO.\n{e.GetType()}: {e.Message}");
+                    //Debug.LogWarning($"Unable to connect {sp.PortName}:{sp.BaudRate}:OXÍMETRO.\n{e.GetType()}: {e.Message}");
                     sp.Close();
                     sp.Dispose();
                     continue;
@@ -158,13 +159,14 @@ namespace Ibit.Core.Serial
 
         public void Connect()
         {
-            Debug.Log("Looking for OXÍMETRO...");
+            // Debug.Log("Looking for OXÍMETRO...");
 
             var portName = AutoConnect();
 
             if (string.IsNullOrEmpty(portName))
             {
                 Debug.LogWarning("Failed to connect OXÍMETRO!");
+                StartCoroutine(Reconnect());
                 return;
             }
 
@@ -176,6 +178,14 @@ namespace Ibit.Core.Serial
             IsConnected = true;
 
             Debug.Log($"Connected to {portName}:{baudRate}:OXÍMETRO");
+        }
+
+        //Caso desconectado, tenta reconectar a cada 10 segundos.
+        private IEnumerator Reconnect()
+        {
+            yield return new WaitForSeconds(10f);
+            //Debug.Log("Tentando reconectar Oxímetro...");
+            Connect();
         }
 
         private void Disconnect()

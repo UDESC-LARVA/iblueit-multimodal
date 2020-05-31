@@ -150,7 +150,7 @@ namespace Ibit.LeavesGame
                 if (scp.IsConnected) // Se PITACO conectado
                 {
                     sensorValue = sensorValue < -Pacient.Loaded.PitacoThreshold || sensorValue > Pacient.Loaded.PitacoThreshold ? sensorValue : 0f;
-                    peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow * 0.5f : -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
+                    peak = sensorValue > 0 ? (Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow*GameManager.CapacityMultiplierMinigames) * 0.5f : (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
 
                 }
                 else
@@ -158,7 +158,7 @@ namespace Ibit.LeavesGame
                     if (scm.IsConnected) // Se Mano conectado
                     {
                         sensorValue = sensorValue < -Pacient.Loaded.ManoThreshold || sensorValue > Pacient.Loaded.ManoThreshold ? sensorValue : 0f;
-                        peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesMano.ExpPeakFlow * 0.5f : -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
+                        peak = sensorValue > 0 ? (Pacient.Loaded.CapacitiesMano.ExpPeakFlow*GameManager.CapacityMultiplierMinigames) * 0.5f : (-Pacient.Loaded.CapacitiesMano.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
 
                     }
                     else
@@ -166,7 +166,7 @@ namespace Ibit.LeavesGame
                         if (scc.IsConnected) // Se CINTA conectada
                         {
                             sensorValue = sensorValue < -Pacient.Loaded.CintaThreshold || sensorValue > Pacient.Loaded.CintaThreshold ? sensorValue : 0f;
-                            peak = sensorValue > 0 ? Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * 0.5f : -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
+                            peak = sensorValue > 0 ? (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierMinigames) * 0.5f : (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
 
                         }
                     }

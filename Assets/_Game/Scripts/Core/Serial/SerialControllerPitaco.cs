@@ -164,7 +164,7 @@ namespace Ibit.Core.Serial
                 }
                 catch (Exception e)
                 {
-                    Debug.LogWarning($"Unable to connect {sp.PortName}:{sp.BaudRate}:PITACO.\n{e.GetType()}: {e.Message}");
+                    //Debug.LogWarning($"Unable to connect {sp.PortName}:{sp.BaudRate}:PITACO.\n{e.GetType()}: {e.Message}");
                     sp.Close();
                     sp.Dispose();
                     continue;
@@ -194,13 +194,14 @@ namespace Ibit.Core.Serial
 //                return;
 //            }
 //#endif
-            Debug.Log("Looking for PITACO...");
+            // Debug.Log("Looking for PITACO...");
 
             var portName = AutoConnect();
 
             if (string.IsNullOrEmpty(portName))
             {
                 Debug.LogWarning("Failed to connect PITACO!");
+                StartCoroutine(Reconnect());
                 return;
             }
 
@@ -212,6 +213,14 @@ namespace Ibit.Core.Serial
             IsConnected = true;
 
             Debug.Log($"Connected to {portName}:{baudRate}:PITACO");
+        }
+
+        //Caso desconectado, tenta reconectar a cada 10 segundos.
+        private IEnumerator Reconnect()
+        {
+            yield return new WaitForSeconds(10f);
+            //Debug.Log("Tentando reconectar Pitaco...");
+            Connect();
         }
 
         private void Disconnect()

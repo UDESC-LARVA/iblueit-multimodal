@@ -5,6 +5,7 @@ using Ibit.Core.Util;
 using Ibit.Core.Audio;
 using UnityEngine;
 using Ibit.Core;
+using Ibit.Core.Game;
 
 namespace Ibit.WaterGame
 {
@@ -64,7 +65,7 @@ namespace Ibit.WaterGame
             }
             else
             {
-                if (scm.IsConnected) // Se Mano conectado
+                if (scm.IsConnected) // Se MANO conectado
                 {
                     scm.OnSerialMessageReceived += OnMessageReceivedMano;
                     scm.StartSamplingDelayed();
@@ -81,7 +82,7 @@ namespace Ibit.WaterGame
                 }
             }
 
-            if (sco.IsConnected) // Se Cinta conectada
+            if (sco.IsConnected) // Se OXÍMETRO conectado
             {
                 sco.OnSerialMessageReceived += OnMessageReceivedOximetro;
 
@@ -266,21 +267,21 @@ namespace Ibit.WaterGame
 
             if (scp.IsConnected) // Se PITACO conectado
             {
-                playerPike = -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;  //originalmente RawInspeakFlow; alterado->02/10/19
+                playerPike = (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow*GameManager.CapacityMultiplierMinigames);  //originalmente RawInspeakFlow; alterado->02/10/19
 
             }
             else
             {
                 if (scm.IsConnected) // Se Mano conectado
                 {
-                    playerPike = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;  //originalmente RawInspeakFlow; alterado->02/10/19
+                    playerPike = (-Pacient.Loaded.CapacitiesMano.InsPeakFlow*GameManager.CapacityMultiplierMinigames);  //originalmente RawInspeakFlow; alterado->02/10/19
 
                 }
                 else
                 {
                     if (scc.IsConnected) // Se CINTA conectada
                     {
-                        playerPike = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;  //originalmente RawInspeakFlow; alterado->02/10/19
+                        playerPike = (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow*GameManager.CapacityMultiplierMinigames);  //originalmente RawInspeakFlow; alterado->02/10/19
 
                     }
                 }

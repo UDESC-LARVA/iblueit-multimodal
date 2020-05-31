@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using Ibit.Core.Data;
 using Ibit.Core.Data.Enums;
 using Ibit.Core.Util;
+using Ibit.Core.Game;
 
 namespace Ibit.WaterGame
 {
@@ -67,19 +68,19 @@ namespace Ibit.WaterGame
 
             if (scp.IsConnected) // Se PITACO conectado
             {
-                SpicoInspiratorio = -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
+                SpicoInspiratorio = (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
             }
             else
             {
                 if (scm.IsConnected) // Se Mano conectado
                 {
-                    SpicoInspiratorio = -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
+                    SpicoInspiratorio = (-Pacient.Loaded.CapacitiesMano.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
                 }
                 else
                 {
                     if (scc.IsConnected) // Se CINTA conectada
                     {
-                        SpicoInspiratorio = -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
+                        SpicoInspiratorio = (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
                     }
                 }
             }

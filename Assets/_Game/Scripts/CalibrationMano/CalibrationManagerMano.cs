@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Assets._Game.Scripts.Core.Api.Dto;
+using Assets._Game.Scripts.Core.Api.Extensions;
 using Ibit.Core.Audio;
 using Ibit.Core.Data;
-using Ibit.Core.Database;
+using Ibit.Core.Data.Enums;
+using Ibit.Core.Data.Manager;
 using Ibit.Core.Serial;
 using Ibit.Core.Util;
 using NaughtyAttributes;
@@ -37,6 +40,7 @@ namespace Ibit.Calibration
         private Stopwatch _flowWatch;
         private Stopwatch _timerWatch;
         private Capacities _tmpCapacities;
+        private CalibrationOverviewSendDto _calibrationOverviewSendDto;
         private CalibrationLoggerMano _calibrationLogger;
         private Dictionary<float, float> _capturedSamples;
         private SerialControllerMano _serialController;
@@ -46,6 +50,11 @@ namespace Ibit.Calibration
             _serialController = FindObjectOfType<SerialControllerMano>();
             _serialController.OnSerialMessageReceived += OnSerialMessageReceived;
             _tmpCapacities = new Capacities();
+            _calibrationOverviewSendDto = new CalibrationOverviewSendDto
+            {
+                GameDevice = GameDevice.Mano.GetDescription(),
+                PacientId = Pacient.Loaded.IdApi
+            };
             _flowWatch = new Stopwatch();
             _timerWatch = new Stopwatch();
             _capturedSamples = new Dictionary<float, float>();
@@ -94,7 +103,7 @@ namespace Ibit.Calibration
                         //     switch (_currentStep)
                         //     {
                         //         case 1:
-                        //             DudeTalk("Você deve respirar somente pela boca. Não precisa morder o PITACO. Mantenha o PITACO sempre para baixo. Pressione (Enter) para continuar.");
+                        //             DudeTalk("Você deve respirar somente pela boca. Não precisa morder o MANO. Mantenha o MANO sempre para baixo. Pressione (Enter) para continuar.");
                         //             SetupNextStep();
                         //             break;
 
@@ -149,6 +158,8 @@ namespace Ibit.Calibration
                         //             break;
 
                         //         case 5:
+                        //             _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawRespRate;
+                        //             _calibrationOverviewSendDto.Exercise = RespiratoryExercise.RespiratoryFrequency.GetDescription();
                         //             Pacient.Loaded.CapacitiesMano.RespiratoryRate = _tmpCapacities.RawRespRate;
                         //             SaveAndQuit();
                         //             break;
@@ -218,6 +229,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawInsPeakFlow;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.InspiratoryPeak.GetDescription();
                                     Pacient.Loaded.CapacitiesMano.InsPeakFlow = _tmpCapacities.RawInsPeakFlow;
                                     SaveAndQuit();
                                     break;
@@ -302,6 +315,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawInsFlowDuration;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.InspiratoryDuration.GetDescription();
                                     Pacient.Loaded.CapacitiesMano.InsFlowDuration = _tmpCapacities.RawInsFlowDuration;
                                     SaveAndQuit();
                                     break;
@@ -374,6 +389,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawExpPeakFlow;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.ExpiratoryPeak.GetDescription();
                                     Pacient.Loaded.CapacitiesMano.ExpPeakFlow = _tmpCapacities.RawExpPeakFlow;
                                     SaveAndQuit();
                                     break;
@@ -459,6 +476,8 @@ namespace Ibit.Calibration
                                     break;
 
                                 case 5:
+                                    _calibrationOverviewSendDto.CalibrationValue = _tmpCapacities.RawExpFlowDuration;
+                                    _calibrationOverviewSendDto.Exercise = RespiratoryExercise.ExpiratoryDuration.GetDescription();
                                     Pacient.Loaded.CapacitiesMano.ExpFlowDuration = _tmpCapacities.RawExpFlowDuration;
                                     SaveAndQuit();
                                     break;
@@ -516,12 +535,26 @@ namespace Ibit.Calibration
             _acceptingValues = true;
         }
 
-        private void SaveAndQuit()
+        private async void SaveAndQuit()
         {
+            GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(true);
+
             Pacient.Loaded.CalibrationManoDone = Pacient.Loaded.IsCalibrationManoDone;
-            PacientDb.Instance.Save();
+
+            var pacientSendDto = Pacient.MapToPacientSendDto();
+            var responsePacient = await DataManager.Instance.UpdatePacient(pacientSendDto);
+
+            var responseCalibration = await DataManager.Instance.SaveCalibrationOverview(_calibrationOverviewSendDto);
+
+            GameObject.Find("Canvas").transform.Find("SavingBgPanel").gameObject.SetActive(false);
+
+            if (responsePacient.ApiResponse == null)
+                SysMessage.Info("Erro ao atualizar os dados do paciente na nuvem!\n Os dados poderão ser enviados posteriormente..");
+
+            if (responseCalibration.ApiResponse == null)
+                SysMessage.Info("Erro salvar os dados de calibração na nuvem!\n Os dados poderão ser enviados posteriormente..");
+
             FindObjectOfType<ManoLogger>().StopLogging();
-            _calibrationLogger.Save();
             ReturnToMainMenu();
         }
 

@@ -9,6 +9,7 @@ using Ibit.Core;
 using Ibit.Core.Data.Enums;
 using Ibit.Core.Util;
 using UnityEditor;
+using Ibit.Core.Game;
 
 namespace Ibit.CakeGame
 {
@@ -59,17 +60,17 @@ namespace Ibit.CakeGame
 
             if (scp.IsConnected) // Se Pitaco conectado
             {
-                SpicoExpiratorio = Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow;
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow*GameManager.CapacityMultiplierMinigames;
 
             } else {
             if (scm.IsConnected) // Se Mano conectado
             {
-                SpicoExpiratorio = Pacient.Loaded.CapacitiesMano.ExpPeakFlow;
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesMano.ExpPeakFlow*GameManager.CapacityMultiplierMinigames;
 
             } else {
             if (scc.IsConnected) // Se Cinta conectada
             {
-                SpicoExpiratorio = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierMinigames;
             }}}
 
             slider.maxValue = SpicoExpiratorio;         //adicionado 09/09/19
@@ -574,19 +575,19 @@ namespace Ibit.CakeGame
 
             if (scp.IsConnected) // Se PITACO conectado
             {
-                picoJogador = Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow;
+                picoJogador = (Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow*GameManager.CapacityMultiplierMinigames);
             }
             else
             {
                if (scm.IsConnected) // Se Mano conectado
                {
-                   picoJogador = Pacient.Loaded.CapacitiesMano.ExpPeakFlow;
+                   picoJogador = (Pacient.Loaded.CapacitiesMano.ExpPeakFlow*GameManager.CapacityMultiplierMinigames);
                }
                else
                {
                    if (scc.IsConnected) // Se CINTA conectada
                    {
-                       picoJogador = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
+                       picoJogador = (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierMinigames);
                    }
                }
             }

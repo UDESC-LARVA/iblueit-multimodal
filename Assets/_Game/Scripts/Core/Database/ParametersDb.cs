@@ -16,7 +16,7 @@ namespace Ibit.Core.Database
     {
         public int id;
         public Parameters parameters;
-        private readonly string filePath = @"savedata/pacients/_parametersList.csv";
+        private readonly string filePath = @"Data/_parametersList.csv";
 
         private SerialControllerPitaco scp;
         private SerialControllerMano scm;

@@ -1,15 +1,22 @@
-﻿using Ibit.Core.Data;
+﻿using System;
+using Ibit.Core.Data;
 using Ibit.Core.Game;
 using Ibit.Core.Serial;
 using System.Linq;
+using Assets._Game.Scripts.Core.Api.Extensions;
+using Ibit.Core.Data.Enums;
 using UnityEngine;
 
 namespace Ibit.Core.Util
 {
     public class CintaLogger : Logger<CintaLogger>
     {
+        public FlowDataDevice flowDataDevice;
+
         protected override void Awake()
         {
+            flowDataDevice = new FlowDataDevice {DeviceName = GameDevice.Cinta.GetDescription()};
+
             sb.AppendLine("time;value");
             FindObjectOfType<SerialControllerCinta>().OnSerialMessageReceived += OnSerialMessageReceived;
         }
@@ -29,6 +36,12 @@ namespace Ibit.Core.Util
         {
             if (!isLogging || msg.Length < 1 || GameManager.GameIsPaused)
                 return;
+
+            flowDataDevice.FlowData.Add(new FlowData
+            {
+                Date = DateTime.Now,
+                Value = Parsers.Float(msg)
+            });
 
             sb.AppendLine($"{Time.time:F};{Parsers.Float(msg):F}");
         }
