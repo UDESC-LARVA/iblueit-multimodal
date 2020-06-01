@@ -3,6 +3,7 @@ using Ibit.Core.Serial;
 using Ibit.Core.Util;
 using Ibit.Plataform.Camera;
 using UnityEngine;
+using Ibit.Core.Game;
 
 namespace Ibit.Plataform
 {
@@ -49,7 +50,7 @@ namespace Ibit.Plataform
             sensorValuePitaco = Parsers.Float(msg);
             sensorValuePitaco = sensorValuePitaco < -Pacient.Loaded.PitacoThreshold || sensorValuePitaco > Pacient.Loaded.PitacoThreshold ? sensorValuePitaco : 0f;
 
-            peakPitaco = sensorValuePitaco > 0 ? Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow : -Pacient.Loaded.CapacitiesPitaco.InsPeakFlow;
+            peakPitaco = sensorValuePitaco > 0 ? (Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow*GameManager.CapacityMultiplierPlataform) : (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow*GameManager.CapacityMultiplierPlataform);
 
 
             nextPosition = sensorValuePitaco * CameraLimits.Boundary / peakPitaco; // Ponto crucial do cálculo da posição do blue
@@ -86,7 +87,7 @@ namespace Ibit.Plataform
             sensorValueMano = Parsers.Float(msg);
             sensorValueMano = sensorValueMano < -Pacient.Loaded.ManoThreshold || sensorValueMano > Pacient.Loaded.ManoThreshold ? sensorValueMano : 0f;
 
-            peakMano = sensorValueMano > 0 ? Pacient.Loaded.CapacitiesMano.ExpPeakFlow : -Pacient.Loaded.CapacitiesMano.InsPeakFlow;
+            peakMano = sensorValueMano > 0 ? (Pacient.Loaded.CapacitiesMano.ExpPeakFlow*GameManager.CapacityMultiplierPlataform) : (-Pacient.Loaded.CapacitiesMano.InsPeakFlow*GameManager.CapacityMultiplierPlataform);
 
             
             nextPosition = sensorValueMano * CameraLimits.Boundary / peakMano; // Ponto crucial do cálculo da posição do blue
@@ -118,10 +119,10 @@ namespace Ibit.Plataform
 
             var nextPosition = 0f;
 
-            sensorValueCinta = Parsers.Float(msg)+Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
+            sensorValueCinta = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierPlataform);
             sensorValueCinta = sensorValueCinta < -Pacient.Loaded.CintaThreshold || sensorValueCinta > Pacient.Loaded.CintaThreshold ? sensorValueCinta : 0f;
 
-            peakCinta = sensorValueCinta > 0 ? Pacient.Loaded.CapacitiesCinta.ExpPeakFlow : -Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
+            peakCinta = sensorValueCinta > 0 ? (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierPlataform) : (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow*GameManager.CapacityMultiplierPlataform);
 
             
             nextPosition = sensorValueCinta * CameraLimits.Boundary / peakCinta; // Ponto crucial do cálculo da posição do blue

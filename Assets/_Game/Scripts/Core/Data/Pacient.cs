@@ -67,7 +67,7 @@ namespace Ibit.Core.Data
                     Condition = ConditionType.Healthy,
                     Name = "NetRunner",
                     PlaySessionsDone = 0,
-                    UnlockedLevels = 15,
+                    UnlockedLevels = 31,
                     AccumulatedScore = 0,
                     PitacoThreshold = 7.5f,
                     ManoThreshold = 7.5f,
@@ -76,27 +76,27 @@ namespace Ibit.Core.Data
                     CapacitiesPitaco = new Capacities
                     {
                         RespiratoryRate = 0.3f,
-                        ExpPeakFlow = 200, //valor original 1600
-                        InsPeakFlow = -80,  //valor original -330
-                        ExpFlowDuration = 18000,   //valor original
-                        InsFlowDuration = 10000   //valor original
+                        ExpPeakFlow = 200,
+                        InsPeakFlow = -150,
+                        ExpFlowDuration = 5000,
+                        InsFlowDuration = 4000
                     },
 
                     CapacitiesMano = new Capacities
                     {
-                        ExpPeakFlow = 400, //valor original 1600
-                        InsPeakFlow = -200,  //valor original -330
-                        ExpFlowDuration = 18000,   //valor original
-                        InsFlowDuration = 10000   //valor original
+                        ExpPeakFlow = 4000,
+                        InsPeakFlow = -4000,
+                        ExpFlowDuration = 4000,
+                        InsFlowDuration = 3000
                     },
 
                     CapacitiesCinta = new Capacities
                     {
                         RespiratoryRate = 0.3f,
-                        ExpPeakFlow = 200, //valor original 1600
-                        InsPeakFlow = -80,  //valor original -330
-                        ExpFlowDuration = 18000,   //valor original
-                        InsFlowDuration = 10000   //valor original
+                        ExpPeakFlow = 98,
+                        InsPeakFlow = -128,
+                        ExpFlowDuration = 5000,
+                        InsFlowDuration = 5000
                     }
                 };
         }
@@ -131,7 +131,7 @@ namespace Ibit.Core.Data
 
                 CapacitiesMano = new Capacities
                 {
-                    RespiratoryRate = pacientDto.CapacitiesMano.RawRespiratoryRate,
+                    // RespiratoryRate = pacientDto.CapacitiesMano.RawRespiratoryRate,
                     ExpPeakFlow = pacientDto.CapacitiesMano.RawExpPeakFlow, //valor original 1600
                     InsPeakFlow = pacientDto.CapacitiesMano.RawInsPeakFlow,  //valor original -330
                     ExpFlowDuration = pacientDto.CapacitiesMano.RawExpFlowDuration,   //valor original
@@ -177,19 +177,19 @@ namespace Ibit.Core.Data
                 },
                 CapacitiesCinta = new CapacitiesDto
                 {
-                    RawInsPeakFlow = Loaded.CapacitiesPitaco.RawInsPeakFlow,
-                    RawExpPeakFlow = Loaded.CapacitiesPitaco.RawExpPeakFlow,
-                    RawRespiratoryRate = Loaded.CapacitiesPitaco.RawRespRate,
-                    RawExpFlowDuration = Loaded.CapacitiesPitaco.RawExpFlowDuration,
-                    RawInsFlowDuration = Loaded.CapacitiesPitaco.RawInsFlowDuration
+                    RawInsPeakFlow = Loaded.CapacitiesCinta.RawInsPeakFlow,
+                    RawExpPeakFlow = Loaded.CapacitiesCinta.RawExpPeakFlow,
+                    RawRespiratoryRate = Loaded.CapacitiesCinta.RawRespRate,
+                    RawExpFlowDuration = Loaded.CapacitiesCinta.RawExpFlowDuration,
+                    RawInsFlowDuration = Loaded.CapacitiesCinta.RawInsFlowDuration
                 },
                 CapacitiesMano = new CapacitiesDto
                 {
-                    RawInsPeakFlow = Loaded.CapacitiesPitaco.RawInsPeakFlow,
-                    RawExpPeakFlow = Loaded.CapacitiesPitaco.RawExpPeakFlow,
-                    RawRespiratoryRate = Loaded.CapacitiesPitaco.RawRespRate,
-                    RawExpFlowDuration = Loaded.CapacitiesPitaco.RawExpFlowDuration,
-                    RawInsFlowDuration = Loaded.CapacitiesPitaco.RawInsFlowDuration
+                    RawInsPeakFlow = Loaded.CapacitiesMano.RawInsPeakFlow,
+                    RawExpPeakFlow = Loaded.CapacitiesMano.RawExpPeakFlow,
+                    // RawRespiratoryRate = Loaded.CapacitiesMano.RawRespRate,
+                    RawExpFlowDuration = Loaded.CapacitiesMano.RawExpFlowDuration,
+                    RawInsFlowDuration = Loaded.CapacitiesMano.RawInsFlowDuration
                 },
                 CalibrationManoDone = Loaded.CalibrationManoDone,
                 CalibrationCintaDone = Loaded.CalibrationCintaDone,

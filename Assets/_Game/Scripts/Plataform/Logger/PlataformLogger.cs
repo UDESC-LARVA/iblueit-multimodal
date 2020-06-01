@@ -4,6 +4,7 @@ using Ibit.Core.Data;
 using Ibit.Core.Data.Manager;
 using Ibit.Core.Game;
 using Ibit.Core.Util;
+using Ibit.Core.Serial;
 using Ibit.Plataform.Data;
 using Ibit.Plataform.Manager.Score;
 using Ibit.Plataform.Manager.Spawn;
@@ -14,18 +15,35 @@ namespace Ibit.Plataform.Logger
 {
     public class PlataformLogger : Logger<PlataformLogger>
     {
+        private SerialControllerPitaco scp;
+        private SerialControllerMano scm;
+        private SerialControllerCinta scc;
+        private SerialControllerOximetro sco;
+
         private Player plr;
         private Scorer scr;
         private Spawner spwn;
-        private PitacoLogger pitacoLogger;
+        private PitacoLogger _pitacoLogger;
+        private ManoLogger _manoLogger;
+        private CintaLogger _cintaLogger;
+        private OximetroLogger _oximetroLogger;
 
         protected override void Awake()
         {
+            scp = FindObjectOfType<SerialControllerPitaco>();
+            scm = FindObjectOfType<SerialControllerMano>();
+            scc = FindObjectOfType<SerialControllerCinta>();
+            sco = FindObjectOfType<SerialControllerOximetro>();
+
+
             sb.AppendLine("time;tag;instanceId;posX;posY");
             plr = FindObjectOfType<Player>();
             spwn = FindObjectOfType<Spawner>();
             scr = FindObjectOfType<Scorer>();
-            pitacoLogger = FindObjectOfType<PitacoLogger>();
+            _pitacoLogger = FindObjectOfType<PitacoLogger>();
+            _manoLogger = FindObjectOfType<ManoLogger>();
+            _cintaLogger = FindObjectOfType<CintaLogger>();
+            _oximetroLogger = FindObjectOfType<OximetroLogger>();
             FindObjectOfType<StageManager>().OnStageEnd += StopLogging;
         }
 
@@ -102,7 +120,29 @@ namespace Ibit.Plataform.Logger
                 FlowDataDevices = new List<FlowDataDevice>()
             };
 
-            plataformOverviewSendDto.FlowDataDevices.Add(pitacoLogger.flowDataDevice);
+
+            if (scp.IsConnected) // Se PITACO conectado
+            {
+                Debug.Log("PlatformLogger - Device: Pitaco.");
+                plataformOverviewSendDto.FlowDataDevices.Add(_pitacoLogger.flowDataDevice);
+            } else {
+            if (scm.IsConnected) // Se MANO conectado
+            {
+                Debug.Log("PlatformLogger - Device: Mano.");
+                plataformOverviewSendDto.FlowDataDevices.Add(_manoLogger.flowDataDevice);
+            } else {
+            if (scc.IsConnected) // Se CINTA conectada
+            {
+                Debug.Log("PlatformLogger - Device: Cinta.");
+                plataformOverviewSendDto.FlowDataDevices.Add(_cintaLogger.flowDataDevice);
+            }}}
+
+            if (sco.IsConnected) // Se OXÍMETRO conectado
+            {
+                Debug.Log("PlatformLogger - Device: Oxímetro.");
+                plataformOverviewSendDto.FlowDataDevices.Add(_oximetroLogger.flowDataDevice);
+            }
+
 
             var plataformResponse = await DataManager.Instance.SavePlataformOverview(plataformOverviewSendDto);
             if (plataformResponse.ApiResponse == null)

@@ -1,4 +1,5 @@
 ﻿using Ibit.Core.Util;
+// using Ibit.Core.Data;
 using UnityEngine;
 
 namespace Ibit.Calibration
@@ -15,6 +16,9 @@ namespace Ibit.Calibration
             switch (_currentExercise)
             {
                 case CalibrationExerciseCinta.ExpiratoryPeak:
+                    tmp = (tmp-_maxFlowINS); //Cálculo ajuste p/ cinta
+                    // Positivo e Aumentando com menos pressão, vai de 0 a picoINS[positivo]
+
                     if (tmp > _flowMeter)
                     {
                         _flowMeter = tmp;
@@ -45,5 +49,6 @@ namespace Ibit.Calibration
                     break;
             }
         }
+
     }
 }

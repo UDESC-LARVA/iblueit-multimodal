@@ -3,6 +3,7 @@ using Ibit.Core.Data;
 using Ibit.Plataform.Data;
 using Ibit.Plataform.Manager.Spawn;
 using UnityEngine;
+using Ibit.Core.Game;
 
 namespace Ibit.Plataform
 {
@@ -34,7 +35,7 @@ namespace Ibit.Plataform
         {
             var tmpScale = this.transform.localScale;
 
-            tmpScale.x = (this._model.PositionYFactor > 0 ? Pacient.Loaded.CapacitiesPitaco.ExpFlowDuration : Pacient.Loaded.CapacitiesPitaco.InsFlowDuration) / 1000f *
+            tmpScale.x = (this._model.PositionYFactor > 0 ? (Pacient.Loaded.CapacitiesPitaco.ExpFlowDuration*GameManager.CapacityMultiplierPlataform) : (Pacient.Loaded.CapacitiesPitaco.InsFlowDuration*GameManager.CapacityMultiplierPlataform)) / 1000f *
                 (1f + performanceFactor) * this._model.DifficultyFactor;
 
             tmpScale.x = tmpScale.x < 1f ? 1f : tmpScale.x;

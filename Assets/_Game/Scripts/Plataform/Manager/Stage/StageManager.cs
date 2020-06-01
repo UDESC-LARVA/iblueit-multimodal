@@ -70,6 +70,12 @@ namespace Ibit.Plataform.Manager.Stage
             serialControllerOximetro = FindObjectOfType<SerialControllerOximetro>();
             serialControllerOximetro.OnSerialConnected += StartStage;
 
+            
+            serialControllerPitaco.Recalibrate();
+            serialControllerMano.Recalibrate();
+            serialControllerCinta.Recalibrate();
+            serialControllerOximetro.Recalibrate();
+
 #if !UNITY_EDITOR
 
         // Caso algum dispositivo de controle seja disconectado.
@@ -93,23 +99,13 @@ namespace Ibit.Plataform.Manager.Stage
             {
                 if (GameManager.GameIsPaused)
                     GameManager.UnPauseGame();
-                // else
-                //     return;
             }
 
-
-            // Conectando/reconectando dispositivos "OnTheFly", ou seja, em tempo de execução.
-            Debug.Log("CONECTANDO/RECONECTANDO DISPOSITIVOS...");
-
-            serialControllerPitaco.Connect();
-            serialControllerMano.Connect();
-            serialControllerCinta.Connect();
-            serialControllerOximetro.Connect();
 
             serialControllerPitaco.StartSamplingDelayed();
             serialControllerMano.StartSamplingDelayed();
             serialControllerCinta.StartSamplingDelayed();
-             serialControllerOximetro.StartSamplingDelayed(); 
+            serialControllerOximetro.StartSamplingDelayed(); 
 
             IsRunning = true;
             OnStageStart?.Invoke();
@@ -125,7 +121,6 @@ namespace Ibit.Plataform.Manager.Stage
         // Caso todos os dispositivos de controle não estejam conectados.
         if (!serialControllerPitaco.IsConnected && !serialControllerMano.IsConnected && !serialControllerCinta.IsConnected)
         {
-            // Debug.Log("Nenhum dispositivo de controle conectado.\nReconecte ao menos um controle.");
             FindObjectOfType<Ibit.Plataform.UI.CanvasManager>().PauseGame();
             SysMessage.Warning("Nenhum dispositivo de controle conectado.\nReconecte ao menos um controle.");
         }

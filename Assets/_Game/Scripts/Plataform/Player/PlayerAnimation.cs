@@ -1,5 +1,6 @@
 ﻿using Ibit.Core.Data;
 using Ibit.Core.Util;
+using Ibit.Core.Game;
 
 namespace Ibit.Plataform
 {
@@ -45,14 +46,14 @@ namespace Ibit.Plataform
                 return;
 
             // Se o Pitaco não estiver conectado, o Mano não estiver conectado e a Cinta sim...
-            if (!scp.IsConnected && !scm.IsConnected && scc.IsConnected)
-            {
-                var f = Parsers.Float(msg) + Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
+            //if (!scp.IsConnected && !scm.IsConnected && scc.IsConnected)
+            //{
+                var f = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierPlataform); //+ (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierPlataform)
 
                 f = f < -Pacient.Loaded.CintaThreshold || f > Pacient.Loaded.CintaThreshold ? f : 0f;
 
                 this.animator.Play(f < 0 ? "Dolphin-Jump" : "Dolphin-Move");
-            }
+            //}
         }
     }
 }
