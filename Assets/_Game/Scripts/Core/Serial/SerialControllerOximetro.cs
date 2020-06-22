@@ -95,12 +95,13 @@ namespace Ibit.Core.Serial
 
         private static string[] GetPortNames()
         {
-            if (Application.platform == RuntimePlatform.OSXPlayer ||
+            if (Application.platform == RuntimePlatform.LinuxPlayer ||
+                Application.platform == RuntimePlatform.LinuxEditor ||
+                Application.platform == RuntimePlatform.OSXPlayer ||
                 Application.platform == RuntimePlatform.OSXEditor ||
-                Application.platform == RuntimePlatform.LinuxPlayer ||
                 Application.platform == RuntimePlatform.Android)
             {
-                return Directory.GetFiles("/dev/").Where(port => port.StartsWith("/dev/tty.usb") || port.StartsWith("/dev/ttyUSB")).ToArray();
+                return Directory.GetFiles("/dev/").Where(port => port.StartsWith("/dev/ttyACM") || port.StartsWith("/dev/tty.usb") || port.StartsWith("/dev/ttyUSB")).ToArray();
             }
 
             return SerialPort.GetPortNames(); //windows
