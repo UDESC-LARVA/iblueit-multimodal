@@ -75,6 +75,8 @@ public class QuickOpener // [1]
             string path = GetAssetStorePackagesPathOnMac();
 #elif UNITY_EDITOR_WIN
         string path = GetAssetStorePackagesPathOnWindows();
+#elif UNITY_EDITOR_LINUX
+        string path = null;
 #endif
 
         Reveal(path);

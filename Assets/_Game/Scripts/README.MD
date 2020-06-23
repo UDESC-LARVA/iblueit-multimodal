@@ -30,6 +30,8 @@ A programação do *I Blue It* foi fruto das contribuições de:
 - Plataform
 
 ## Contribuições - Yuri
+- Core
+- Editor
 - CakeGame
 - LeavesGame
 - WaterGame
