@@ -38,7 +38,7 @@ void ListenCommand(char cmd)
 {
   //ECHO
   if (cmd == 'e' || cmd == 'E')
-    Serial.println("echoo");
+    Serial.println("echox");
 
   //READ SAMPLES
   else if (cmd == 'r' || cmd == 'R')

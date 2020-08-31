@@ -12,6 +12,7 @@ namespace Ibit.Plataform
     {
         [SerializeField] private GameObject _helpPanel;
         [SerializeField] private CanvasManager _canvasManager;
+        [SerializeField] private GameObject SecurityPanel2;
 
         private void Start()
         {
@@ -37,7 +38,9 @@ namespace Ibit.Plataform
                 if (!GameManager.GameIsPaused)
                     _canvasManager.PauseGame();
                 else
-                    _canvasManager.UnPauseGame();
+                   
+                    if (!GameObject.Find("Canvas").transform.Find("Security Panel 2").gameObject.activeSelf) // Só despausa o jogo caso o painel de segurança 2 não esteja ativado
+                        _canvasManager.UnPauseGame();
             }
 
             // F1

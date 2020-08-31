@@ -48,7 +48,7 @@ namespace Ibit.Plataform
             // Se o Pitaco não estiver conectado, o Mano não estiver conectado e a Cinta sim...
             //if (!scp.IsConnected && !scm.IsConnected && scc.IsConnected)
             //{
-                var f = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierPlataform); //+ (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierPlataform)
+                var f = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * gameMultiplier); //+ (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * gameMultiplier)
 
                 f = f < -Pacient.Loaded.CintaThreshold || f > Pacient.Loaded.CintaThreshold ? f : 0f;
 

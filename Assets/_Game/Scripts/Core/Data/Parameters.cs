@@ -10,15 +10,18 @@ namespace Ibit.Core.Data
 
         public string device;
         public int lostWtimes;
-        public float additionalHeight;
-        public float additionalSize;
-        public int LostXtimes;
+        public float decreaseHeight;
+        public float decreaseSize;
+        public int lostXtimes;
         public float AdditionalDistance;
-        public bool CalibrateStartBelt;
+        public float ObjectsSpeedFactor;
         public string FusionType;
         public float FusionPrefPitaco;
         public float FusionPrefMano;
         public float FusionPrefCinta;
+        public string FusionSubDevice;
+        public string FusionFunctIns;
+        public string FusionFunctExp;
         public float ScoreCalculationFactor;
         public float MinimumExtensionBelt;
         public int MinimumNormalOxygenation;
@@ -33,16 +36,19 @@ namespace Ibit.Core.Data
                 Loaded = new Parameters
                 {
                     device = "P", // Dispositivos
-                    lostWtimes = 2, // Perdeu W vezes (Alt. e Tam.)
-                    additionalHeight = 0, // Altura adicional dos Alvos
-                    additionalSize = 0, // Tamanho adicional dos Obstáculos
-                    LostXtimes = 3, // Perdeu X vezes (Recalibrar disp.)
-                    AdditionalDistance = 0.3f, // Distância adicional entre Objetos
-                    CalibrateStartBelt = false, // Calibrar Cinta no início?
-                    FusionType = "", // Fusão de Sinais
+                    lostWtimes = 1, // Perdeu W vezes (Alt. e Tam.)
+                    decreaseHeight = 1, // // Valor de decremento da ALTURA dos Alvos
+                    decreaseSize = 1, // Valor de decremento do TAMANHO dos Obstáculos
+                    lostXtimes = 2, // Perdeu X vezes (Recalibrar disp.)
+                    AdditionalDistance = 1, // Distância adicional entre Objetos
+                    ObjectsSpeedFactor = 0, // Fator de cálculo da velocidade de movimento dos objetos de jogo (Alvos e Obstáculos)
+                    FusionType = "", // Tipo de Fusão 
                     FusionPrefPitaco = 0, // PrefPitaco
                     FusionPrefMano = 0, // PrefMano
                     FusionPrefCinta = 0, // PrefCinta
+                    FusionSubDevice = "", // Fusão de Sinais, Dispositivo a ser subtraído
+                    FusionFunctIns = "", // Fusão de Funções: Dispositivo responsável por controlar a Inspiração
+                    FusionFunctExp = "", // Fusão de Funções: Dispositivo responsável por controlar a Expiração
                     ScoreCalculationFactor = 0, // Fator de Cálculo da Pontuação
                     MinimumExtensionBelt = 0, // Valor mínimo exigido da Cinta Extensora
                     MinimumNormalOxygenation = 0, // Oxigenação Normal Mínima

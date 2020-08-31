@@ -1,5 +1,5 @@
 /*
- * Pitaco Serial Connection - MPX5700AP
+ * Mano Serial Connection - MPX5700AP
  * https://github.com/UDESC-LARVA/IBLUEIT
  * 
  * RANGE do Sensor MPX5700AP p/ pressão absoluta

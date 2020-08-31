@@ -12,13 +12,13 @@ namespace Ibit.Core.Data
 
         public float InsPeakFlow
         {
-            get { return RawInsPeakFlow; } // * GameManager.CapacityMultiplierPlataform
+            get { return RawInsPeakFlow; }
             set { RawInsPeakFlow = value; }
         }
 
         public float ExpPeakFlow
         {
-            get { return RawExpPeakFlow; } // * GameManager.CapacityMultiplierPlataform
+            get { return RawExpPeakFlow; }
             set { RawExpPeakFlow = value; }
         }
 
@@ -27,7 +27,7 @@ namespace Ibit.Core.Data
         /// </summary>
         public float InsFlowDuration
         {
-            get { return RawInsFlowDuration; } // * GameManager.CapacityMultiplierPlataform
+            get { return RawInsFlowDuration; }
             set { RawInsFlowDuration = value; }
         }
 
@@ -36,7 +36,7 @@ namespace Ibit.Core.Data
         /// </summary>
         public float ExpFlowDuration
         {
-            get { return RawExpFlowDuration; } // * GameManager.CapacityMultiplierPlataform
+            get { return RawExpFlowDuration; }
             set { RawExpFlowDuration = value; }
         }
 
@@ -45,7 +45,7 @@ namespace Ibit.Core.Data
         /// </summary>
         public float RespiratoryRate
         {
-            get { return RawRespRate; } // / GameManager.CapacityMultiplierPlataform
+            get { return RawRespRate; }
             set { RawRespRate = value; }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Ibit.Core.Data;
+using Ibit.Core.Database;
 using Ibit.Core.Serial;
 using Ibit.Core.Util;
 using Ibit.Plataform.Camera;
@@ -7,68 +8,79 @@ using Ibit.Core.Game;
 
 namespace Ibit.Plataform
 {
-    
     public partial class Player
     {
+        private float SignalSamplesRatePitaco;
+        private float timeBetweenSamplesPitaco;
+        private float currenttimePitaco;
 
-        public float TestSensorValue;// p/ a plataforma de testes
-        public float TestPositionValue;// p/ a plataforma de testes
+        private float SignalSamplesRateMano;
+        private float timeBetweenSamplesMano;
+        private float currenttimeMano;
 
-        public float HRValue;
-        public float SPO2Value;
-        public bool oxiActive = false;
+        private float SignalSamplesRateCinta;
+        private float timeBetweenSamplesCinta;
+        private float currenttimeCinta;
+
+        private float SignalSamplesRateOxi;
+        private float timeBetweenSamplesOxi;
+        private float currenttimeOxi;
+
+        private float gameMultiplier = GameManager.CapacityMultiplierPlataform;
         
-        [SerializeField]
-        private SerialControllerPitaco scp;
+        [SerializeField] private SerialControllerPitaco scp;
+        [SerializeField] private SerialControllerMano scm;
+        [SerializeField] private SerialControllerCinta scc;
+        [SerializeField] private SerialControllerOximetro sco;
 
-        [SerializeField]
-        private SerialControllerMano scm;
+        //IMPORTANT Valores principais colhidos dos dispositivos:
+        public static float sensorValuePitaco;
+        public static float sensorValueMano;
+        public static float sensorValueCinta;
+        public static float sensorValueOxiSPO;
+        public static float sensorValueOxiHR;
 
-        [SerializeField]
-        private SerialControllerCinta scc;
-
-        [SerializeField]
-        private SerialControllerOximetro sco;
+        public float HRValue; //Variável responsável por mostrar na tela a HR
+        public float SPO2Value; //Variável responsável por mostrar na tela a SPO2
+        public bool oxiActive = false;
+        public float auxValuesOxi;
 
         public object outputDoPlayer { get; set; }
 
+        private void OnEnable()
+        {
+            // Taxa de amostragem do "Tratamento de Sinais" por minuto do Pitaco
+            SignalSamplesRatePitaco = SignalTreatmentDb.LoadSignalParameters("P");
+            timeBetweenSamplesPitaco = 60 / SignalSamplesRatePitaco;  // 60 segundos / amostragem desejada = tempo de intervalo entre cada amostra do sinal
 
+            // Taxa de amostragem do "Tratamento de Sinais" por minuto do Mano
+            SignalSamplesRateMano = SignalTreatmentDb.LoadSignalParameters("M");
+            timeBetweenSamplesMano = 60 / SignalSamplesRateMano;  // 60 segundos / amostragem desejada = tempo de intervalo entre cada amostra do sinal
+
+            // Taxa de amostragem do "Tratamento de Sinais" por minuto da Cinta Extensora
+            SignalSamplesRateCinta = SignalTreatmentDb.LoadSignalParameters("C");
+            timeBetweenSamplesCinta = 60 / SignalSamplesRateCinta;  // 60 segundos / amostragem desejada = tempo de intervalo entre cada amostra do sinal
+
+            // Taxa de amostragem do "Tratamento de Sinais" por minuto do Oxímetro
+            SignalSamplesRateOxi = SignalTreatmentDb.LoadSignalParameters("O");
+            timeBetweenSamplesOxi = 60 / SignalSamplesRateOxi;  // 60 segundos / amostragem desejada = tempo de intervalo entre cada amostra do sinal
+        }
 
         private void PositionOnSerialPitaco(string msg)
         {
             if (msg.Length < 1)
                 return;
 
-            // scp = FindObjectOfType<SerialControllerPitaco>();
+            if (Time.time > currenttimePitaco + timeBetweenSamplesPitaco) // Executa a quantidade de leituras escolhida pelo usuário no arquivo "_signalTreatment.csv" por minuto.
+            { 
+                sensorValuePitaco = 0f;
+                sensorValuePitaco = Parsers.Float(msg);
+                sensorValuePitaco = sensorValuePitaco < -Pacient.Loaded.PitacoThreshold || sensorValuePitaco > Pacient.Loaded.PitacoThreshold ? sensorValuePitaco : 0f;
 
-            var sensorValuePitaco = 0f;
-            
-            var peakPitaco = 0f;
-
-            var nextPosition = 0f;
-
-            sensorValuePitaco = Parsers.Float(msg);
-            sensorValuePitaco = sensorValuePitaco < -Pacient.Loaded.PitacoThreshold || sensorValuePitaco > Pacient.Loaded.PitacoThreshold ? sensorValuePitaco : 0f;
-
-            peakPitaco = sensorValuePitaco > 0 ? (Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow*GameManager.CapacityMultiplierPlataform) : (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow*GameManager.CapacityMultiplierPlataform);
-
-
-            nextPosition = sensorValuePitaco * CameraLimits.Boundary / peakPitaco; // Ponto crucial do cálculo da posição do blue
-            nextPosition = Mathf.Clamp(nextPosition, -CameraLimits.Boundary, CameraLimits.Boundary);// Ponto crucial do cálculo da posição do blue
-
-            TestSensorValue = sensorValuePitaco; // p/ a plataforma de testes
-            TestPositionValue = nextPosition; // p/ a plataforma de testes
-
-
-            var from = this.transform.position;
-            var to = new Vector3(this.transform.position.x, -nextPosition);
-
-            // Lerp(de onde está, para onde vai, lerpSpeed = velocidade de deslocamento);
-            this.transform.position = Vector3.Lerp(from, to, Time.deltaTime * 10f); // Valor original: Vector3.Lerp(from, to, Time.deltaTime * 15f);
+                currenttimePitaco = Time.time; // currenttimePitaco é atualizado para o tempo atual (Time.time é um contador de segundos que começa quando o jogo é executado)
+            }
             
         }
-
-
 
 
         private void PositionOnSerialMano(string msg)
@@ -76,33 +88,14 @@ namespace Ibit.Plataform
             if (msg.Length < 1)
                 return;
 
-            // scm = FindObjectOfType<SerialControllerMano>();
+            if (Time.time > currenttimeMano + timeBetweenSamplesMano) // Executa a quantidade de leituras escolhida pelo usuário no arquivo "_signalTreatment.csv" por minuto.
+            { 
+                sensorValueMano = 0f;
+                sensorValueMano = Parsers.Float(msg);
+                sensorValueMano = sensorValueMano < -Pacient.Loaded.ManoThreshold || sensorValueMano > Pacient.Loaded.ManoThreshold ? sensorValueMano : 0f;
 
-            var sensorValueMano = 0f;
-            
-            var peakMano = 0f;
-
-            var nextPosition = 0f;
-
-            sensorValueMano = Parsers.Float(msg);
-            sensorValueMano = sensorValueMano < -Pacient.Loaded.ManoThreshold || sensorValueMano > Pacient.Loaded.ManoThreshold ? sensorValueMano : 0f;
-
-            peakMano = sensorValueMano > 0 ? (Pacient.Loaded.CapacitiesMano.ExpPeakFlow*GameManager.CapacityMultiplierPlataform) : (-Pacient.Loaded.CapacitiesMano.InsPeakFlow*GameManager.CapacityMultiplierPlataform);
-
-            
-            nextPosition = sensorValueMano * CameraLimits.Boundary / peakMano; // Ponto crucial do cálculo da posição do blue
-            nextPosition = Mathf.Clamp(nextPosition, -CameraLimits.Boundary, CameraLimits.Boundary);// Ponto crucial do cálculo da posição do blue
-
-            TestSensorValue = sensorValueMano; // p/ a plataforma de testes
-            TestPositionValue = nextPosition; // p/ a plataforma de testes
-
-
-            var from = this.transform.position;
-            var to = new Vector3(this.transform.position.x, -nextPosition);
-
-            // Lerp(de onde está, para onde vai, lerpSpeed = velocidade de deslocamento);
-            this.transform.position = Vector3.Lerp(from, to, Time.deltaTime * 10f); // Valor original: Vector3.Lerp(from, to, Time.deltaTime * 15f);
-            
+                currenttimeMano = Time.time; // currenttimeMano é atualizado para o tempo atual (Time.time é um contador de segundos que começa quando o jogo é executado)
+            }
         }
 
 
@@ -111,33 +104,14 @@ namespace Ibit.Plataform
             if (msg.Length < 1)
                 return;
 
-            // scc = FindObjectOfType<SerialControllerCinta>();
+            if (Time.time > currenttimeCinta + timeBetweenSamplesCinta) // Executa a quantidade de leituras escolhida pelo usuário no arquivo "_signalTreatment.csv" por minuto.
+            { 
+                sensorValueCinta = 0f;
+                sensorValueCinta = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * gameMultiplier);
+                sensorValueCinta = sensorValueCinta < -Pacient.Loaded.CintaThreshold || sensorValueCinta > Pacient.Loaded.CintaThreshold ? sensorValueCinta : 0f;
 
-            var sensorValueCinta = 0f;
-            
-            var peakCinta = 0f;
-
-            var nextPosition = 0f;
-
-            sensorValueCinta = Parsers.Float(msg)+(Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierPlataform);
-            sensorValueCinta = sensorValueCinta < -Pacient.Loaded.CintaThreshold || sensorValueCinta > Pacient.Loaded.CintaThreshold ? sensorValueCinta : 0f;
-
-            peakCinta = sensorValueCinta > 0 ? (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierPlataform) : (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow*GameManager.CapacityMultiplierPlataform);
-
-            
-            nextPosition = sensorValueCinta * CameraLimits.Boundary / peakCinta; // Ponto crucial do cálculo da posição do blue
-            nextPosition = Mathf.Clamp(nextPosition, -CameraLimits.Boundary, CameraLimits.Boundary);// Ponto crucial do cálculo da posição do blue
-
-            TestSensorValue = sensorValueCinta; // p/ a plataforma de testes
-            TestPositionValue = nextPosition; // p/ a plataforma de testes
-
-
-            var from = this.transform.position;
-            var to = new Vector3(this.transform.position.x, -nextPosition);
-
-            // Lerp(de onde está, para onde vai, lerpSpeed = velocidade de deslocamento);
-            this.transform.position = Vector3.Lerp(from, to, Time.deltaTime * 10f); // Valor original: Vector3.Lerp(from, to, Time.deltaTime * 15f);
-            
+                currenttimeCinta = Time.time; // currenttimeCinta é atualizado para o tempo atual (Time.time é um contador de segundos que começa quando o jogo é executado)
+            }
         }
 
         private void PositionOnSerialOximetro(string msg)
@@ -145,16 +119,25 @@ namespace Ibit.Plataform
             if (msg.Length < 1)
                 return;
 
-            // Se o Oxímetro estiver conectado
-            if (sco.IsConnected)
-            {   oxiActive = true;
-                string[] sensorValueOxi = msg.Split(',');
-                HRValue = Parsers.Float(sensorValueOxi[0]);
-                SPO2Value = Parsers.Float(sensorValueOxi[1]);
-            } else {
-                oxiActive = false;
+            if (Time.time > currenttimeOxi + timeBetweenSamplesOxi) // Executa a quantidade de leituras escolhida pelo usuário no arquivo "_signalTreatment.csv" por minuto.
+            {
+                // Se o Oxímetro estiver conectado
+                if (sco.IsConnected)
+                {
+                    oxiActive = true;
+                    string[] auxValuesOxi = msg.Split(',');
+                
+                    sensorValueOxiHR = Parsers.Float(auxValuesOxi[0]);
+                    sensorValueOxiSPO = Parsers.Float(auxValuesOxi[1]);
+                
+                    HRValue = sensorValueOxiHR; //Variável responsável por mostrar na tela a HR
+                    SPO2Value = sensorValueOxiSPO; //Variável responsável por mostrar na tela a SPO2
+                } else {
+                    oxiActive = false;
+                }
+
+                currenttimeOxi = Time.time; // currenttimeOxi é atualizado para o tempo atual (Time.time é um contador de segundos que começa quando o jogo é executado)
             }
-            
         }
     }
 }

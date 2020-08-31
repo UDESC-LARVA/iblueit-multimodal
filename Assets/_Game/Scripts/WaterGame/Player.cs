@@ -33,6 +33,8 @@ namespace Ibit.WaterGame
         public int _roundNumber;
         Coroutine lastCoroutine;
 
+        private float gameMultiplier = GameManager.CapacityMultiplierMinigames;
+
         private SerialControllerPitaco scp;
         private SerialControllerMano scm;
         private SerialControllerCinta scc;
@@ -267,21 +269,21 @@ namespace Ibit.WaterGame
 
             if (scp.IsConnected) // Se PITACO conectado
             {
-                playerPike = (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow*GameManager.CapacityMultiplierMinigames);  //originalmente RawInspeakFlow; alterado->02/10/19
+                playerPike = (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow * gameMultiplier);  //originalmente RawInspeakFlow; alterado->02/10/19
 
             }
             else
             {
                 if (scm.IsConnected) // Se Mano conectado
                 {
-                    playerPike = (-Pacient.Loaded.CapacitiesMano.InsPeakFlow*GameManager.CapacityMultiplierMinigames);  //originalmente RawInspeakFlow; alterado->02/10/19
+                    playerPike = (-Pacient.Loaded.CapacitiesMano.InsPeakFlow * gameMultiplier);  //originalmente RawInspeakFlow; alterado->02/10/19
 
                 }
                 else
                 {
                     if (scc.IsConnected) // Se CINTA conectada
                     {
-                        playerPike = (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow*GameManager.CapacityMultiplierMinigames);  //originalmente RawInspeakFlow; alterado->02/10/19
+                        playerPike = (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow * gameMultiplier);  //originalmente RawInspeakFlow; alterado->02/10/19
 
                     }
                 }

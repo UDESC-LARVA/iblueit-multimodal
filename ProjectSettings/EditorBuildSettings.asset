@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Game/Scenes/Minigames/LeavesGame.unity
     guid: ec4a2ebd50b8c5b4cb75b7cb0ea04466
+  - enabled: 1
+    path: Assets/_Game/Scenes/TestingPlatform.unity
+    guid: 720099a20709d3542bee18cd170e873f
   m_configObjects: {}

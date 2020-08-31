@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Assets._Game.Scripts.Core.Api;
 using Ibit.Core.Data;
 using Ibit.Core.Data.Manager;
@@ -60,7 +61,6 @@ namespace Ibit.Core.Game
 
         public async void FlushLocalDataToCloudAction()
         {
-
             var hasInternetConnection = await ApiClient.Instance.HasInternetConnection();
             if (!hasInternetConnection)
             {
@@ -69,6 +69,13 @@ namespace Ibit.Core.Game
             }
             GameObject.Find("Canvas").transform.Find("SendingBgPanel").gameObject.SetActive(true);
             await DataManager.Instance.SendRemoteData();
+            StartCoroutine(Delay());
+            
+        }
+
+        private IEnumerator Delay() // Após enviar dados para a nuvem, aguarda 1 segundo antes de desativar o painel de envio.
+        {
+            yield return new WaitForSeconds(1.0f);
             GameObject.Find("Canvas").transform.Find("SendingBgPanel").gameObject.SetActive(false);
         }
     }
