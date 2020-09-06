@@ -1,4 +1,5 @@
 ﻿using Ibit.Core.Database;
+using Ibit.Core.Data;
 using Ibit.Plataform.UI;
 using Ibit.Plataform.Manager.Spawn;
 using Ibit.Plataform.Data;
@@ -11,6 +12,10 @@ namespace Ibit.Core.Game
         private float SignalSamplesRateOxi;
         private float timeBetweenSamplesOxi;
         private float currenttimeOxi;
+        private float minExtBelt;
+        private float maxExpBeltPacient;
+        private float maxInsBeltPacient;
+        private GameObject Dolphin;
 
         int limitSPORegular = 2; // Número de leituras regulares para fazer adaptação
         int limitSPODanger = 2; // Número de leituras perigosas para fazer adaptação
@@ -22,9 +27,15 @@ namespace Ibit.Core.Game
 
         private void OnEnable()
         {
-            // Taxa de amostragem do "Tratamento de Sinais" por minuto do Oxímetro
+            // Variáveis para taxa de amostragem, que é o número de leituras usadas no jogo por minuto do Oxímetro (Tratamento de Sinais)
             SignalSamplesRateOxi = SignalTreatmentDb.LoadSignalParameters("O");
             timeBetweenSamplesOxi = 60 / SignalSamplesRateOxi;  // 60 segundos / amostragem desejada = tempo de intervalo entre cada amostra do sinal
+            
+            // Variáveis para alterar a cor do Blue quando abaixo da porcentagem mínima de uso da cinta
+            Dolphin = GameObject.FindWithTag("Dolphin");
+            minExtBelt = ParametersDb.parameters.MinimumExtensionBelt;
+            maxExpBeltPacient = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
+            maxInsBeltPacient = Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
         }
 
         void AdaptationGrid(float signalPitaco, float signalMano, float signalCinta, float signalOxiSPO, float signalOxiHR)
@@ -33,14 +44,13 @@ namespace Ibit.Core.Game
                 _spawner = FindObjectOfType<Spawner>();
             }
 
-            if (_spawner.SpawnedObjects.Count < 1) // Se não tiver objetos não os testes não são feitos
-                return;
+            // if (_spawner.SpawnedObjects.Count < 1) // Se não tiver objetos, os testes não são feitos
+            //     return;
 
-
-            if (Time.time > currenttimeOxi + timeBetweenSamplesOxi) // Executa a quantidade de leituras escolhida pelo usuário no arquivo "_signalTreatment.csv" por minuto.
+            //* AvaliationNode Oxímeter
+            if (sco.IsConnected && Time.time > currenttimeOxi + timeBetweenSamplesOxi) // Executa a quantidade de leituras escolhida pelo usuário no arquivo "_signalTreatment.csv" por minuto.
             {
-                //* AvaliationNode
-                if (signalOxiSPO != 0 && signalOxiSPO >= 0 && signalOxiSPO < ParametersDb.parameters.MinimumNormalOxygenation) // ParametersDb.parameters.MinimumRegularOxygenation
+                if (signalOxiSPO > 0 && signalOxiSPO < ParametersDb.parameters.MinimumNormalOxygenation) // ParametersDb.parameters.MinimumRegularOxygenation
                 {
                     countSPORegular += 1;
                     if (countSPORegular >= limitSPORegular)
@@ -63,7 +73,7 @@ namespace Ibit.Core.Game
 
                     }
                 } else {
-                    if (signalOxiSPO != 0 && signalOxiSPO < ParametersDb.parameters.MinimumRegularOxygenation)
+                    if (signalOxiSPO > 0 && signalOxiSPO < ParametersDb.parameters.MinimumRegularOxygenation)
                     {
 
                         //  if (_spawner == null){
@@ -92,6 +102,24 @@ namespace Ibit.Core.Game
                 }
                 currenttimeOxi = Time.time; // currenttimeOxi é atualizado para o tempo atual (Time.time é um contador de segundos que começa quando o jogo é executado)
             }
+
+
+            //* AvaliationNode Extensor Belt
+            if (scc.IsConnected && minExtBelt > 0)  // Se o mínimo exigido da cinta é maior qur zero
+            {
+                // Debug.Log($"maxExpBeltPacient: {maxExpBeltPacient}");
+                // Debug.Log($"maxInsBeltPacient: {maxInsBeltPacient}");
+                if ((signalCinta < (minExtBelt/100) * maxExpBeltPacient) && (signalCinta > (minExtBelt/100) * maxInsBeltPacient)) //ParametersDb.parameters.MinimumExtensionBelt
+                {
+                    Dolphin.GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.640f, 0.0f, 1.0f); // Laranja       new Color(0.912f, 0.480f, 0.204f, 1.0f)
+                } else {
+                    Dolphin.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f); // Cor natural
+                }
+            }
+            
+
+
+
 
             //* FlowNode
         }

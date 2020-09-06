@@ -36,7 +36,7 @@ namespace Ibit.Plataform
             var tmpPos = this.transform.position;
 
             tmpPos.y = (1f + performanceAccumulator) * CameraLimits.Boundary * _model.DifficultyFactor;
-            Debug.Log($"Alvos - Altura antes: {tmpPos.y}");
+            // Debug.Log($"Alvos - Altura antes: {tmpPos.y}");
 
             tmpPos.y = _model.PositionYFactor > 0 ? // Normal
                 Mathf.Clamp(tmpPos.y, 0f, CameraLimits.Boundary) :
@@ -48,7 +48,7 @@ namespace Ibit.Plataform
                 tmpPos.y = _model.PositionYFactor > 0 ?
                     Mathf.Clamp(tmpPos.y*ParametersDb.parameters.decreaseHeight, 0f, CameraLimits.Boundary) :
                     Mathf.Clamp(tmpPos.y*ParametersDb.parameters.decreaseHeight, -CameraLimits.Boundary, 0f); // decreaseHeight =  Valor de decremento da ALTURA dos Alvos, vindo de _parametersList.csv
-                Debug.Log($"Alvos - Altura depois: {tmpPos.y}");
+                // Debug.Log($"Alvos - Altura depois: {tmpPos.y}");
             }
             
             this.transform.position = tmpPos;

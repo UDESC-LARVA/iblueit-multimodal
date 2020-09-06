@@ -20,6 +20,7 @@ namespace Ibit.Core.Game
         private SerialControllerPitaco scp;
         private SerialControllerMano scm;
         private SerialControllerCinta scc;
+        private SerialControllerOximetro sco;
 
         void Start()
         {
@@ -31,6 +32,9 @@ namespace Ibit.Core.Game
 
             if (scc == null)
                 scc = FindObjectOfType<SerialControllerCinta>();
+            
+            if (sco == null)
+                sco = FindObjectOfType<SerialControllerOximetro>();
         }
 
         void Update()

@@ -17,6 +17,7 @@ TagManager:
   - txInfos2
   - txInfos0
   - txModal
+  - Dolphin
   layers:
   - Default
   - TransparentFX

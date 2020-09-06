@@ -2561,6 +2561,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 684932089}
     m_Modifications:
+    - target: {fileID: 1869751318144148, guid: b2df1bf30ba44844cb4c3bf45413870d, type: 3}
+      propertyPath: m_TagString
+      value: Dolphin
+      objectReference: {fileID: 0}
     - target: {fileID: 4891303343357522, guid: b2df1bf30ba44844cb4c3bf45413870d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2595,7 +2599,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4891303343357522, guid: b2df1bf30ba44844cb4c3bf45413870d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.7
+      value: 1.7000002
       objectReference: {fileID: 0}
     - target: {fileID: 4891303343357522, guid: b2df1bf30ba44844cb4c3bf45413870d, type: 3}
       propertyPath: m_LocalScale.y
@@ -2608,12 +2612,42 @@ PrefabInstance:
     - target: {fileID: 95191716280218792, guid: b2df1bf30ba44844cb4c3bf45413870d,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 212842463845092420, guid: b2df1bf30ba44844cb4c3bf45413870d,
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212842463845092420, guid: b2df1bf30ba44844cb4c3bf45413870d,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212842463845092420, guid: b2df1bf30ba44844cb4c3bf45413870d,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212842463845092420, guid: b2df1bf30ba44844cb4c3bf45413870d,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212842463845092420, guid: b2df1bf30ba44844cb4c3bf45413870d,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212842463845092420, guid: b2df1bf30ba44844cb4c3bf45413870d,
+        type: 3}
+      propertyPath: m_DrawMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 212842463845092420, guid: b2df1bf30ba44844cb4c3bf45413870d,
+        type: 3}
+      propertyPath: m_MaskInteraction
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2df1bf30ba44844cb4c3bf45413870d, type: 3}
@@ -3444,16 +3478,14 @@ MonoBehaviour:
   heartPoints: 5
   animator: {fileID: 1451766584}
   invincibilityTime: 2
-  TestSensorValue: 0
-  TestPositionValue: 0
-  HRValue: 0
-  SPO2Value: 0
-  oxiActive: 0
-  auxValuesOxi: 0
   scp: {fileID: 1227191271}
   scm: {fileID: 1750549191}
   scc: {fileID: 1302589204}
   sco: {fileID: 776451452}
+  HRValue: 0
+  SPO2Value: 0
+  oxiActive: 0
+  auxValuesOxi: 0
 --- !u!70 &684932087
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

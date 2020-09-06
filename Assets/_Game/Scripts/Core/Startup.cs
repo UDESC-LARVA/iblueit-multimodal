@@ -14,7 +14,7 @@ namespace Assets._Game.Scripts.Core
 
         static void OnBeforeSceneLoadRuntimeMethod()
         {
-            Debug.Log("Before scene loaded");
+            // Debug.Log("Before scene loaded");
             if (!Directory.Exists(GameDataPaths.configurationPath))
                 Directory.CreateDirectory(GameDataPaths.configurationPath);
 
