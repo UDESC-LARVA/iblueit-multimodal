@@ -12,7 +12,6 @@ namespace Ibit.Plataform.Manager.Spawn
     {
         [BoxGroup("Tutorial")][SerializeField] private GameObject arrowUpPrefab;
         [BoxGroup("Tutorial")][SerializeField] private GameObject arrowDownPrefab;
-        [SerializeField] public int speedReductionAdaptation;
 
         public LinkedList<Transform> SpawnedObjects
         {
@@ -34,8 +33,6 @@ namespace Ibit.Plataform.Manager.Spawn
             stgMgr.OnStageEnd += Clean;
 
             FindObjectOfType<Player>().OnObjectHit += PerformanceOnPlayerHit;
-
-            speedReductionAdaptation = 0;
         }
 
         [Button("Spawn")]
@@ -77,8 +74,9 @@ namespace Ibit.Plataform.Manager.Spawn
 
         private void UpdateSpeed(ref GameObject obj)
         {
-            obj.GetComponent<MoveObject>().Speed = (StageModel.Loaded.ObjectSpeedFactor * ParametersDb.parameters.ObjectsSpeedFactor) - speedReductionAdaptation;
-            Debug.Log($"SpeedObjects: {(StageModel.Loaded.ObjectSpeedFactor * ParametersDb.parameters.ObjectsSpeedFactor) - speedReductionAdaptation}");
+            obj.GetComponent<MoveObject>().Speed = (StageModel.Loaded.ObjectSpeedFactor * ParametersDb.parameters.ObjectsSpeedFactor);
+
+            Debug.Log($"SpeedObjects1: {(StageModel.Loaded.ObjectSpeedFactor * ParametersDb.parameters.ObjectsSpeedFactor)}");
         }
 
         private void SpawnTutorialArrowAir(ref GameObject obj)

@@ -1,5 +1,6 @@
 ﻿using Ibit.Core.Database;
 using Ibit.Core.Data;
+using Ibit.Plataform;
 using Ibit.Plataform.UI;
 using Ibit.Plataform.Manager.Spawn;
 using Ibit.Plataform.Data;
@@ -22,6 +23,9 @@ namespace Ibit.Core.Game
         int countSPORegular = 0; // Contador de leituras com Oxigenação Regular
         int countSPODanger = 0; // Contador de leituras com Oxigenação Perigosa
 
+        bool SecurityPanelOneExecuted;
+        bool SecurityPanelTwoExecuted;
+
         [SerializeField] private CanvasManager _canvasManager;
         [SerializeField] private Spawner _spawner;
 
@@ -36,6 +40,9 @@ namespace Ibit.Core.Game
             minExtBelt = ParametersDb.parameters.MinimumExtensionBelt;
             maxExpBeltPacient = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow;
             maxInsBeltPacient = Pacient.Loaded.CapacitiesCinta.InsPeakFlow;
+
+            SecurityPanelOneExecuted = false;
+            SecurityPanelTwoExecuted = false;
         }
 
         void AdaptationGrid(float signalPitaco, float signalMano, float signalCinta, float signalOxiSPO, float signalOxiHR)
@@ -50,10 +57,13 @@ namespace Ibit.Core.Game
             //* AvaliationNode Oxímeter
             if (sco.IsConnected && Time.time > currenttimeOxi + timeBetweenSamplesOxi) // Executa a quantidade de leituras escolhida pelo usuário no arquivo "_signalTreatment.csv" por minuto.
             {
-                if (signalOxiSPO > 0 && signalOxiSPO < ParametersDb.parameters.MinimumNormalOxygenation) // ParametersDb.parameters.MinimumRegularOxygenation
+                if (signalOxiSPO >= ParametersDb.parameters.MinimumRegularOxygenation && signalOxiSPO < ParametersDb.parameters.MinimumNormalOxygenation) // 85 até 94%    
                 {
+                    if (_spawner.SpawnedObjects.Count < 1) // Se não tiver objetos, os testes não seguem
+                        return;
+
                     countSPORegular += 1;
-                    if (countSPORegular >= limitSPORegular)
+                    if (countSPORegular >= limitSPORegular && SecurityPanelOneExecuted == false) // Só dispara o "Security Panel 1" uma única vez durante o nível
                     {
                         GameObject.Find("Canvas").transform.Find("Security Panel 1").gameObject.SetActive(true);
                         if (_canvasManager == null){
@@ -61,34 +71,34 @@ namespace Ibit.Core.Game
                         }
                         _canvasManager.PauseGametoShowAlert(); // Pausa jogo
 
-                        if (_spawner == null){
-                            _spawner = FindObjectOfType<Spawner>();
+                        SecurityPanelOneExecuted = true;
+
+                        // if (_spawner == null){
+                        //     _spawner = FindObjectOfType<Spawner>();
+                        // }
+
+                        if ((StageModel.Loaded.ObjectSpeedFactor * ParametersDb.parameters.ObjectsSpeedFactor) >= 2){
+                            // _spawner.speedReductionAdaptation = 1;  
+                            DecreaseSpeed(); // Diminuir velocidade em um nível
                         }
-
-                        if ((StageModel.Loaded.ObjectSpeedFactor * ParametersDb.parameters.ObjectsSpeedFactor) >= 2)
-                            _spawner.speedReductionAdaptation = 1;  // Diminuir velocidade em um nível
-                        // TODO: Todos os objetos (Alvos e Obst.) são spawnados no início do nível, então não tem como mudar a velocidade no meio da fase, tentar fazer algo...
-                        // TODO: speedReductionAdaptation = 1 não se mantém para próximos níveis, pois ele é zerado novamente.
-
 
                     }
                 } else {
                     if (signalOxiSPO > 0 && signalOxiSPO < ParametersDb.parameters.MinimumRegularOxygenation)
                     {
-
-                        //  if (_spawner == null){
-                        //     _spawner = FindObjectOfType<Spawner>();
-                        // }
-                        // _spawner.speedReductionAdaptation = 2;  // Diminuir velocidade pela metade
+                        if (_spawner.SpawnedObjects.Count < 1) // Se não tiver objetos, os testes não seguem
+                            return;
 
                         countSPODanger += 1;
-                        if (countSPODanger >= limitSPODanger)
+                        if (countSPODanger >= limitSPODanger && SecurityPanelTwoExecuted == false)  // Só dispara o "Security Panel 2" uma única vez durante o nível
                         {
                             GameObject.Find("Canvas").transform.Find("Security Panel 2").gameObject.SetActive(true);
                             if (_canvasManager == null){
                                 _canvasManager = FindObjectOfType<CanvasManager>();
                             }
                             _canvasManager.PauseGametoShowAlert(); // Pausa jogo
+
+                            SecurityPanelTwoExecuted = true;
                         }
                     } else {
                         countSPORegular = 0;
@@ -122,6 +132,17 @@ namespace Ibit.Core.Game
 
 
             //* FlowNode
+        }
+
+        private void DecreaseSpeed()
+        {
+            // StageModel.Loaded.ObjectSpeedFactor -= 1.00f;
+            // Debug.Log($"SpeedObjects2: {(StageModel.Loaded.ObjectSpeedFactor)}");
+
+            foreach (var obj in _spawner.SpawnedObjects)
+            {
+                obj.GetComponent<MoveObject>().Speed -= 1.00f;
+            }
         }
 
         // void AvaliationNode()

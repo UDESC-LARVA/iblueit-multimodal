@@ -15,8 +15,9 @@ namespace Ibit.Core.Database
 {
     public class ParametersDb : MonoBehaviour
     {
-        //public int id;
         public static Parameters parameters;
+        private Parameters parAux;
+        public Parameters par;
         // public Parameters currentParameters;
         private readonly string filePath = @"Config/_parametersList.csv";
 
@@ -155,43 +156,63 @@ namespace Ibit.Core.Database
             }}}}}}}}}}}}}}}
 
 
-            for (var i = 1; i < grid.Length; i++)
+
+            for (var i = 2; i < 12; i++)
             {
                 if (string.IsNullOrEmpty(grid[i][0]))
                     continue;
 
                 if (device == grid[i][0])
                 {
-
-                    var par = new Parameters
+                    parAux = new Parameters
                     {
                         device = grid[i][0], // Dispositivo
+                        FusionType = grid[i][1], // Tipo de Fusão
+                        FusionSubDevice = grid[i][2],
+                        FusionPrefPitaco = Parsers.Float(grid[i][3]), // Porcentagem Preferencial Pitaco
+                        FusionPrefMano = Parsers.Float(grid[i][4]), // Porcentagem Preferencial Mano
+                        FusionPrefCinta = Parsers.Float(grid[i][5]), // Porcentagem Preferencial Cinta
+                        FusionFunctIns = grid[i][6],
+                        FusionFunctExp = grid[i][7]
+                    };
+                }
+            }
+
+            for (var i = 16; i < 26; i++)
+            {
+                if (string.IsNullOrEmpty(grid[i][0]))
+                    continue;
+
+                if (device == grid[i][0])
+                {
+                    par = new Parameters
+                    {
+                        device = parAux.device, // Dispositivo
+                        FusionType = parAux.FusionType, // Tipo de Fusão
+                        FusionSubDevice = parAux.FusionSubDevice,
+                        FusionPrefPitaco = parAux.FusionPrefPitaco, // Porcentagem Preferencial Pitaco
+                        FusionPrefMano = parAux.FusionPrefMano, // Porcentagem Preferencial Mano
+                        FusionPrefCinta = parAux.FusionPrefCinta, // Porcentagem Preferencial Cinta
+                        FusionFunctIns = parAux.FusionFunctIns,
+                        FusionFunctExp = parAux.FusionFunctExp,
+
                         lostWtimes = int.Parse(grid[i][1]), // Perdeu W vezes (Alt. e Tam.) %%%%%%%%%%%%%
                         decreaseHeight = Parsers.Float(grid[i][2]), // Fator de decremento da ALTURA dos Alvos %%%%%%%%%%%%%
                         decreaseSize = Parsers.Float(grid[i][3]), // Fator de decremento do TAMANHO dos Obstáculos %%%%%%%%%%%%%
                         lostXtimes = int.Parse(grid[i][4]), // Perdeu X vezes (Recalibrar disp.) %%%%%%%%%%%%%
                         AdditionalDistance = Parsers.Float(grid[i][5]), // Distância adicional entre Obstáculos %%%%%%%%%%%%%
                         ObjectsSpeedFactor = Parsers.Float(grid[i][6]), // Fator de cálculo da velocidade de movimento dos objetos de jogo (Alvos e Obstáculos)
-                        FusionType = grid[i][7], // Fusão de Sinais
-                        FusionPrefPitaco = Parsers.Float(grid[i][8]), // Porcentagem Preferencial Pitaco
-                        FusionPrefMano = Parsers.Float(grid[i][9]), // Porcentagem Preferencial Mano
-                        FusionPrefCinta = Parsers.Float(grid[i][10]), // Porcentagem Preferencial Cinta
-                        FusionSubDevice = grid[i][11],
-                        FusionFunctIns = grid[i][12],
-                        FusionFunctExp = grid[i][13],
-                        ScoreCalculationFactor = Parsers.Float(grid[i][14]), // Fator de Cálculo da Pontuação %%%%%%%%%%%%%
-                        MinimumExtensionBelt = Parsers.Float(grid[i][15]), // Valor mínimo exigido da Cinta Extensora
-                        MinimumNormalOxygenation = int.Parse(grid[i][16]), // Oxigenação Normal Mínima
-                        MinimumRegularOxygenation = int.Parse(grid[i][17]) // Oxigenação Regular Mínima
+                        ScoreCalculationFactor = Parsers.Float(grid[i][7]), // Fator de Cálculo da Pontuação %%%%%%%%%%%%%
+                        MinimumExtensionBelt = Parsers.Float(grid[i][8]), // Valor mínimo exigido da Cinta Extensora
+                        MinimumNormalOxygenation = int.Parse(grid[i][9]), // Oxigenação Normal Mínima
+                        MinimumRegularOxygenation = int.Parse(grid[i][10]) // Oxigenação Regular Mínima
                     };
-
-                    parameters = par;
-                    // currentParameters = parameters;
-
                 }
             }
 
-            yield return new WaitForSeconds(10f); // Espera 10 segundos depois de carregar os parâmetros
+            parameters = par;
+
+            yield return new WaitForSeconds(10f); // Tenta carregar os parâmetros a cada 10 segundos
             LoadParameters();
           }
         }

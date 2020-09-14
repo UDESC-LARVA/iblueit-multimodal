@@ -6705,7 +6705,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _helpPanel: {fileID: 852458531}
   _canvasManager: {fileID: 1410877794}
-  SecurityPanel2: {fileID: 0}
+  SecurityPanel2: {fileID: 934436942}
 --- !u!1 &1413756104
 GameObject:
   m_ObjectHideFlags: 0

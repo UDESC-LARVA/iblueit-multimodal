@@ -421,5 +421,5 @@ MigrationBackup/
 
 # End of https://www.gitignore.io/api/unity,visualstudio,visualstudiocode
 Data/
-Config/
+Config/config.json
 savedata/
