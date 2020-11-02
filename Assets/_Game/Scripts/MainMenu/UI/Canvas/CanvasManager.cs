@@ -44,8 +44,8 @@ namespace Ibit.MainMenu.UI.Canvas
                                     $"Tins/Texp: {((Pacient.Loaded.CapacitiesMano.RawInsFlowDuration / 1000f) / (Pacient.Loaded.CapacitiesMano.RawExpFlowDuration / 1000f)):F1}\n";
             
             
-            TextCintaInfos.text =   $"Pico Exp.: {CintaFlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesCinta.RawExpPeakFlow):F2} L/min ({Pacient.Loaded.CapacitiesCinta.RawExpPeakFlow:F2} Pa)\n" +
-                                    $"Pico Ins.: {CintaFlowMath.ToLitresPerMinute(Pacient.Loaded.CapacitiesCinta.RawInsPeakFlow):F2} L/min ({Pacient.Loaded.CapacitiesCinta.RawInsPeakFlow:F2} Pa)\n" +
+            TextCintaInfos.text =   $"Pico Exp.: {Pacient.Loaded.CapacitiesCinta.RawExpPeakFlow:F2} Pa\n" +
+                                    $"Pico Ins.: {Pacient.Loaded.CapacitiesCinta.RawInsPeakFlow:F2} Pa\n" +
                                     $"Tempo Ins.: {Pacient.Loaded.CapacitiesCinta.RawInsFlowDuration / 1000f:F1} s\n" +
                                     $"Tempo Exp.: {Pacient.Loaded.CapacitiesCinta.RawExpFlowDuration / 1000f:F1} s\n" +
                                     $"Tins/Texp: {((Pacient.Loaded.CapacitiesCinta.RawInsFlowDuration / 1000f) / (Pacient.Loaded.CapacitiesCinta.RawExpFlowDuration / 1000f)):F1}\n" +
