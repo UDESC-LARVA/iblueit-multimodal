@@ -1,12 +1,10 @@
 /*
  * Mano Serial Connection - MPX5700AP
- * https://github.com/UDESC-LARVA/IBLUEIT
+ * Crédito: Jhonatan Thallisson Cabral Néry
+ * https://github.com/jhonatantcn/IBLUEIT
  * 
  * RANGE do Sensor MPX5700AP p/ pressão absoluta
- * Vai de 0 a 700KPA, mas consegui dividir o range entre positivo e negativo
- * Max~: 5000 Pa
- * Stop: 0.0 Pa
- * Min~: -5000 Pa
+ * Vai de 0 a 700KPA
  */
 
 #define SAMPLESIZE 100

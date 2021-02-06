@@ -111,7 +111,7 @@ namespace Ibit.Calibration
                             switch (_currentStep)
                             {
                                 case 1:
-                                    DudeTalk("Manipule a Cinta Extensora através da respiração. Pressione (Enter) para continuar.");
+                                    DudeTalk("Manipule a Cinta através da respiração. Pressione (Enter) para continuar.");
                                     SetupNextStep();
                                     break;
 

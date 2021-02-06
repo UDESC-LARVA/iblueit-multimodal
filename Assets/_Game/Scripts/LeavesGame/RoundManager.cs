@@ -299,7 +299,7 @@ namespace Ibit.LeavesGame
                     }
                     else
                     { ////////////////////
-                      // Se a CINTA Extensora estiver conectada
+                      // Se a Cinta de Pressão estiver conectada
                         if (scc.IsConnected)
                         {
                             switch (state)

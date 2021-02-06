@@ -61,7 +61,7 @@ namespace Ibit.WaterGame
                 FinalScore.pikeString[roundNumber].text += $"{ManoFlowMath.ToCentimetersofWater(pikeValue)} CmH2O ({pikeValue} pa)";
                 
             } else {
-            // Se a Cinta Extensora estiver conectada
+            // Se a Cinta de Pressão estiver conectada
             if (scc.IsConnected)
             {
                 FinalScore.pikeString[roundNumber].text += $"{CintaFlowMath.ToLitresPerMinute(pikeValue)} L/min ({pikeValue} pa)";

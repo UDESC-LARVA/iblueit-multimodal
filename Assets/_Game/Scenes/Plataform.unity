@@ -1564,7 +1564,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 604bbe793263e5745a74586841681cdb, type: 3}
-    m_FontSize: 18
+    m_FontSize: 17
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -2043,7 +2043,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "PAR\xC2METROS MULTIMODAIS"
+  m_Text: "PAR\xC2METROS"
 --- !u!222 &461659585
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3072,6 +3072,11 @@ PrefabInstance:
       propertyPath: serialController
       value: 
       objectReference: {fileID: 1227191271}
+    - target: {fileID: 7283642634205224507, guid: b094e1e8a44efbb4588fb9405d4f72e3,
+        type: 3}
+      propertyPath: m_Text
+      value: "Cinta de Press\xE3o"
+      objectReference: {fileID: 0}
     - target: {fileID: 7283642634349612312, guid: b094e1e8a44efbb4588fb9405d4f72e3,
         type: 3}
       propertyPath: m_Color.r
@@ -3536,7 +3541,7 @@ Transform:
   m_Children:
   - {fileID: 587047504}
   m_Father: {fileID: 0}
-  m_RootOrder: 24
+  m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &689656702
 GameObject:
@@ -6674,19 +6679,19 @@ MonoBehaviour:
   _securityPanel2: {fileID: 934436942}
   CurrentParameters:
     device: 
+    FusionType: 
+    FusionSubDevice: 
+    FusionPrefPitaco: 0
+    FusionPrefMano: 0
+    FusionPrefCinta: 0
+    FusionFunctIns: 
+    FusionFunctExp: 
     lostWtimes: 0
     decreaseHeight: 0
     decreaseSize: 0
     lostXtimes: 0
     AdditionalDistance: 0
     ObjectsSpeedFactor: 0
-    FusionType: 
-    FusionPrefPitaco: 0
-    FusionPrefMano: 0
-    FusionPrefCinta: 0
-    FusionSubDevice: 
-    FusionFunctIns: 
-    FusionFunctExp: 
     ScoreCalculationFactor: 0
     MinimumExtensionBelt: 0
     MinimumNormalOxygenation: 0
@@ -6717,7 +6722,7 @@ GameObject:
   - component: {fileID: 1413756106}
   - component: {fileID: 1413756105}
   m_Layer: 0
-  m_Name: LoggerOximetro
+  m_Name: LoggerOximetroSPO2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6735,7 +6740,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17ce343faee1cda4e957c5ca30becebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FileName: Plataform-Oximetro-Logs
+  FileName: Plataform-OximetroSPO2-Logs
 --- !u!4 &1413756106
 Transform:
   m_ObjectHideFlags: 0
@@ -8028,7 +8033,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 604bbe793263e5745a74586841681cdb, type: 3}
-    m_FontSize: 18
+    m_FontSize: 17
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -8950,7 +8955,6 @@ MonoBehaviour:
     type: 3}
   arrowDownPrefab: {fileID: 1967461620418684, guid: 0fa275c1c03cbb649a9f720729db6cdf,
     type: 3}
-  speedReductionAdaptation: 1
   obstaclesAir:
   - {fileID: 1596007118193250, guid: 2245c0c7b8a839449b4f0651efd04e5f, type: 3}
   - {fileID: 1079772737705790, guid: 894cc6132a08acb4f8f7be48eb10dcf9, type: 3}
@@ -9532,6 +9536,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1874301731}
   m_CullTransparentMesh: 0
+--- !u!1 &1875884165
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1875884167}
+  - component: {fileID: 1875884166}
+  m_Layer: 0
+  m_Name: LoggerOximetroHR
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1875884166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1875884165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17ce343faee1cda4e957c5ca30becebb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FileName: Plataform-OximetroHR-Logs
+--- !u!4 &1875884167
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1875884165}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 23
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1879851093
 GameObject:
   m_ObjectHideFlags: 0
@@ -9880,7 +9928,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 23
+  m_RootOrder: 24
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1935371830
 GameObject:

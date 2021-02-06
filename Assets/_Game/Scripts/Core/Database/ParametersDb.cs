@@ -203,7 +203,7 @@ namespace Ibit.Core.Database
                         AdditionalDistance = Parsers.Float(grid[i][5]), // Distância adicional entre Obstáculos %%%%%%%%%%%%%
                         ObjectsSpeedFactor = Parsers.Float(grid[i][6]), // Fator de cálculo da velocidade de movimento dos objetos de jogo (Alvos e Obstáculos)
                         ScoreCalculationFactor = Parsers.Float(grid[i][7]), // Fator de Cálculo da Pontuação %%%%%%%%%%%%%
-                        MinimumExtensionBelt = Parsers.Float(grid[i][8]), // Valor mínimo exigido da Cinta Extensora
+                        MinimumExtensionBelt = Parsers.Float(grid[i][8]), // Valor mínimo exigido da Cinta de Pressão
                         MinimumNormalOxygenation = int.Parse(grid[i][9]), // Oxigenação Normal Mínima
                         MinimumRegularOxygenation = int.Parse(grid[i][10]) // Oxigenação Regular Mínima
                     };

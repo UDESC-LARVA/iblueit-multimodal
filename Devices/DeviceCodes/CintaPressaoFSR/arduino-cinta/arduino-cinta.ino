@@ -1,6 +1,7 @@
 /*
  * Cinta Serial Connection - Force Sensitive Resistor 0.5″ FSR402
- * https://github.com/UDESC-LARVA/IBLUEIT
+ * Crédito: Jhonatan Thallisson Cabral Néry
+ * https://github.com/jhonatantcn/IBLUEIT
  */
  
 /* 

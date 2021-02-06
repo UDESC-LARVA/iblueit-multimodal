@@ -52,7 +52,7 @@ namespace Ibit.Core.Data
                     AdditionalDistance = 1, // Distância adicional entre Objetos
                     ObjectsSpeedFactor = 0, // Fator de cálculo da velocidade de movimento dos objetos de jogo (Alvos e Obstáculos)
                     ScoreCalculationFactor = 0, // Fator de Cálculo da Pontuação
-                    MinimumExtensionBelt = 0, // Valor mínimo exigido da Cinta Extensora
+                    MinimumExtensionBelt = 0, // Valor mínimo exigido da Cinta de Pressão
                     MinimumNormalOxygenation = 0, // Oxigenação Normal Mínima
                     MinimumRegularOxygenation = 0 // Oxigenação Regular Mínima
                 };

@@ -57,7 +57,7 @@ namespace Ibit.Plataform
             SignalSamplesRateMano = SignalTreatmentDb.LoadSignalParameters("M");
             timeBetweenSamplesMano = 60 / SignalSamplesRateMano;  // 60 segundos / amostragem desejada = tempo de intervalo entre cada amostra do sinal
 
-            // Taxa de amostragem do "Tratamento de Sinais" por minuto da Cinta Extensora
+            // Taxa de amostragem do "Tratamento de Sinais" por minuto da Cinta de Pressão
             SignalSamplesRateCinta = SignalTreatmentDb.LoadSignalParameters("C");
             timeBetweenSamplesCinta = 60 / SignalSamplesRateCinta;  // 60 segundos / amostragem desejada = tempo de intervalo entre cada amostra do sinal
 

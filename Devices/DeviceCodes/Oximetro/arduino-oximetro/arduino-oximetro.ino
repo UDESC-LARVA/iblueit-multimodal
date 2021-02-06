@@ -1,7 +1,8 @@
 /*
-   Oxímetro Serial Connection - MPX5010DP
-
-*/
+ * Oxímetro Serial Connection - MAX30102
+ * Crédito: Jhonatan Thallisson Cabral Néry
+ * https://github.com/jhonatantcn/IBLUEIT
+ */
 #include <Wire.h>
 #include "MAX30105.h"           //MAX3010x library
 #include "heartRate.h"          //Heart rate calculating algorithm

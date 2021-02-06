@@ -34,7 +34,7 @@ namespace Ibit.Core.Database
                     return int.Parse(grid[2][1]);
                 } else {
 
-                if (device == "C" && !string.IsNullOrEmpty(grid[3][1])){ // Cinta Extensora
+                if (device == "C" && !string.IsNullOrEmpty(grid[3][1])){ // Cinta de Pressão
                     return int.Parse(grid[3][1]);
                 } else {
 
@@ -54,7 +54,7 @@ namespace Ibit.Core.Database
                     return 500;
 
                 } else {
-                if (device == "C"){ // Cinta Extensora
+                if (device == "C"){ // Cinta de Pressão
                     return 500;
 
                 } else {

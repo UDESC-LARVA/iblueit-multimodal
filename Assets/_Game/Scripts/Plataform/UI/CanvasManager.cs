@@ -185,7 +185,7 @@ namespace Ibit.Plataform.UI
                     Infos2.text =   $"Distância adicional entre Objetos: +{CurrentParameters.AdditionalDistance}\n" +
                                     $"Fator de cálculo da velocidade: *{CurrentParameters.ObjectsSpeedFactor}\n" +
                                     $"Fator de Cálculo da Pontuação: *{CurrentParameters.ScoreCalculationFactor}\n" +
-                                    $"Valor mínimo exigido da Cinta Extensora: {CurrentParameters.MinimumExtensionBelt}%\n" +
+                                    $"Valor mínimo exigido da Cinta de Pressão: {CurrentParameters.MinimumExtensionBelt}%\n" +
                                     $"  • Golfinho Blue fica laranja.\n\n" +
 
                                     $"% Oxigenação Normal Mínima: {CurrentParameters.MinimumNormalOxygenation}%\n" +
@@ -203,7 +203,7 @@ namespace Ibit.Plataform.UI
                     Infos2.text =   $"Distância adicional entre Objetos: +{CurrentParameters.AdditionalDistance}\n" +
                                     $"Fator de cálculo da velocidade: *{CurrentParameters.ObjectsSpeedFactor}\n" +
                                     $"Fator de Cálculo da Pontuação: *{CurrentParameters.ScoreCalculationFactor}\n" +
-                                    $"Valor mínimo exigido da Cinta Extensora: {CurrentParameters.MinimumExtensionBelt}%\n" +
+                                    $"Valor mínimo exigido da Cinta de Pressão: {CurrentParameters.MinimumExtensionBelt}%\n" +
                                     $"  • Golfinho Blue fica laranja.\n\n" +
 
                                     $"Nº derrotas p/ adapt. A: {CurrentParameters.lostWtimes}\n" +

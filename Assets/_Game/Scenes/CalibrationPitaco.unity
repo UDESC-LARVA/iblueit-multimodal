@@ -786,7 +786,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &723438322
 RectTransform:
   m_ObjectHideFlags: 0
@@ -923,9 +923,6 @@ MonoBehaviour:
   baudRate: 115200
   maxUnreadMessages: 1
   reconnectionDelay: 1000
-  testPitacoValue: 0
-  testPitacoConnection: 1
-  stopReceivePicatoValues: 0
 --- !u!4 &862827483
 Transform:
   m_ObjectHideFlags: 0

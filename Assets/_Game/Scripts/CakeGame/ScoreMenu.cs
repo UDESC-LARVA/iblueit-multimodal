@@ -48,7 +48,7 @@ namespace Ibit.CakeGame
                 peakText[2].text = "   Pico: " + ManoFlowMath.ToCentimetersofWater(Parsers.Float(pikeString[2])) + " CmH2O";
 
             } else {
-            // Se a Cinta Extensora estiver conectada
+            // Se a Cinta de Pressão estiver conectada
             if (scc.IsConnected)
             {
                 peakText[0].text = "   Pico: " + CintaFlowMath.ToLitresPerMinute(Parsers.Float(pikeString[0])) + " L/min";

@@ -2588,7 +2588,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1b0cbb0d2ec7c44586be3ac5b0bc33e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arduinoOpenTime: 3000
+  arduinoOpenTime: 5000
   baudRate: 115200
   maxUnreadMessages: 1
   reconnectionDelay: 1000
@@ -2759,7 +2759,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e5404edbaa94f14bb951593cb6c5b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arduinoOpenTime: 3000
+  arduinoOpenTime: 5000
   baudRate: 115200
   maxUnreadMessages: 1
   reconnectionDelay: 1000
@@ -5002,6 +5002,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2731025710573834592297322ed09cc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  par:
+    device: 
+    FusionType: 
+    FusionSubDevice: 
+    FusionPrefPitaco: 0
+    FusionPrefMano: 0
+    FusionPrefCinta: 0
+    FusionFunctIns: 
+    FusionFunctExp: 
+    lostWtimes: 0
+    decreaseHeight: 0
+    decreaseSize: 0
+    lostXtimes: 0
+    AdditionalDistance: 0
+    ObjectsSpeedFactor: 0
+    ScoreCalculationFactor: 0
+    MinimumExtensionBelt: 0
+    MinimumNormalOxygenation: 0
+    MinimumRegularOxygenation: 0
 --- !u!1 &403886312
 GameObject:
   m_ObjectHideFlags: 0
@@ -6531,7 +6550,7 @@ GameObject:
   - component: {fileID: 467714958}
   - component: {fileID: 467714957}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Text1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6553,8 +6572,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 55}
-  m_SizeDelta: {x: 0, y: 60}
+  m_AnchoredPosition: {x: 0, y: 81.3}
+  m_SizeDelta: {x: 0, y: 116.9}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &467714957
 MonoBehaviour:
@@ -6576,18 +6595,18 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 724caf3bbac81794eb04e17a54fce1d3, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 3
+    m_FontSize: 30
+    m_FontStyle: 2
     m_BestFit: 0
     m_MinSize: 0
-    m_MaxSize: 40
+    m_MaxSize: 41
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'I Blue It
+  m_Text: 'Plataforma
 
 '
 --- !u!222 &467714958
@@ -7282,6 +7301,7 @@ RectTransform:
   m_LocalScale: {x: 1.2, y: 1.2, z: 1}
   m_Children:
   - {fileID: 467714956}
+  - {fileID: 1797417842}
   m_Father: {fileID: 737574495}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -12207,8 +12227,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 10.299927, y: -162}
-  m_SizeDelta: {x: -887.6, y: 90}
+  m_AnchoredPosition: {x: 8.799988, y: -162}
+  m_SizeDelta: {x: -865.3, y: 90}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &818190338
 MonoBehaviour:
@@ -12241,9 +12261,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'CINTA EXTENSORA
-
-'
+  m_Text: "Cinta de Press\xE3o\n"
 --- !u!222 &818190339
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14883,7 +14901,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80dc2ec0e94f2594e9c69a593128b16d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arduinoOpenTime: 3000
+  arduinoOpenTime: 5000
   baudRate: 115200
   maxUnreadMessages: 1
   reconnectionDelay: 1000
@@ -19935,9 +19953,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'CINTA
-
-    EXTENSORA'
+  m_Text: "Cinta de\nPress\xE3o"
 --- !u!222 &1269452697
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20814,9 +20830,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Cinta
-
-    Extensora'
+  m_Text: "Cinta de Press\xE3o"
 --- !u!222 &1392148477
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -24379,7 +24393,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Cinta Extensora
+  m_Text: "Cinta de Press\xE3o"
 --- !u!222 &1572227612
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -27797,6 +27811,85 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8d137fde9eced754eb5fa6ee9ac39d53, type: 3}
+--- !u!1 &1797417841
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1797417842}
+  - component: {fileID: 1797417844}
+  - component: {fileID: 1797417843}
+  m_Layer: 5
+  m_Name: Text2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1797417842
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1797417841}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 509584190}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 30.300003}
+  m_SizeDelta: {x: 0, y: 57.5}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &1797417843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1797417841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 724caf3bbac81794eb04e17a54fce1d3, type: 3}
+    m_FontSize: 40
+    m_FontStyle: 3
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 'I Blue It
+
+'
+--- !u!222 &1797417844
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1797417841}
+  m_CullTransparentMesh: 0
 --- !u!1001 &1808133217
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28103,7 +28196,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Cinta Extensora
+  m_Text: "Cinta de Press\xE3o"
 --- !u!222 &1833882479
 CanvasRenderer:
   m_ObjectHideFlags: 0
