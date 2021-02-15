@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Assets._Game.Scripts.Core.Api.Dto;
 using Assets._Game.Scripts.Core.Api.Extensions;
 using Ibit.Core.Audio;
@@ -110,7 +111,7 @@ namespace Ibit.Calibration
                             switch (_currentStep)
                             {
                                 case 1:
-                                    DudeTalk("Manipule a Cinta Extensora através da respiração. Pressione (Enter) para continuar.");
+                                    DudeTalk("Manipule a Cinta através da respiração. Pressione (Enter) para continuar.");
                                     SetupNextStep();
                                     break;
 
@@ -182,6 +183,7 @@ namespace Ibit.Calibration
                             {
                                 case 1:
                                     DudeTalk("Neste exercício, você deve PUXAR O AR COM FORÇA dilatando peito e abdome. Serão 3 tentativas. Ao apertar (Enter), o relógio ficará verde para você começar o exercício.");
+                                    _serialController.Recalibrate();
                                     SetupNextStep();
                                     break;
 
@@ -262,6 +264,7 @@ namespace Ibit.Calibration
                             {
                                 case 1:
                                     DudeTalk("Neste exercício, você deve ASSOPRAR FORTE contraindo peito e abdome. Serão 3 tentativas. Ao apertar (Enter), o relógio ficará verde para você começar o exercício.");
+                                    _serialController.Recalibrate();
                                     SetupNextStep();
                                     break;
 
@@ -355,7 +358,7 @@ namespace Ibit.Calibration
                                     _serialController.StartSampling();
 
                                     _exerciseCountText.text = $"Exercício: {_currentExerciseCount + 1}/3";
-                                    yield return new WaitForSeconds(1);
+                                    yield return new WaitForSeconds(2);
 
                                     AirFlowEnable(false);
                                     _dialogText.text = "(MANTENHA o ponteiro GIRANDO, PUXANDO O AR!)";
@@ -441,7 +444,7 @@ namespace Ibit.Calibration
                                     _serialController.StartSampling();
 
                                     _exerciseCountText.text = $"Exercício: {_currentExerciseCount + 1}/3";
-                                    yield return new WaitForSeconds(1);
+                                    yield return new WaitForSeconds(2);
 
                                     AirFlowEnable(false);
                                     _dialogText.text = "(MANTENHA o ponteiro GIRANDO, ASSOPRANDO!)";
@@ -552,6 +555,7 @@ namespace Ibit.Calibration
 
             _clockObject.GetComponent<SpriteRenderer>().color = Color.green;
             _clockObject.GetComponentInChildren<ClockArrowAnimationCinta>().SpinClock = true;
+            _clockObject.GetComponentInChildren<ClockArrowAnimationCinta>().CurrentExercise = _currentExercise.ToString();
             _acceptingValues = true;
         }
 

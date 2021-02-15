@@ -33,6 +33,8 @@ namespace Ibit.WaterGame
         [SerializeField] private int state, backupState, _roundNumber;
         private float countdownTimer;
 
+        private float gameMultiplier = GameManager.CapacityMultiplierMinigames;
+
         private SerialControllerPitaco scp;
         private SerialControllerMano scm;
         private SerialControllerCinta scc;
@@ -68,19 +70,19 @@ namespace Ibit.WaterGame
 
             if (scp.IsConnected) // Se PITACO conectado
             {
-                SpicoInspiratorio = (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
+                SpicoInspiratorio = (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow * gameMultiplier);
             }
             else
             {
                 if (scm.IsConnected) // Se Mano conectado
                 {
-                    SpicoInspiratorio = (-Pacient.Loaded.CapacitiesMano.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
+                    SpicoInspiratorio = (-Pacient.Loaded.CapacitiesMano.InsPeakFlow * gameMultiplier);
                 }
                 else
                 {
                     if (scc.IsConnected) // Se CINTA conectada
                     {
-                        SpicoInspiratorio = (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
+                        SpicoInspiratorio = (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow * gameMultiplier);
                     }
                 }
             }

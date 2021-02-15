@@ -53,7 +53,7 @@ namespace Ibit.MainMenu.UI
 
                 if (PitacoPrecisaCalib == true || ManoPrecisaCalib == true || CintaPrecisaCalib == true)
                 {
-                    SysMessage.Info("Para começar a jogar, você precisa \ncalibrar todos os dispositivos conectados!");
+                    SysMessage.Info("Para começar a jogar, você precisa \nmedir suas capacidades com todos os \ndispositivos conectados!");
                 }
             }
         }

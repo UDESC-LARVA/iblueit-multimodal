@@ -44,6 +44,8 @@ namespace Ibit.LeavesGame
         private Scorer _scorer;
         public int score = 0;
 
+        private float gameMultiplier = GameManager.CapacityMultiplierMinigames;
+
         private SerialControllerPitaco scp;
         private SerialControllerMano scm;
         private SerialControllerCinta scc;
@@ -150,7 +152,7 @@ namespace Ibit.LeavesGame
                 if (scp.IsConnected) // Se PITACO conectado
                 {
                     sensorValue = sensorValue < -Pacient.Loaded.PitacoThreshold || sensorValue > Pacient.Loaded.PitacoThreshold ? sensorValue : 0f;
-                    peak = sensorValue > 0 ? (Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow*GameManager.CapacityMultiplierMinigames) * 0.5f : (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
+                    peak = sensorValue > 0 ? (Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow * gameMultiplier) * 0.5f : (-Pacient.Loaded.CapacitiesPitaco.InsPeakFlow * gameMultiplier);
 
                 }
                 else
@@ -158,7 +160,7 @@ namespace Ibit.LeavesGame
                     if (scm.IsConnected) // Se Mano conectado
                     {
                         sensorValue = sensorValue < -Pacient.Loaded.ManoThreshold || sensorValue > Pacient.Loaded.ManoThreshold ? sensorValue : 0f;
-                        peak = sensorValue > 0 ? (Pacient.Loaded.CapacitiesMano.ExpPeakFlow*GameManager.CapacityMultiplierMinigames) * 0.5f : (-Pacient.Loaded.CapacitiesMano.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
+                        peak = sensorValue > 0 ? (Pacient.Loaded.CapacitiesMano.ExpPeakFlow * gameMultiplier) * 0.5f : (-Pacient.Loaded.CapacitiesMano.InsPeakFlow * gameMultiplier);
 
                     }
                     else
@@ -166,7 +168,7 @@ namespace Ibit.LeavesGame
                         if (scc.IsConnected) // Se CINTA conectada
                         {
                             sensorValue = sensorValue < -Pacient.Loaded.CintaThreshold || sensorValue > Pacient.Loaded.CintaThreshold ? sensorValue : 0f;
-                            peak = sensorValue > 0 ? (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierMinigames) * 0.5f : (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow*GameManager.CapacityMultiplierMinigames);
+                            peak = sensorValue > 0 ? (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * gameMultiplier) * 0.5f : (-Pacient.Loaded.CapacitiesCinta.InsPeakFlow * gameMultiplier);
 
                         }
                     }

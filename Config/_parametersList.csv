@@ -1,0 +1,28 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  FUSAO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  ;;;;;;;;;;
+Combinacao de Dispositivos;Tipo de Fusao;Subtracao: Dispositivo a suprimir;Preferencial Pitaco (%);Preferencial Mano (%);Preferencial Cinta (%);Funcao: INS;Funcao: EXP;;;
+P;n;0;0;0;0;0;0;;;
+M;n;0;0;0;0;0;0;;;
+C;n;0;0;0;0;0;0;;;
+PC;Soma;0;0;0;0;0;0;;;
+MC;Funcao;0;0;0;0;C;M;;;
+PO;n;0;0;0;0;0;0;;;
+MO;n;0;0;0;0;0;0;;;
+CO;n;0;0;0;0;0;0;;;
+PCO;Preferencial;0;70;0;30;0;0;;;
+MCO;Subtracao;C;0;0;0;0;0;;;
+;;;;;;;;;;
+;;;;;;;;;;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  ADAPTACAO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%;;;;;;;;;;
+Combinacao de Dispositivos;"Derrotas p/ Adapt. A 
+(Alt. e Tam.)";Fator de reducao da ALTURA dos Alvos;Fator de reducao do TAMANHO dos Obstaculos;Derrotas p/ Adapt. B (Recalibrar);Distancia adicional entre Objetos;"Fator da velocidade dos objetos de jogo 
+(Alvos e Obstaculos)";Fator de Calculo da Pontuaçcao;Minimo exigido da Cinta Extensora (%);Oxigenacao Normal Minima (%);Oxigenacao Regular Minima (%)
+P;1;1;1;2;0;1;1;0;0;0
+M;1;1;1;2;0,3;1;2;0;0;0
+C;1;1;1;2;0;1;1;75;0;0
+PC;1;0,75;0,8;2;0;3;2;75;0;0
+MC;1;0,75;0,8;2;0,3;1;2;0;0;0
+PO;1;0,75;0,8;2;0;1;1;0;95;89
+MO;1;0,75;0,8;2;0,3;2;1;0;95;89
+CO;1;0,75;0,8;2;0;1;1;0;95;89
+PCO;1;0,75;0,8;2;0;1;2;0;95;89
+MCO;1;0,75;0,8;2;0,3;1;2;75;95;89

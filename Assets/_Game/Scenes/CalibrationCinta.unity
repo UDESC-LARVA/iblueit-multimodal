@@ -1748,7 +1748,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1896113772
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1851,7 +1851,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65471c9f3a8077e47a0a95ae3b23acf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentExercise: 5
+  _currentExercise: 2
   FlowTimeThreshold: 2000
   RespiratoryFrequencyThreshold: 0.05
   TimerRespFreq: 60

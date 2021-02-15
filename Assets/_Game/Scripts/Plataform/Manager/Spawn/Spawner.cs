@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Ibit.Core.Database;
 using Ibit.Plataform.Data;
 using Ibit.Plataform.Manager.Stage;
 using NaughtyAttributes;
@@ -73,7 +74,9 @@ namespace Ibit.Plataform.Manager.Spawn
 
         private void UpdateSpeed(ref GameObject obj)
         {
-            obj.GetComponent<MoveObject>().Speed = StageModel.Loaded.ObjectSpeedFactor;
+            obj.GetComponent<MoveObject>().Speed = (StageModel.Loaded.ObjectSpeedFactor * ParametersDb.parameters.ObjectsSpeedFactor);
+
+            Debug.Log($"SpeedObjects1: {(StageModel.Loaded.ObjectSpeedFactor * ParametersDb.parameters.ObjectsSpeedFactor)}");
         }
 
         private void SpawnTutorialArrowAir(ref GameObject obj)

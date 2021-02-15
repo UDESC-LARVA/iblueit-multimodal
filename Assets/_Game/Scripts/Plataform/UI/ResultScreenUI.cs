@@ -1,9 +1,12 @@
 ﻿using Ibit.Core.Audio;
 using Ibit.Core.Data;
+using Ibit.Core.Database;
+using Ibit.Core.Util;
 using Ibit.Plataform.Data;
 using Ibit.Plataform.Manager.Score;
 using UnityEngine;
 using UnityEngine.UI;
+
 using Color = UnityEngine.Color;
 
 namespace Ibit.Plataform.UI
@@ -25,6 +28,9 @@ namespace Ibit.Plataform.UI
         [SerializeField]
         private Text scoreValue, scoreRatio;
 
+        [SerializeField]
+        public static int numberFailures; // Número de vezes que o paciente perdeu sequencialmente.
+
         private void OnEnable()
         {
             var scorer = FindObjectOfType<Scorer>();
@@ -34,6 +40,10 @@ namespace Ibit.Plataform.UI
                 finalResult.text = "GoGoGo!";
                 finalResult.color = Color.cyan;
                 motivationText.text = "Muito bem! Você passou de nível. Continue assim!";
+
+                numberFailures = 0; // Caso ganhe uma partida, o número de falhas é zerado.
+                Debug.Log($"numberFailures {numberFailures}");
+
                 SoundManager.Instance.PlaySound("StageClear");
             }
             else
@@ -47,6 +57,16 @@ namespace Ibit.Plataform.UI
                 finalResult.text = "YOU BLEW IT";
                 finalResult.color = Color.red;
                 motivationText.text = "Você não conseguiu pontos suficientes. Não desista!";
+
+                numberFailures += 1; // Caso perca, o número de falhas é incrementado.
+
+                if (numberFailures >= ParametersDb.parameters.lostXtimes) // Se perdeu X vezes, então solicita recalibração...
+                {
+                    SysMessage.Warning($"Você perdeu {numberFailures} vezes, pode haver algum problema com sua calibração, sugiro que recalibre os dispositivos");
+                }
+
+                Debug.Log($"numberFailures {numberFailures}");
+
                 SoundManager.Instance.PlaySound("PlayerDamage");
             }
 

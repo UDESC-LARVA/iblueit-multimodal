@@ -2,8 +2,10 @@
 using Ibit.Core.Data;
 using Ibit.Plataform.Data;
 using Ibit.Plataform.Manager.Spawn;
+using Ibit.Plataform.UI;
 using UnityEngine;
 using Ibit.Core.Game;
+using Ibit.Core.Database;
 
 namespace Ibit.Plataform
 {
@@ -15,6 +17,8 @@ namespace Ibit.Plataform
 
         public int HeartPoint => heartPoint;
         public float Score { get; private set; }
+
+        private float gameMultiplier = GameManager.CapacityMultiplierPlataform;
 
         public void Build(ObjectModel model)
         {
@@ -35,10 +39,18 @@ namespace Ibit.Plataform
         {
             var tmpScale = this.transform.localScale;
 
-            tmpScale.x = (this._model.PositionYFactor > 0 ? (Pacient.Loaded.CapacitiesPitaco.ExpFlowDuration*GameManager.CapacityMultiplierPlataform) : (Pacient.Loaded.CapacitiesPitaco.InsFlowDuration*GameManager.CapacityMultiplierPlataform)) / 1000f *
+            tmpScale.x = (this._model.PositionYFactor > 0 ? (Pacient.Loaded.CapacitiesPitaco.ExpFlowDuration * gameMultiplier) : (Pacient.Loaded.CapacitiesPitaco.InsFlowDuration * gameMultiplier)) / 1000f *
                 (1f + performanceFactor) * this._model.DifficultyFactor;
 
-            tmpScale.x = tmpScale.x < 1f ? 1f : tmpScale.x;
+            tmpScale.x = tmpScale.x < 1f ? 1f : tmpScale.x;  // Normal
+            Debug.Log($"Obstáculos - Tamanho antes: {tmpScale.x}");
+
+
+            if (ResultScreenUI.numberFailures >= ParametersDb.parameters.lostWtimes)  // Perdeu W vezes
+            {
+                tmpScale.x *= ParametersDb.parameters.decreaseSize; // decreaseSize = Valor de decremento do TAMANHO dos Obstáculos, vindo de _parametersList.csv
+                Debug.Log($"Obstáculos - Tamanho depois: {tmpScale.x}");
+            }
 
             this.transform.localScale = new Vector3(tmpScale.x, tmpScale.x);
 
@@ -56,11 +68,11 @@ namespace Ibit.Plataform
 
                 if (previousObject.GetComponent<Target>() == null)
                 {
-                    this.transform.position = new Vector3(previousObject.position.x + previousObject.localScale.x / 2 + _model.PositionXSpacing + this.transform.localScale.x / 2, this.transform.position.y);
+                    this.transform.position = new Vector3(previousObject.position.x + previousObject.localScale.x / 2 + _model.PositionXSpacing + this.transform.localScale.x / 2 + ParametersDb.parameters.AdditionalDistance, this.transform.position.y); // AdditionalDistance = Distância adicional entre Obstáculos
                 }
                 else
                 {
-                    this.transform.position = new Vector3(previousObject.position.x + _model.PositionXSpacing, this.transform.position.y);
+                    this.transform.position = new Vector3(previousObject.position.x + _model.PositionXSpacing + ParametersDb.parameters.AdditionalDistance, this.transform.position.y); // AdditionalDistance = Distância adicional entre Obstáculos
                 }
             }
             catch (NullReferenceException) { } // ignore new distances if the previous object was destroyed
@@ -68,7 +80,7 @@ namespace Ibit.Plataform
 
         private void CalculateScore()
         {
-            Score = 2f * this.transform.localScale.x * (1f + this._model.DifficultyFactor) * (1 + StageModel.Loaded.ObjectSpeedFactor);
+            Score = (2f * this.transform.localScale.x * (1f + this._model.DifficultyFactor) * (1 + StageModel.Loaded.ObjectSpeedFactor))*ParametersDb.parameters.ScoreCalculationFactor; // ScoreCalculationFactor = Fator de Cálculo da Pontuação
         }
 
         private void OnDestroy()

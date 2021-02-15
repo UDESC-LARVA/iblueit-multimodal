@@ -113,7 +113,7 @@ namespace Ibit.Core.Serial
 
 #if !UNITY_EDITOR
             if (ports.Length < 1)
-                Ibit.Core.Util.SysMessage.Warning("CINTA EXTENSORA não encontrada!");
+                Ibit.Core.Util.SysMessage.Warning("CINTA não encontrada!");
 #endif
 
             foreach (var port in ports)
@@ -138,7 +138,7 @@ namespace Ibit.Core.Serial
                 }
                 catch (Exception e)
                 {
-                    //Debug.LogWarning($"Unable to connect {sp.PortName}:{sp.BaudRate}:CINTA EXTENSORA.\n{e.GetType()}: {e.Message}");
+                    //Debug.LogWarning($"Unable to connect {sp.PortName}:{sp.BaudRate}:CINTA.\n{e.GetType()}: {e.Message}");
                     sp.Close();
                     sp.Dispose();
                     continue;
@@ -160,13 +160,13 @@ namespace Ibit.Core.Serial
 
         public void Connect()
         {
-            // Debug.Log("Looking for CINTA EXTENSORA...");
+            // Debug.Log("Looking for CINTA...");
 
             var portName = AutoConnect();
 
             if (string.IsNullOrEmpty(portName))
             {
-                Debug.LogWarning("Failed to connect CINTA EXTENSORA!");
+                Debug.LogWarning("Failed to connect CINTA!");
                 StartCoroutine(Reconnect());
                 return;
             }
@@ -178,14 +178,14 @@ namespace Ibit.Core.Serial
 
             IsConnected = true;
 
-            Debug.Log($"Connected to {portName}:{baudRate}:CINTA EXTENSORA");
+            Debug.Log($"Connected to {portName}:{baudRate}:CINTA");
         }
 
         //Caso desconectado, tenta reconectar a cada 10 segundos.
         private IEnumerator Reconnect()
         {
             yield return new WaitForSeconds(10f);
-            //Debug.Log("Tentando reconectar Cinta Extensora...");
+            //Debug.Log("Tentando reconectar Cinta...");
             Connect();
         }
 
@@ -218,7 +218,7 @@ namespace Ibit.Core.Serial
 
             IsConnected = false;
 
-            Debug.Log("Serial disconnected:CINTA EXTENSORA");
+            Debug.Log("Serial disconnected:CINTA");
         }
 
         private void OnDestroy() => Disconnect();

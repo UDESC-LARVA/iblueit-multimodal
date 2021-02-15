@@ -31,7 +31,7 @@ namespace Ibit.Calibration
 
         private void DudeWarnCintaDisconnected()
         {
-            DudeTalk("A Cinta Extensora não está conectada. Conecte-a ao computador! Pressione (Enter) para continuar.");
+            DudeTalk("A Cinta de Pressão não está conectada. Conecte-a ao computador! Pressione (Enter) para continuar.");
         }
     }
 }

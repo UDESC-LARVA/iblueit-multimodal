@@ -133,7 +133,7 @@ namespace Ibit.Core.Serial
                     Thread.Sleep(arduinoOpenTime); // this is a fix to wait for arduino to open a connection :)
                     sp.Write("e");
 
-                    if (!sp.ReadLine().Contains("echoo"))
+                    if (!sp.ReadLine().Contains("echox"))
                         throw new TimeoutException("No response from device.");
                 }
                 catch (Exception e)

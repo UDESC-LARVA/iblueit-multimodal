@@ -9,6 +9,15 @@ TagManager:
   - WaterObstacle
   - WaterTarget
   - RelaxObject
+  - txPitacoInfos
+  - txManoInfos
+  - txCintaInfos
+  - txPacient
+  - txInfos1
+  - txInfos2
+  - txInfos0
+  - txModal
+  - Dolphin
   layers:
   - Default
   - TransparentFX

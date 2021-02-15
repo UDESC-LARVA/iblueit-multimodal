@@ -22,6 +22,8 @@ namespace Ibit.CakeGame
         [SerializeField] private int passo;
         private float timer = 10;
 
+        private float gameMultiplier = GameManager.CapacityMultiplierMinigames;
+
         private SerialControllerPitaco scp;
         private SerialControllerMano scm;
         private SerialControllerCinta scc;
@@ -60,17 +62,17 @@ namespace Ibit.CakeGame
 
             if (scp.IsConnected) // Se Pitaco conectado
             {
-                SpicoExpiratorio = Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow*GameManager.CapacityMultiplierMinigames;
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow * gameMultiplier;
 
             } else {
             if (scm.IsConnected) // Se Mano conectado
             {
-                SpicoExpiratorio = Pacient.Loaded.CapacitiesMano.ExpPeakFlow*GameManager.CapacityMultiplierMinigames;
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesMano.ExpPeakFlow * gameMultiplier;
 
             } else {
             if (scc.IsConnected) // Se Cinta conectada
             {
-                SpicoExpiratorio = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierMinigames;
+                SpicoExpiratorio = Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * gameMultiplier;
             }}}
 
             slider.maxValue = SpicoExpiratorio;         //adicionado 09/09/19
@@ -575,19 +577,19 @@ namespace Ibit.CakeGame
 
             if (scp.IsConnected) // Se PITACO conectado
             {
-                picoJogador = (Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow*GameManager.CapacityMultiplierMinigames);
+                picoJogador = (Pacient.Loaded.CapacitiesPitaco.ExpPeakFlow * gameMultiplier);
             }
             else
             {
                if (scm.IsConnected) // Se Mano conectado
                {
-                   picoJogador = (Pacient.Loaded.CapacitiesMano.ExpPeakFlow*GameManager.CapacityMultiplierMinigames);
+                   picoJogador = (Pacient.Loaded.CapacitiesMano.ExpPeakFlow * gameMultiplier);
                }
                else
                {
                    if (scc.IsConnected) // Se CINTA conectada
                    {
-                       picoJogador = (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow*GameManager.CapacityMultiplierMinigames);
+                       picoJogador = (Pacient.Loaded.CapacitiesCinta.ExpPeakFlow * gameMultiplier);
                    }
                }
             }
